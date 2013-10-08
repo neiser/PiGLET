@@ -7,6 +7,8 @@
 #include "Structs.h"
 #include "Interval.h"
 
+#define DATA_BLOCK_SIZE 256
+
 namespace PiGLPlot {
 
 class Block {
@@ -36,7 +38,7 @@ protected:
     size_t _size;
 
 public:
-    DataBlock( const unsigned int size=100 ): _size(size) { _data.reserve(size);}
+    DataBlock( const unsigned int size=DATA_BLOCK_SIZE ): _size(size) { _data.reserve(size);}
     virtual ~DataBlock() {}
 
     virtual void Draw();
@@ -72,6 +74,8 @@ public:
     void Add( const vec2_t& vertex );
 
     void Draw();
+
+    void DoTicks();
 
 };
 }
