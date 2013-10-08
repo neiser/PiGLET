@@ -9,7 +9,7 @@ using namespace PiGLPlot;
 
 int main()
 {
-    BlockList b(Interval(0,0));
+    BlockList b(12);
 
     b.Draw();
 

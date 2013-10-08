@@ -59,13 +59,15 @@ class BlockList {
 protected:
     typedef std::list<Block*> blist;
     blist _blocks;
+    float _backlen;
     Interval _xrange;
+
 
     void PopBack();
     void NewBlock();
 
 public:
-    BlockList( const Interval& xrange );
+    BlockList( const float backlen );
 
     void Add( const vec2_t& vertex );
 

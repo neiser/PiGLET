@@ -27,8 +27,6 @@ void PiGLPlot::DataBlock::Add(const vec2_t &vertex)
 }
 
 
-
-
 void PiGLPlot::BlockList::PopBack()
 {
     Block* last = _blocks.back();
@@ -51,7 +49,7 @@ void PiGLPlot::BlockList::NewBlock()
 
 }
 
-PiGLPlot::BlockList::BlockList(const PiGLPlot::Interval &xrange): _xrange(xrange)
+PiGLPlot::BlockList::BlockList(const float backlen): _backlen(backlen)
 {
 }
 
@@ -69,7 +67,7 @@ void PiGLPlot::BlockList::Add(const vec2_t &vertex)
 
     h->Add( vertex );
 
-    _xrange = Interval(vertex.x - 10, vertex.x );
+    _xrange = Interval(vertex.x - _backlen, vertex.x );
 
     Block* last = _blocks.back();
 
