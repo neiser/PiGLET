@@ -9,7 +9,7 @@ SOURCES=BlockBuffer.cpp Interval.cpp main.cpp EGLWindow.cpp MyGLWindow.cpp EGLCo
 
 OBJECTS=$(SOURCES:%.cpp=%.o)
 
-EXECUTABLE=SimpleNGL
+EXECUTABLE=PiGLPlot
 
 all: $(SOURCES) $(EXECUTABLE)
 
