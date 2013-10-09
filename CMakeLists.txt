@@ -22,7 +22,7 @@ if(BUILD_FOR_PI)
     /opt/vc/include/interface/vcos/pthreads
     /opt/vc/include/interface/vmcs_host/linux)
   link_directories(/opt/vc/lib)
-  set(SYSTEM_LIBS EGL GLESv2 bcm_host m)
+  set(SYSTEM_LIBS EGL GLESv2 bcm_host)
 else()
   set(SYSTEM_DIR ${CMAKE_SOURCE_DIR}/SystemGLUT)
 
@@ -42,4 +42,4 @@ include_directories(${CMAKE_SOURCE_DIR})
 
 # build the exe
 add_executable(${PROJECT_NAME} ${SRC_LIST} ${SYSTEM_SRC_LIST})
-target_link_libraries(${PROJECT_NAME} ${SYSTEM_LIBS})
+target_link_libraries(${PROJECT_NAME} ${SYSTEM_LIBS} m)

@@ -1,5 +1,6 @@
 #include "PiGLPlotApp.h"
 #include "system.h"
+#include <cmath>
 
 PiGLPlotApp::PiGLPlotApp(): graph(10.0), phase(0.0) {}
 

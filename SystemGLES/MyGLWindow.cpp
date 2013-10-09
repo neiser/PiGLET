@@ -16,10 +16,9 @@
 */
 #include "MyGLWindow.h"
 
-
 #include <iostream>
-#include <cmath>
 #include <time.h>
+
 using namespace std;
 
 MyGLWindow::MyGLWindow(EGLconfig *_config) : EGLWindow(_config), graph(20), phase(0.0f), frames(0)
