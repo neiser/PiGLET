@@ -2,6 +2,7 @@
 
 #include <system.h>
 #include <iostream>
+#include "stdlib.h"
 
 using namespace std;
 
@@ -15,8 +16,15 @@ static void drawCallback() {
     glutSwapBuffers();
 }
 
+void keyPressed (unsigned char key, int x, int y) {
+    if( key = 27 ) {
+        exit(0);
+    }
+}
+
 
 void RunGL(GLApp &app) {
+    cout << "GLUT Init" << endl;
     int iArgc = 0;
     glutInit(&iArgc, NULL);
     glutInitDisplayMode( GLUT_DOUBLE | GLUT_RGB | GLUT_STENCIL );
@@ -28,6 +36,9 @@ void RunGL(GLApp &app) {
     glLoadIdentity();
     glOrtho(-1.0, 1.0, -1.0, 1.0, -1.0, 1.0);
     currentInstance = &app;
+    app.Init();
     glutIdleFunc(drawCallback);
+    glutKeyboardFunc(keyPressed);
+    cout << "Press ESC to quit" << endl;
     glutMainLoop();
 }
