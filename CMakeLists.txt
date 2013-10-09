@@ -20,11 +20,12 @@ if(BUILD_FOR_PI)
     /opt/vc/include/interface/vcos/pthreads
     /opt/vc/include/interface/vmcs_host/linux)
   link_directories(/opt/vc/lib)
+  aux_source_directory(${CMAKE_SOURCE_DIR}/SystemGLES SYSTEM_SRC_LIST)
   set(MYLIBS EGL GLESv2 bcm_host m)
 else()
-  
+    aux_source_directory(${CMAKE_SOURCE_DIR}/SystemGLUT SYSTEM_SRC_LIST)
 endif()
 
 aux_source_directory(${CMAKE_SOURCE_DIR} SRC_LIST)
-add_executable(${PROJECT_NAME} ${SRC_LIST})
+add_executable(${PROJECT_NAME} ${SRC_LIST} ${SYSTEM_SRC_LIST})
 target_link_libraries(${PROJECT_NAME} ${MYLIBS})
