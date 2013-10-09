@@ -19,10 +19,12 @@ void RunGL( GLApp& app ) {
 
     app.Init();
 
+    win.app = &app;
+
     while(1)
     {
 
-        app.Draw();
+        win.paintGL();
     }
 
     bcm_host_deinit();

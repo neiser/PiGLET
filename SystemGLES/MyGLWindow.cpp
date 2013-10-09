@@ -56,6 +56,8 @@ void MyGLWindow::paintGL()
 {
 
 
+    app->Draw();
+
 	glFlush();
 	glFinish();
 	swapBuffers();

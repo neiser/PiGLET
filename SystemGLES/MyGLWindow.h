@@ -24,6 +24,8 @@
 #include "Structs.h"
 #include <time.h>
 
+#include "../GLApp.h"
+
 typedef struct timespec timespec;
 
 
@@ -39,6 +41,9 @@ class MyGLWindow : public EGLWindow
 		/// @brief the is the main drawing function should only be called once initalizeGL has
 		/// been called
 		virtual void paintGL();
+
+        GLApp* app;
+
 	protected :
 		/// @brief one time OpenGL initialisation
 		virtual void initializeGL();
