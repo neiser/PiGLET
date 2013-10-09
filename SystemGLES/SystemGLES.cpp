@@ -1,4 +1,5 @@
 #include "SystemGLES.h"
+#include <iostream>
 
 void RunGL() {
     std::cout<<"starting GL test\n";

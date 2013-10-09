@@ -38,6 +38,7 @@ aux_source_directory(${SYSTEM_DIR} SYSTEM_SRC_LIST)
 
 # then all other common sources
 aux_source_directory(${CMAKE_SOURCE_DIR} SRC_LIST)
+include_directories(${CMAKE_SOURCE_DIR})
 
 # build the exe
 add_executable(${PROJECT_NAME} ${SRC_LIST} ${SYSTEM_SRC_LIST})
