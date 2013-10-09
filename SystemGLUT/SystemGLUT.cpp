@@ -19,15 +19,14 @@ static void drawCallback() {
 void RunGL(GLApp &app) {
     int iArgc = 0;
     glutInit(&iArgc, NULL);
-    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
-    glutInitWindowSize(250, 250);
-    glutInitWindowPosition(200, 200);
+    glutInitDisplayMode( GLUT_DOUBLE | GLUT_RGB | GLUT_STENCIL );
+    glutInitWindowSize(1280, 720);
+    glutInitWindowPosition(0, 0);
     glutCreateWindow("PiGLPlot");
     glClearColor(0.0, 0.0, 0.0, 0.0);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    cout << "Test" << endl;
-    glOrtho(0.0, 1.0, 0.0, 1.0, -1.0, 1.0);
+    glOrtho(-1.0, 1.0, -1.0, 1.0, -1.0, 1.0);
     currentInstance = &app;
     glutIdleFunc(drawCallback);
     glutMainLoop();
