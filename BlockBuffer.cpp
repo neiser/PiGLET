@@ -1,12 +1,9 @@
 #include "BlockBuffer.h"
 
-
+#include "system.h"
+#include <cmath>
 #include <iostream>
 #include <iomanip>
-#include <EGL/egl.h>
-#include <EGL/eglext.h>
-#include <GLES/gl.h>
-#include <cmath>
 
 using namespace std;
 

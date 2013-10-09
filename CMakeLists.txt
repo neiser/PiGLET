@@ -15,17 +15,30 @@ if(NOT DEFINED BUILD_FOR_PI)
 endif()
 
 if(BUILD_FOR_PI)
+  set(SYSTEM_DIR ${CMAKE_SOURCE_DIR}/SystemGLES)
+  
   include_directories(/usr/local/include
     /opt/vc/include
     /opt/vc/include/interface/vcos/pthreads
     /opt/vc/include/interface/vmcs_host/linux)
   link_directories(/opt/vc/lib)
-  aux_source_directory(${CMAKE_SOURCE_DIR}/SystemGLES SYSTEM_SRC_LIST)
-  set(MYLIBS EGL GLESv2 bcm_host m)
+  set(SYSTEM_LIBS EGL GLESv2 bcm_host m)
 else()
-    aux_source_directory(${CMAKE_SOURCE_DIR}/SystemGLUT SYSTEM_SRC_LIST)
+  set(SYSTEM_DIR ${CMAKE_SOURCE_DIR}/SystemGLUT)
+
+  find_package(OpenGL REQUIRED)
+  find_package(GLUT REQUIRED)
+  include_directories(${OPENGL_INCLUDE_DIR} ${GLUT_INCLUDE_DIR})
+  set(SYSTEM_LIBS ${OPENGL_LIBRARIES} ${GLUT_LIBRARIES})
 endif()
 
+# for both systems, we add the sources and set the include dir
+include_directories(${SYSTEM_DIR})
+aux_source_directory(${SYSTEM_DIR} SYSTEM_SRC_LIST)
+
+# then all other common sources
 aux_source_directory(${CMAKE_SOURCE_DIR} SRC_LIST)
+
+# build the exe
 add_executable(${PROJECT_NAME} ${SRC_LIST} ${SYSTEM_SRC_LIST})
-target_link_libraries(${PROJECT_NAME} ${MYLIBS})
+target_link_libraries(${PROJECT_NAME} ${SYSTEM_LIBS})
