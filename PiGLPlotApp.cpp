@@ -1,6 +1,7 @@
 #include "PiGLPlotApp.h"
+#include "system.h"
 
-PiGLPlotApp::PiGLPlotApp() {}
+PiGLPlotApp::PiGLPlotApp(): graph(10.0) {}
 
 void PiGLPlotApp::Init() {
 
@@ -62,3 +63,4 @@ void PiGLPlotApp::Draw() {
             glDisable(GL_STENCIL_TEST);
 }
 
+const vec2_t PiGLPlotApp::square[4] = { {1,1},{-1,1},{-1,-1},{1,-1} };
