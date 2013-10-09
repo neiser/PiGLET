@@ -1,7 +1,7 @@
 #include "SystemGLES.h"
 #include <iostream>
 
-void RunGL() {
+void RunGL( GLApp& app ) {
     std::cout<<"starting GL test\n";
   bcm_host_init();
     std::cout<<"done bcm init\n";
@@ -17,10 +17,12 @@ void RunGL() {
     // now create a new window using the default config
     MyGLWindow win(config);
 
+    app.Init();
+
     while(1)
     {
 
-        win.paintGL();
+        app.Draw();
     }
 
     bcm_host_deinit();

@@ -2,6 +2,6 @@
 
 #include <system.h>
 
-void RunGL() {
+void RunGL(GLApp &app) {
 
 }

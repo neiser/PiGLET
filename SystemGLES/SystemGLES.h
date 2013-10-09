@@ -4,7 +4,8 @@
 #include "MyGLWindow.h"
 #include "bcm_host.h"
 
+#include "../GLApp.h"
 
-void RunGL();
+void RunGL( GLApp& app );
 
 #endif

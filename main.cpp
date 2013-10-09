@@ -6,7 +6,7 @@
 
 int main()
 {
-    PiGLPlotApp app();
-    RunGL();
+    PiGLPlotApp app;
+    RunGL(app);
 }
 
