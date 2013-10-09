@@ -8,6 +8,8 @@ protected:
     static const vec2_t square[4];
     PiGLPlot::BlockList graph;
 
+    float phase;
+
 public:
     PiGLPlotApp();
 

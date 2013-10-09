@@ -1,7 +1,7 @@
 #include "PiGLPlotApp.h"
 #include "system.h"
 
-PiGLPlotApp::PiGLPlotApp(): graph(10.0) {}
+PiGLPlotApp::PiGLPlotApp(): graph(10.0), phase(0.0) {}
 
 void PiGLPlotApp::Init() {
 
@@ -61,6 +61,14 @@ void PiGLPlotApp::Draw() {
             glDisableClientState(GL_VERTEX_ARRAY);
 
             glDisable(GL_STENCIL_TEST);
+
+
+            phase += .02f;
+
+            vec2_t n;
+            n.x = phase;
+            n.y = sin(3.14157*phase/10.0);
+            graph.Add(n);
 }
 
 const vec2_t PiGLPlotApp::square[4] = { {1,1},{-1,1},{-1,-1},{1,-1} };

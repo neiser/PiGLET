@@ -62,14 +62,6 @@ void MyGLWindow::paintGL()
 	glFinish();
 	swapBuffers();
 
-    //cout << "xlen=" << graph.XR << "   xcenter="<<buffer.xcenter() << endl;
-
-    phase += .02f;
-
-    vec2_t n;
-    n.x = phase;
-    n.y = sin(3.14157*phase/10.0);
-    graph.Add(n);
     ++frames;
     if( frames == 200 ) {
         timespec stop;
