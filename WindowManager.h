@@ -16,7 +16,7 @@ private:
 
 public:
 
-    WindowManager( const int dx, const int dy): _size_x(dx), _size_y(dy) {}
+    WindowManager( const int dx = 1, const int dy = 1): _size_x(dx), _size_y(dy) {}
 
     const int& SizeX() const { return _size_x; }
     const int& SizeY() const { return _size_y; }

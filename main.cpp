@@ -7,8 +7,8 @@
 int main()
 {
     InitGL();
-    PiGLPlotApp app;
-//    testApp app;
+//    PiGLPlotApp app;
+    testApp app;
     RunGL(app);
 }
 

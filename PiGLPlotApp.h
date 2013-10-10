@@ -31,12 +31,13 @@ public:
 };
 
 class testApp: public GLApp{
-private:
-    PlotWindow pwin;
+//private:
 
 public:
 
-    testApp(): pwin(1,1){}
+    WindowManager windowman;
+
+    testApp():windowman(){}
 
     virtual void Init();
     virtual void Draw();

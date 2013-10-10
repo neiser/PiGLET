@@ -115,9 +115,12 @@ void testApp::Draw(){
 
             glLineWidth(3);
 
-    pwin.Draw();
+    windowman.Draw();
 
 }
 void testApp::Init(){
     cout << "Starting a test app!" << endl;
+    windowman.AddWindow( new PlotWindow(1,1));
+    windowman.AddWindow( new PlotWindow(1,1));
+    windowman.AddWindow( new PlotWindow(1,1));
 }
