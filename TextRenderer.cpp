@@ -35,7 +35,6 @@ void TextRenderer::Text2Texture(const GLuint texhandle, const string &text)
     _watch.Start();
 
     MagickReadImage(mw, text.c_str());
-    MagickWriteImage(mw,"text.gif");
 
     unsigned char *Buffer = NULL;
     size_t width = MagickGetImageWidth(mw);
