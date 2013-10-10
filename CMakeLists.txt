@@ -45,6 +45,7 @@ aux_source_directory(${SYSTEM_DIR} SYSTEM_SRC_LIST)
 # then all other needed libraries
 find_library(M_LIB m REQUIRED)
 find_package(ImageMagick COMPONENTS MagickWand REQUIRED)
+add_definitions(-DMAGICKCORE_HDRI_ENABLE=0 -DMAGICKCORE_QUANTUM_DEPTH=16)
 include_directories(${ImageMagick_INCLUDE_DIRS})
 
 # the sources itself
