@@ -33,7 +33,7 @@ else()
 endif()
 
 # for both systems, we add the sources and set the include dir
-include_directories(${SYSTEM_DIR})
+include_directories(${SYSTEM_DIR} /usr/include/ImageMagick)
 aux_source_directory(${SYSTEM_DIR} SYSTEM_SRC_LIST)
 
 # then all other common sources
@@ -42,4 +42,4 @@ include_directories(${CMAKE_SOURCE_DIR})
 
 # build the exe
 add_executable(${PROJECT_NAME} ${SRC_LIST} ${SYSTEM_SRC_LIST})
-target_link_libraries(${PROJECT_NAME} ${SYSTEM_LIBS} m)
+target_link_libraries(${PROJECT_NAME} ${SYSTEM_LIBS} m MagickWand)

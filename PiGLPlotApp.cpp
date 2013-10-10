@@ -1,10 +1,18 @@
 #include "PiGLPlotApp.h"
 #include "system.h"
 #include <cmath>
+#include <iostream>
+
+using namespace std;
 
 PiGLPlotApp::PiGLPlotApp(): graph(10.0), phase(0.0) {}
 
 void PiGLPlotApp::Init() {
+    glGenTextures(1, &tex);
+
+    tr.Text2Texture(tex,"label:EPICS rulz!");
+
+    cout << "App init done" << endl;
 
 }
 
@@ -12,10 +20,12 @@ void PiGLPlotApp::Draw() {
 
     // Start with a clear screen
     glClearColor(.1,.1,.1,0);
-    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+
+    glClear( GL_COLOR_BUFFER_BIT );
 
 
             glEnableClientState(GL_VERTEX_ARRAY);
+            glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
             glLineWidth(3);
 
@@ -57,6 +67,17 @@ void PiGLPlotApp::Draw() {
 
             graph.Draw();
 
+            glScalef(.5,.5,.5);
+            glEnable(GL_TEXTURE_2D);
+            glBindTexture(GL_TEXTURE_2D, tex);
+            glVertexPointer(2, GL_FLOAT, 0, square);
+            glTexCoordPointer(2, GL_FLOAT, 0, square_tex);
+
+            glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+
+            glDisable(GL_TEXTURE_2D);
+
+
             glPopMatrix();
 
             glDisableClientState(GL_VERTEX_ARRAY);
@@ -73,3 +94,4 @@ void PiGLPlotApp::Draw() {
 }
 
 const vec2_t PiGLPlotApp::square[4] = { {1,1},{-1,1},{-1,-1},{1,-1} };
+const vec2_t PiGLPlotApp::square_tex[4] = { {1,0},{0,0},{0,1},{1,1} };
