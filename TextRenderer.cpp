@@ -12,7 +12,7 @@ TextRenderer::TextRenderer()
     MagickSetPointsize(mw,48);
     MagickSetFont(mw,"Sans");
     MagickSetOption(mw,"fill","white");
-    MagickSetOption(mw,"background","red");
+    MagickSetOption(mw,"background","rgba(0,0,0,0)");
     MagickSetGravity(mw,CenterGravity);
     cout << "ctor" <<endl;
 }

@@ -70,12 +70,15 @@ void PiGLPlotApp::Draw() {
 
             glScalef(.5,.5,.5);
             glEnable(GL_TEXTURE_2D);
+             glEnable(GL_BLEND);
+             glBlendFunc(GL_SRC_ALPHA,GL_ONE);
+             glColor4f(0.0f,1.0f,1.0f,1.0f);
             glBindTexture(GL_TEXTURE_2D, tex[1]);
             glVertexPointer(2, GL_FLOAT, 0, square);
             glTexCoordPointer(2, GL_FLOAT, 0, square_tex);
 
             glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
-
+            glDisable(GL_BLEND);
             glDisable(GL_TEXTURE_2D);
 
 
