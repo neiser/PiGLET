@@ -22,8 +22,7 @@ void keyPressed (unsigned char key, int x, int y) {
     }
 }
 
-
-void RunGL(GLApp &app) {
+void InitGL(){
     cout << "GLUT Init" << endl;
     int iArgc = 0;
     glutInit(&iArgc, NULL);
@@ -35,10 +34,13 @@ void RunGL(GLApp &app) {
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glOrtho(-1.0, 1.0, -1.0, 1.0, -1.0, 1.0);
-    currentInstance = &app;
-    app.Init();
     glutIdleFunc(drawCallback);
     glutKeyboardFunc(keyPressed);
+}
+
+void RunGL(GLApp &app) {
+    currentInstance = &app;
+    app.Init();
     cout << "Press ESC to quit" << endl;
     glutMainLoop();
 }
