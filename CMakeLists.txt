@@ -11,7 +11,14 @@ endif()
 
 # by default, we build for "normal" environments
 if(NOT DEFINED BUILD_FOR_PI)
-	set(BUILD_FOR_PI 0)
+  message(STATUS "Auto-detecting system...is it a Raspberry Pi?")
+  include(CheckIncludeFile)
+  check_include_file(/opt/vc/include/bcm_host.h BCMHOST)
+  if(BCMHOST)
+    set(BUILD_FOR_PI "ON" CACHE INTERNAL "") 
+  else()
+    set(BUILD_FOR_PI "OFF" CACHE INTERNAL "") 
+  endif()
 endif()
 
 if(BUILD_FOR_PI)
@@ -33,13 +40,21 @@ else()
 endif()
 
 # for both systems, we add the sources and set the include dir
-include_directories(${SYSTEM_DIR} /usr/include/ImageMagick)
+include_directories(${SYSTEM_DIR})
 aux_source_directory(${SYSTEM_DIR} SYSTEM_SRC_LIST)
 
-# then all other common sources
+# then all other needed libraries
+find_library(M_LIB m REQUIRED)
+find_package(ImageMagick COMPONENTS MagickWand REQUIRED)
+include_directories(${ImageMagick_INCLUDE_DIRS})
+
+# the sources itself
 aux_source_directory(${CMAKE_SOURCE_DIR} SRC_LIST)
 include_directories(${CMAKE_SOURCE_DIR})
 
 # build the exe
 add_executable(${PROJECT_NAME} ${SRC_LIST} ${SYSTEM_SRC_LIST})
-target_link_libraries(${PROJECT_NAME} ${SYSTEM_LIBS} m MagickWand)
+target_link_libraries(${PROJECT_NAME}
+  ${SYSTEM_LIBS}
+  ${M_LIB}
+  ${ImageMagick_LIBRARIES})
