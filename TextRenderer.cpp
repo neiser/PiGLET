@@ -32,6 +32,8 @@ void TextRenderer::test(const string &text)
 
 void TextRenderer::Text2Texture(const GLuint texhandle, const string &text)
 {
+    _watch.Start();
+
     MagickReadImage(mw, text.c_str());
     MagickWriteImage(mw,"text.gif");
 
@@ -53,6 +55,10 @@ void TextRenderer::Text2Texture(const GLuint texhandle, const string &text)
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
 
     delete [] Buffer;
+
+    _watch.Stop();
+
+    cout << "Text generation took: " << _watch.TimeElapsed() << " s" << endl;
 
 }
 

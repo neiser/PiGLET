@@ -4,12 +4,14 @@
 #include <string>
 #include <wand/magick_wand.h>
 #include "system.h"
-
+#include "StopWatch.h"
 
 
 class TextRenderer {
 protected:
     MagickWand *mw;
+    StopWatch _watch;
+
 
 public:
     TextRenderer();
