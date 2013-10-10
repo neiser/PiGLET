@@ -101,6 +101,17 @@ const vec2_t PiGLPlotApp::square[4] = { {1,1},{-1,1},{-1,-1},{1,-1} };
 
 
 void testApp::Draw(){
+    // Start with a clear screen
+    glClearColor(.1,.1,.1,0);
+
+    glClear( GL_COLOR_BUFFER_BIT );
+
+
+            glEnableClientState(GL_VERTEX_ARRAY);
+            glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+            glLineWidth(3);
+
     pwin.Draw();
 
 }

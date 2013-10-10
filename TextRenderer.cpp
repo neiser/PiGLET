@@ -10,7 +10,7 @@ TextRenderer::TextRenderer()
     MagickWandGenesis();    // just once somewhere
     mw = NewMagickWand();
 
-    MagickSetSize(mw,1024,64);
+    MagickSetSize(mw,256,64);
     MagickSetPointsize(mw,48);
     MagickSetFont(mw,"Sans");
     MagickSetOption(mw,"colorspace","GRAY");    // does this do anything?
@@ -18,6 +18,7 @@ TextRenderer::TextRenderer()
     MagickSetOption(mw,"background","rgba(0,0,0,0)");   // transparent background
     MagickSetOption(mw,"encoding","unicode");   // does this do anything?
     MagickSetGravity(mw,CenterGravity);
+//    cout << "ctor" <<endl;
 }
 
 TextRenderer::~TextRenderer()
@@ -38,6 +39,7 @@ void TextRenderer::Text2Texture(const GLuint texhandle, const string &text)
     _watch.Start();
 
     MagickReadImage(mw, text.c_str());
+    MagickWriteImage(mw,"x.gif");
 
     unsigned char *Buffer = NULL;
     size_t width = MagickGetImageWidth(mw);

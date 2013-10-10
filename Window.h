@@ -30,6 +30,8 @@ class PlotWindow: public Window{
 private:
     std::string _xlabel;
     std::string _ylabel;
+
+    // Window Frame:
     Rectangle rect;
 
 public:
@@ -39,7 +41,7 @@ public:
     std::string& Ylabel() { return _ylabel; }
     PlotWindow( const int width, const int height,
                 const std::string xlabel = "Always label your axes",
-                const std::string ylabel = "Alawys label your Axes"):
+                const std::string ylabel = "Alawys label your axes"):
         Window(width,height),
         _xlabel(xlabel),
         _ylabel(ylabel),
