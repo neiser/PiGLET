@@ -8,9 +8,10 @@ using namespace std;
 PiGLPlotApp::PiGLPlotApp(): graph(10.0), phase(0.0) {}
 
 void PiGLPlotApp::Init() {
-    glGenTextures(1, &tex);
+    glGenTextures(2, tex);
 
-    tr.Text2Texture(tex,"label:EPICS rulz!");
+    tr.Text2Texture(tex[0],"label:EPICS rulz!");
+    tr.Text2Texture(tex[1],"label:LALALAL");
 
     cout << "App init done" << endl;
 
@@ -69,7 +70,7 @@ void PiGLPlotApp::Draw() {
 
             glScalef(.5,.5,.5);
             glEnable(GL_TEXTURE_2D);
-            glBindTexture(GL_TEXTURE_2D, tex);
+            glBindTexture(GL_TEXTURE_2D, tex[1]);
             glVertexPointer(2, GL_FLOAT, 0, square);
             glTexCoordPointer(2, GL_FLOAT, 0, square_tex);
 

@@ -14,7 +14,7 @@ protected:
 
     TextRenderer tr;
 
-    GLuint tex;
+    GLuint tex[2];
 
 public:
     PiGLPlotApp();
