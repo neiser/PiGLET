@@ -6,6 +6,7 @@
 
 #include "Structs.h"
 #include "TextRenderer.h"
+#include "BlockBuffer.h"
 
 
 class Window {
@@ -34,6 +35,13 @@ private:
     // Window Frame:
     Rectangle rect;
 
+    PiGLPlot::BlockList graph;
+
+    TextLabel text;
+
+    int frame;          //for debug
+    NumberLabel num;    //for debug
+
 public:
     const std::string& Xlabel() const { return _xlabel; }
     const std::string& Ylabel() const { return _ylabel; }
@@ -45,8 +53,14 @@ public:
         Window(width,height),
         _xlabel(xlabel),
         _ylabel(ylabel),
-        rect(-1,-1,1,1)
-    {}
+        rect(-1,-1,1,1),
+        graph(10.0),
+        text(-.95,0.82,.95,.98),
+        frame(0)
+    {
+        text.SetText("Hallo Welt");
+        num.Init();
+    }
 
     virtual void Draw();
 };
