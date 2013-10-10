@@ -1,5 +1,9 @@
 #include "PiGLPlotApp.h"
 #include "system.h"
+
+#include "WindowManager.h"
+#include "Window.h"
+
 #include <cmath>
 #include <iostream>
 #include <sstream>
@@ -13,6 +17,7 @@ void PiGLPlotApp::Init() {
    rect.SetText("Hallo Welt");
 
    cout << "App init done" << endl;
+
 
 }
 
