@@ -4,6 +4,10 @@
 #include "BlockBuffer.h"
 #include "TextRenderer.h"
 
+#include "WindowManager.h"
+#include "Window.h"
+
+
 class PiGLPlotApp: public GLApp {
 protected:
     static const vec2_t square[4];
@@ -26,4 +30,16 @@ public:
     virtual void Init();
     virtual void Draw();
 
+};
+
+class testApp: public GLApp{
+private:
+    PlotWindow pwin;
+
+public:
+
+    testApp(): pwin(1,1){}
+
+    virtual void Init();
+    virtual void Draw();
 };

@@ -1,5 +1,8 @@
 #include "Window.h"
 
+void PlotWindow::Draw(){
+    rect.Draw( GL_LINE_LOOP );
+}
 
 std::ostream& operator<<( std::ostream& stream, const Window& win ) {
     stream << "[ " << win.Width() << " x " << win.Height() << " ]";

@@ -5,6 +5,7 @@
 #include <string>
 
 #include "Structs.h"
+#include "TextRenderer.h"
 
 
 class Window {
@@ -21,6 +22,7 @@ public:
     int& Width() { return _width; }
     int& Height() { return _height; }
 
+    virtual void Draw() = 0;
 
 };
 
@@ -28,6 +30,7 @@ class PlotWindow: public Window{
 private:
     std::string _xlabel;
     std::string _ylabel;
+    Rectangle rect;
 
 public:
     const std::string& Xlabel() const { return _xlabel; }
@@ -39,9 +42,11 @@ public:
                 const std::string ylabel = "Alawys label your Axes"):
         Window(width,height),
         _xlabel(xlabel),
-        _ylabel(ylabel)
+        _ylabel(ylabel),
+        rect(-1,-1,1,1)
     {}
 
+    virtual void Draw();
 };
 
 std::ostream& operator<<( std::ostream& stream, const Window& win );

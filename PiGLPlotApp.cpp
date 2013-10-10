@@ -1,9 +1,6 @@
 #include "PiGLPlotApp.h"
 #include "system.h"
 
-#include "WindowManager.h"
-#include "Window.h"
-
 #include <cmath>
 #include <iostream>
 #include <sstream>
@@ -101,3 +98,12 @@ void PiGLPlotApp::Draw() {
 }
 
 const vec2_t PiGLPlotApp::square[4] = { {1,1},{-1,1},{-1,-1},{1,-1} };
+
+
+void testApp::Draw(){
+    pwin.Draw();
+
+}
+void testApp::Init(){
+    cout << "Starting a test app!" << endl;
+}
