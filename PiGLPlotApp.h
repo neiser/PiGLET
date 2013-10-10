@@ -16,13 +16,11 @@ protected:
 
     float phase;
 
-   // TextRenderer tr;
-
-    GLuint tex[2];
-
-    TextLabel rect;
+    TextLabel text;
 
     int frame;
+
+    NumberLabel num;
 
 public:
     PiGLPlotApp();

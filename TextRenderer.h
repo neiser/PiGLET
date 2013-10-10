@@ -29,6 +29,7 @@ public:
     void test( const std::string& text );
 
     void Text2Texture(const GLuint texhandle, const std::string& text );
+    void Text2Texture(const GLuint texhandle, const std::string& text, const int w, const int h);
 
 
 };
@@ -65,9 +66,10 @@ class TextLabel: public Rectangle {
 private:
     std::string _text;
     GLuint _texture;
-    static const vec2_t _texcoords[4];
+
 
 public:
+    static const vec2_t _texcoords[4];
     TextLabel( const float x1, const float y1, const float x2, const float y2);
     TextLabel(const vec2_t& center, const float width, const float height);
 
@@ -77,6 +79,21 @@ public:
 
     void SetText( const std::string& text );
     const std::string& GetText() const { return _text; }
+};
+
+class NumberLabel {
+private:
+    static GLuint _textures[10];
+    static bool _hasTex;
+    static Rectangle r;
+    void _maketextures();
+
+public:
+    NumberLabel() {}
+    virtual ~NumberLabel() {}
+
+    void Draw( int i );
+    void Init() { _maketextures(); }
 };
 
 

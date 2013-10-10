@@ -7,11 +7,12 @@
 
 using namespace std;
 
-PiGLPlotApp::PiGLPlotApp(): graph(10.0), phase(0.0), rect(-.95,0.82,.95,.98), frame(0) {}
+PiGLPlotApp::PiGLPlotApp(): graph(10.0), phase(0.0), text(-.95,0.82,.95,.98), frame(0) {}
 
 void PiGLPlotApp::Init() {
 
-   rect.SetText("Hallo Welt");
+   text.SetText("Hallo Welt");
+   num.Init();
 
    cout << "App init done" << endl;
 
@@ -73,7 +74,9 @@ void PiGLPlotApp::Draw() {
 
             glDisable(GL_STENCIL_TEST);
 
-            rect.Draw( GL_LINE_LOOP );
+            text.Draw( GL_LINE_LOOP );
+
+            num.Draw(frame);
 
             glDisableClientState(GL_VERTEX_ARRAY);
 
@@ -84,7 +87,7 @@ void PiGLPlotApp::Draw() {
             if( frame % 20 ) {
                 stringstream s;
                 s << "Frame " << frame;
-                rect.SetText(s.str());
+                //rect.SetText(s.str());
             }
 
             vec2_t n;

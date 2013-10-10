@@ -34,12 +34,22 @@ void TextRenderer::test(const string &text)
     MagickWriteImage(mw,"caption2.gif");
 }
 
+void TextRenderer::Text2Texture(const GLuint texhandle, const string &text, const int w, const int h) {
+    MagickSetSize(mw,w,h);
+    Text2Texture(texhandle,text);
+}
+
 void TextRenderer::Text2Texture(const GLuint texhandle, const string &text)
 {
     _watch.Start();
 
     MagickReadImage(mw, text.c_str());
-    MagickWriteImage(mw,"x.gif");
+    std::stringstream rendercmd;
+    rendercmd << "label:" << text;
+
+    MagickReadImage(mw, rendercmd.str().c_str());
+
+    cout << "handle=" << texhandle << " Text=" << text << endl;
 
     unsigned char *Buffer = NULL;
     size_t width = MagickGetImageWidth(mw);
@@ -154,10 +164,50 @@ void TextLabel::Draw(GLenum mode)
 
 void TextLabel::SetText(const string &text)
 {
-    stringstream s;
-    s << "label:" << text;
-    _text = text;
-    TextRenderer::I().Text2Texture(_texture, s.str());
+    TextRenderer::I().Text2Texture(_texture, text);
 }
 
 const vec2_t TextLabel::_texcoords[4] = { {0,1},{0,0},{1,0},{1,1} };
+
+
+
+void NumberLabel::_maketextures()
+{    
+    if(!_hasTex) {
+        glGenTextures(10, _textures);
+        for( int i=0; i<10; ++i ) {
+            stringstream s;
+            s << i;
+            TextRenderer::I().Text2Texture(_textures[i], s.str(),64,64);
+        }
+        _hasTex = true;
+    }
+
+}
+
+void NumberLabel::Draw( int i )
+{
+    glEnable(GL_TEXTURE_2D);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA,GL_ONE);
+    glColor4f(.5f,1.0f,1.0f,1.0f);
+
+    glTexCoordPointer(2, GL_FLOAT, 0, TextLabel::_texcoords);
+
+    glPushMatrix();
+    for( int p=0;p<6;++p ) {
+        int d = i % 10;
+        i /= 10;
+        glBindTexture(GL_TEXTURE_2D, _textures[d]);
+        r.Draw( GL_TRIANGLE_FAN );
+        glTranslatef(-.1,0,0);
+    }
+    glPopMatrix();
+
+    glDisable(GL_BLEND);
+    glDisable(GL_TEXTURE_2D);
+}
+
+bool NumberLabel::_hasTex = false;
+GLuint NumberLabel::_textures[10];
+Rectangle NumberLabel::r(0,0,.1,.1);
