@@ -18,7 +18,6 @@ TextRenderer::TextRenderer()
     MagickSetOption(mw,"background","rgba(0,0,0,0)");   // transparent background
     MagickSetOption(mw,"encoding","unicode");   // does this do anything?
     MagickSetGravity(mw,CenterGravity);
-    cout << "ctor" <<endl;
 }
 
 TextRenderer::~TextRenderer()
@@ -157,7 +156,7 @@ void TextLabel::SetText(const string &text)
     stringstream s;
     s << "label:" << text;
     _text = text;
-    TRenderer.Text2Texture(_texture, s.str());
+    TextRenderer::I().Text2Texture(_texture, s.str());
 }
 
 const vec2_t TextLabel::_texcoords[4] = { {0,1},{0,0},{1,0},{1,1} };

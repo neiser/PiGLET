@@ -13,10 +13,18 @@ protected:
     MagickWand *mw;
     StopWatch _watch;
 
-
-public:
+private:
     TextRenderer();
     virtual ~TextRenderer();
+    TextRenderer(TextRenderer const& copy);            // Not Implemented
+    TextRenderer& operator=(TextRenderer const& copy); // Not Implemented
+
+public:
+
+    static TextRenderer& I() {
+        static TextRenderer instance;
+        return instance;
+    }
 
     void test( const std::string& text );
 
@@ -24,8 +32,6 @@ public:
 
 
 };
-
-static TextRenderer TRenderer;
 
 class Rectangle {
 private:
