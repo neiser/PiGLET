@@ -10,7 +10,7 @@ TextRenderer::TextRenderer()
     MagickWandGenesis();    // just once somewhere
     mw = NewMagickWand();
 
-    MagickSetSize(mw,256,64);
+    MagickSetSize(mw,1024,64);
     MagickSetPointsize(mw,48);
     MagickSetFont(mw,"Sans");
     MagickSetOption(mw,"colorspace","GRAY");    // does this do anything?
@@ -38,7 +38,6 @@ void TextRenderer::Text2Texture(const GLuint texhandle, const string &text)
     _watch.Start();
 
     MagickReadImage(mw, text.c_str());
-    MagickWriteImage(mw,"x.gif");
 
     unsigned char *Buffer = NULL;
     size_t width = MagickGetImageWidth(mw);

@@ -6,7 +6,7 @@
 
 using namespace std;
 
-PiGLPlotApp::PiGLPlotApp(): graph(10.0), phase(0.0), rect(.1,.1,.4,.4), frame(0) {}
+PiGLPlotApp::PiGLPlotApp(): graph(10.0), phase(0.0), rect(-.95,0.82,.95,.98), frame(0) {}
 
 void PiGLPlotApp::Init() {
 
@@ -69,11 +69,13 @@ void PiGLPlotApp::Draw() {
 
             glPopMatrix();
 
+            glDisable(GL_STENCIL_TEST);
+
             rect.Draw( GL_LINE_LOOP );
 
             glDisableClientState(GL_VERTEX_ARRAY);
 
-            glDisable(GL_STENCIL_TEST);
+
 
             phase += .02f;
 
