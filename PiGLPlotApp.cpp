@@ -2,18 +2,17 @@
 #include "system.h"
 #include <cmath>
 #include <iostream>
+#include <sstream>
 
 using namespace std;
 
-PiGLPlotApp::PiGLPlotApp(): graph(10.0), phase(0.0) {}
+PiGLPlotApp::PiGLPlotApp(): graph(10.0), phase(0.0), rect(.1,.1,.4,.4), frame(0) {}
 
 void PiGLPlotApp::Init() {
-    glGenTextures(2, tex);
 
-    tr.Text2Texture(tex[0],"label:EPICS rulz!");
-    tr.Text2Texture(tex[1],"label:LALALAL");
+   rect.SetText("Hallo Welt");
 
-    cout << "App init done" << endl;
+   cout << "App init done" << endl;
 
 }
 
@@ -68,34 +67,30 @@ void PiGLPlotApp::Draw() {
 
             graph.Draw();
 
-            glScalef(.5,.5,.5);
-            glEnable(GL_TEXTURE_2D);
-             glEnable(GL_BLEND);
-             glBlendFunc(GL_SRC_ALPHA,GL_ONE);
-             glColor4f(0.0f,1.0f,1.0f,1.0f);
-            glBindTexture(GL_TEXTURE_2D, tex[1]);
-            glVertexPointer(2, GL_FLOAT, 0, square);
-            glTexCoordPointer(2, GL_FLOAT, 0, square_tex);
-
-            glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
-            glDisable(GL_BLEND);
-            glDisable(GL_TEXTURE_2D);
-
-
             glPopMatrix();
+
+            rect.Draw( GL_LINE_LOOP );
 
             glDisableClientState(GL_VERTEX_ARRAY);
 
             glDisable(GL_STENCIL_TEST);
 
-
             phase += .02f;
+
+            if( frame % 20 ) {
+                stringstream s;
+                s << "Frame " << frame;
+                rect.SetText(s.str());
+            }
 
             vec2_t n;
             n.x = phase;
             n.y = sin(3.14157*phase/10.0);
             graph.Add(n);
+
+            ++frame;
+
+
 }
 
 const vec2_t PiGLPlotApp::square[4] = { {1,1},{-1,1},{-1,-1},{1,-1} };
-const vec2_t PiGLPlotApp::square_tex[4] = { {1,0},{0,0},{0,1},{1,1} };
