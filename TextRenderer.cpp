@@ -76,6 +76,53 @@ void TextRenderer::Text2Texture(const GLuint texhandle, const string &text)
 
 }
 
+void TextRenderer::Text2Texture2(const GLuint texhandle, const string &text, const int w, const int h, float& texw, float& texh)
+{
+    _watch.Start();
+
+    MagickSetSize(mw,0,0);
+
+    MagickReadImage(mw, text.c_str());
+    std::stringstream rendercmd;
+    rendercmd << "label:" << text;
+
+    MagickReadImage(mw, rendercmd.str().c_str());
+
+    size_t _w = MagickGetImageWidth(mw);
+    size_t _h = MagickGetImageHeight(mw);
+    MagickExtentImage(mw,w,h,0,0);
+
+    size_t width = MagickGetImageWidth(mw);
+    size_t height = MagickGetImageHeight(mw);
+
+    cout << "Generated: " << _w << "x" << _h << " padded:" << width << "x" << height << endl;
+
+    unsigned char *Buffer = NULL;
+
+    Buffer = new unsigned char[width * height];
+
+    cout << "w="<<width << " h="<<height << endl;
+
+    // Export the whole image
+    MagickExportImagePixels(mw, 0, 0, width, height, "I", CharPixel, Buffer);
+
+    glBindTexture(GL_TEXTURE_2D, texhandle);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, width, height, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, Buffer);
+
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+
+    delete [] Buffer;
+
+    _watch.Stop();
+
+    cout << "Text generation took: " << _watch.TimeElapsed() << " s" << endl;
+
+    texw = ((float)_w) / w;
+    texh = ((float)_h) / w;
+
+}
 
 void Rectangle::_update_vertices()
 {
@@ -174,18 +221,43 @@ const vec2_t TextLabel::_texcoords[4] = { {0,1},{0,0},{1,0},{1,1} };
 
 
 void NumberLabel::_maketextures()
-{    
+{
+    float maxw =0;
+    float maxh =0;
+    float w,h;
     if(!_hasTex) {
         glGenTextures(10, _textures);
         for( int i=0; i<10; ++i ) {
             stringstream s;
             s << i;
-            TextRenderer::I().Text2Texture(_textures[i], s.str(),64,64);
+            TextRenderer::I().Text2Texture2(_textures[i], s.str(),64,64,w,h);
+            if(w>maxw)
+                maxw=w;
+            if(h>maxh)
+                maxh=h;
         }
+
+        _texcoords[0].x = 0;
+        _texcoords[0].y = maxh;
+
+        _texcoords[1].x = 0;
+        _texcoords[1].y = 0;
+
+        _texcoords[2].x = maxw;
+        _texcoords[2].y = 0;
+
+        _texcoords[3].x = maxw;
+        _texcoords[3].y = maxh;
+
+        r.SetWidth(maxw/maxh);
+
         _hasTex = true;
+
     }
 
 }
+
+vec2_t NumberLabel::_texcoords[4];
 
 void NumberLabel::Draw( int i )
 {
@@ -193,17 +265,21 @@ void NumberLabel::Draw( int i )
     glEnable(GL_BLEND);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     glBlendFunc(GL_SRC_ALPHA,GL_ONE);
-    glColor4f(.5f,1.0f,1.0f,1.0f);
+    glColor4f(.5f,.1f,.1f,1.0f);
 
-    glTexCoordPointer(2, GL_FLOAT, 0, TextLabel::_texcoords);
+    glTexCoordPointer(2, GL_FLOAT, 0, _texcoords);
 
     glPushMatrix();
+    float s = 1.0/(6*r.Width());
+    glScalef(s,s,s);
+    glTranslatef(.5*r.Width(),0,0);
+
     for( int p=0;p<6;++p ) {
         int d = i % 10;
         i /= 10;
         glBindTexture(GL_TEXTURE_2D, _textures[d]);
         r.Draw( GL_TRIANGLE_FAN );
-        glTranslatef(-.1,0,0);
+        glTranslatef(-r.Width(),0,0);
     }
     glPopMatrix();
 
@@ -214,4 +290,4 @@ void NumberLabel::Draw( int i )
 
 bool NumberLabel::_hasTex = false;
 GLuint NumberLabel::_textures[10];
-Rectangle NumberLabel::r(0,0,.1,.1);
+Rectangle NumberLabel::r(0,0,1,1);

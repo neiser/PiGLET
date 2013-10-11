@@ -30,6 +30,7 @@ public:
 
     void Text2Texture(const GLuint texhandle, const std::string& text );
     void Text2Texture(const GLuint texhandle, const std::string& text, const int w, const int h);
+    void Text2Texture2(const GLuint texhandle, const std::string &text, const int w, const int h, float& texw, float& texh);
 
 
 };
@@ -83,6 +84,7 @@ public:
 class NumberLabel {
 private:
     static GLuint _textures[10];
+    static vec2_t _texcoords[4];
     static bool _hasTex;
     static Rectangle r;
     void _maketextures();
