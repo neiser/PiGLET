@@ -6,6 +6,7 @@
 
 #include "../GLApp.h"
 
+void InitGL();
 void RunGL( GLApp& app );
 
 #endif
