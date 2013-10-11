@@ -14,7 +14,7 @@ int main()
     glEnableClientState(GL_VERTEX_ARRAY);
     //  PiGLPlotApp app;
     testApp app;
-    PiGLPlotApp app;
+//    PiGLPlotApp app;
     RunGL(app);
 }
 

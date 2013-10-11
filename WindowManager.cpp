@@ -11,7 +11,6 @@ std::ostream& operator<<( std::ostream& stream, const WindowManager& wman ) {
 }
 
 void WindowManager::align_windws(){
-
     _rows.clear();
     int row = -1;
     int i = 0;
@@ -38,7 +37,11 @@ void WindowManager::align_windws(){
             }
         }
     }
-
+    cout << endl << "New tiling:" << endl;
+    for ( int r = 0 ; r < _rows.size() ; ++r ){
+        cout << "  " <<_rows.at(r) << endl;
+    }
+    cout << endl;
 }
 
 void WindowManager::Draw(){
@@ -46,13 +49,15 @@ void WindowManager::Draw(){
     float dy = 2. / _rows.size();
     float dx = 0;
 
+    int i_window = 0;
     for ( int row = 0; row < _rows.size() ; ++row){
         dx = 2. / _rows.at(row);
         for ( int in_row = 0 ; in_row < _rows.at(row) ; ++in_row ){
             glPushMatrix();
             glTranslatef(-1 + (dx / 2) + (in_row * dx ),1 - (dy / 2. ) - (row * dy ),0.);
             glScalef(1. / _rows.at(row), 1.  / _rows.size() ,1);
-            _window_list.at(row+in_row)->Draw();
+            _window_list.at(i_window)->Draw();
+            i_window++;
             glPopMatrix();
         }
     }
