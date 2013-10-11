@@ -8,11 +8,15 @@
 #include "Structs.h"
 
 
+
 class WindowManager {
 private:
     int _size_x;
     int _size_y;
     std::vector<Window*> _window_list;
+    std::vector<int> _rows;
+
+    void align_windws();
 
 public:
 
@@ -24,7 +28,10 @@ public:
     int& SizeY() { return _size_y; }
     const int NumWindows() { return _window_list.size();}
 
-    int AddWindow( Window *win){ _window_list.push_back(win);  return NumWindows(); }
+    void AddWindow( Window *win){
+        _window_list.push_back(win);
+        align_windws();
+    }
 
     void Draw();
 
