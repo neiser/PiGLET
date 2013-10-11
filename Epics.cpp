@@ -1,13 +1,3 @@
-//******************************************************************************
-//! @file    Epics.cpp
-//!                       
-//! @author  F. Feldbauer, A. Neiser
-//!
-//! @brief   Class for EPICS interfacing
-//!
-//! @version 1.0.0
-//******************************************************************************
-
 #include <iostream>
 #include <cadef.h>
 #include "Epics.h"
@@ -23,22 +13,12 @@ struct PiGLPlot::PV {
   bool            connected;
 };
 
-//------------------------------------------------------------------------------
-//! @fn      exceptionCallback
-//!
-//! @brief   EPICS Callback when an exception occured
-//------------------------------------------------------------------------------
 static void exceptionCallback( exception_handler_args args ) {
   std::string pvname = ( args.chid ? ca_name( args.chid ) : "unknown" );
   throw string( "CA Exception:\n Status: " + string( ca_message(args.stat) )
                + "\n Channel: " + pvname);
 }
 
-//------------------------------------------------------------------------------
-//! @fn      connectionCallback
-//!
-//! @brief   EPICS Callback when PV gets (re-)connected or disconnected
-//------------------------------------------------------------------------------
 static void connectionCallback( connection_handler_args args ) {
 #ifdef DEBUG
   std::cout << "ConnectionCallback:"
@@ -77,11 +57,6 @@ static void connectionCallback( connection_handler_args args ) {
   }
 }
 
-//------------------------------------------------------------------------------
-//! @fn      eventCallback
-//!
-//! @brief   EPICS Callback on an event in CA, e.g. updated value
-//------------------------------------------------------------------------------
 static void eventCallback( event_handler_args args ) {
 #ifdef DEBUG
   std::cout << "eventCallback:"
@@ -101,25 +76,13 @@ static void eventCallback( event_handler_args args ) {
   }
 }
 
-//------------------------------------------------------------------------------
-//! @fn      constructors and destructors
-//------------------------------------------------------------------------------
-PiGLPlot::Epics::Epics ()
-{
+PiGLPlot::Epics::Epics () {
 
 }
-
-
-//------------------------------------------------------------------------------
 
 PiGLPlot::Epics::~Epics () {
 }
 
-//------------------------------------------------------------------------------
-//! @fn      init
-//!
-//! @brief   Initialize CA Client
-//------------------------------------------------------------------------------
 void PiGLPlot::Epics::init() {
 
   if( isInitialized_ ) {
@@ -132,11 +95,6 @@ void PiGLPlot::Epics::init() {
   isInitialized_ = true;
 }
 
-//------------------------------------------------------------------------------
-//! @fn      close
-//!
-//! @brief   Close connection to CA Server
-//------------------------------------------------------------------------------
 void PiGLPlot::Epics::close() {
   std::vector<PV*>::const_iterator it;
   for ( it = pvs.begin(); it != pvs.end(); ++it ) {
@@ -148,12 +106,6 @@ void PiGLPlot::Epics::close() {
   ca_context_destroy();
 }
 
-
-//------------------------------------------------------------------------------
-//! @fn      subscribe
-//!
-//! @brief   Create CA Channel and Subscription for PV named pvname
-//------------------------------------------------------------------------------
 void PiGLPlot::Epics::subscribe( std::string& pvname, PV* puser ) {
   int ca_rtn = ca_create_channel( pvname.c_str(),      // PV name
                                   connectionCallback,  // name of connection callback function
@@ -180,5 +132,5 @@ void PiGLPlot::Epics::subscribe( std::string& pvname, PV* puser ) {
                  + ca_message( ca_rtn ) );
 
 
-  pvs.push_back( puser ); 
+  pvs.push_back(puser); 
 }

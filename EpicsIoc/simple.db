@@ -1,0 +1,4 @@
+record (ao, "MyTestRecord")
+{
+    field (DESC, "A simple record")
+}

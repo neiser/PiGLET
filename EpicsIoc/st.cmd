@@ -1,0 +1,2 @@
+dbLoadRecords "simple.db"
+iocInit
