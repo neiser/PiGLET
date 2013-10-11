@@ -47,6 +47,7 @@ public:
     const std::string& Ylabel() const { return _ylabel; }
     std::string& Xlabel() { return _xlabel; }
     std::string& Ylabel() { return _ylabel; }
+
     PlotWindow( const int width, const int height,
                 const std::string xlabel = "Always label your axes",
                 const std::string ylabel = "Alawys label your axes"):
@@ -58,8 +59,9 @@ public:
         text(-.95,0.82,.95,.98),
         frame(0)
     {
-        text.SetText("Hallo Welt");
+
         num.Init();
+        text.SetText("Hallo Welt");
     }
 
     virtual void Draw();

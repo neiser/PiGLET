@@ -67,7 +67,6 @@ private:
     std::string _text;
     GLuint _texture;
 
-
 public:
     static const vec2_t _texcoords[4];
     TextLabel( const float x1, const float y1, const float x2, const float y2);

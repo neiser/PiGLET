@@ -103,13 +103,14 @@ const vec2_t PiGLPlotApp::square[4] = { {1,1},{-1,1},{-1,-1},{1,-1} };
 
 void testApp::Draw(){
     // Start with a clear screen
+
     glClearColor(.1,.1,.1,0);
 
-    glClear( GL_COLOR_BUFFER_BIT );
+    glClear( GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT );
 
+    glLoadIdentity();
 
-
-            glLineWidth(3);
+    glLineWidth(3);
 
     windowman.Draw();
 

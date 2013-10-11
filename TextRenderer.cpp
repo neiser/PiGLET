@@ -146,25 +146,27 @@ TextLabel::TextLabel(const float x1, const float y1, const float x2, const float
 
 void TextLabel::Draw(GLenum mode)
 {
+
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_BLEND);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     glBlendFunc(GL_SRC_ALPHA,GL_ONE);
     glColor4f(.5f,1.0f,1.0f,1.0f);
-    glBindTexture(GL_TEXTURE_2D, _texture);
+
     glTexCoordPointer(2, GL_FLOAT, 0, _texcoords);
 
+    glBindTexture(GL_TEXTURE_2D, _texture);
     Rectangle::Draw( GL_TRIANGLE_FAN );
 
     glDisable(GL_BLEND);
     glDisable(GL_TEXTURE_2D);
-
-    //cout << gluErrorString(glGetError()) << endl;
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
 }
 
 void TextLabel::SetText(const string &text)
 {
-    TextRenderer::I().Text2Texture(_texture, text);
+    TextRenderer::I().Text2Texture(_texture, text, 512, 64);
 }
 
 const vec2_t TextLabel::_texcoords[4] = { {0,1},{0,0},{1,0},{1,1} };
