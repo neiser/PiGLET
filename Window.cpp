@@ -47,7 +47,7 @@ void PlotWindow::Draw(){
     // feed some data
 	vec2_t n;
 	n.x = frame/100.0;
-	n.y = sin(3.14157*frame/1000.0);
+    n.y = sin(3.14157*frame/1000.0);
 	graph.Add(n);
 	++frame;
 }

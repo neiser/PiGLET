@@ -13,10 +13,11 @@ class Window {
 private:
     int _width;
     int _height;
+    std::string _title;
 
 public:
 
-    Window( const int width, const int height): _width(width), _height(height) {}
+    Window( const std::string& title, const int width = 1, const int height = 1): _title(title) , _width(width), _height(height) {}
 
     const int& Width() const { return _width; }
     const int& Height() const { return _height; }
@@ -48,10 +49,11 @@ public:
     std::string& Xlabel() { return _xlabel; }
     std::string& Ylabel() { return _ylabel; }
 
-    PlotWindow( const int width, const int height,
+    PlotWindow( const std::string& title,
                 const std::string xlabel = "Always label your axes",
-                const std::string ylabel = "Alawys label your axes"):
-        Window(width,height),
+                const std::string ylabel = "Alawys label your axes",
+                 const int width = 1, const int height = 1):
+        Window(title,width,height),
         _xlabel(xlabel),
         _ylabel(ylabel),
         rect(-1,-1,1,1),
@@ -61,7 +63,7 @@ public:
     {
 
         num.Init();
-        text.SetText("Hallo Welt");
+        text.SetText(title);
     }
 
     virtual void Draw();

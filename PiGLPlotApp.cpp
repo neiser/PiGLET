@@ -117,6 +117,9 @@ void testApp::Draw(){
 }
 void testApp::Init(){
     cout << "Starting a test app!" << endl;
-    for (int i = 0 ; i < 6; i++)
-        windowman.AddWindow( new PlotWindow(1,1));
+    for (int i = 0 ; i < 6; i++){
+        stringstream ss;
+        ss << "Hello Window " << i;
+        windowman.AddWindow( new PlotWindow(ss.str()));
+    }
 }
