@@ -27,8 +27,6 @@ void PiGLPlotApp::Draw() {
     glClear( GL_COLOR_BUFFER_BIT );
 
 
-            glEnableClientState(GL_VERTEX_ARRAY);
-            glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
             glLineWidth(3);
 
@@ -110,8 +108,6 @@ void testApp::Draw(){
     glClear( GL_COLOR_BUFFER_BIT );
 
 
-            glEnableClientState(GL_VERTEX_ARRAY);
-            glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
             glLineWidth(3);
 

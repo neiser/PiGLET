@@ -189,6 +189,7 @@ void NumberLabel::Draw( int i )
 {
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_BLEND);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     glBlendFunc(GL_SRC_ALPHA,GL_ONE);
     glColor4f(.5f,1.0f,1.0f,1.0f);
 
@@ -206,6 +207,7 @@ void NumberLabel::Draw( int i )
 
     glDisable(GL_BLEND);
     glDisable(GL_TEXTURE_2D);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 }
 
 bool NumberLabel::_hasTex = false;
