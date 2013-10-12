@@ -49,13 +49,19 @@ void WindowManager::Draw(){
     float dy = 2. / _rows.size();
     float dx = 0;
 
+    float wscaley = 1. / _rows.size();
+    float wscalex = 1.;
+
     int i_window = 0;
     for ( int row = 0; row < _rows.size() ; ++row){
         dx = 2. / _rows.at(row);
         for ( int in_row = 0 ; in_row < _rows.at(row) ; ++in_row ){
+            wscalex = 1. / _rows.at(row);
             glPushMatrix();
             glTranslatef(-1 + (dx / 2) + (in_row * dx ),1 - (dy / 2. ) - (row * dy ),0.);
-            glScalef(1. / _rows.at(row), 1.  / _rows.size() ,1);
+            glScalef( wscalex , wscaley ,1);
+            _window_list.at(i_window)->XScale() = wscalex;
+            _window_list.at(i_window)->YScale() = wscaley;
             _window_list.at(i_window)->Draw();
             i_window++;
             glPopMatrix();

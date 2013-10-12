@@ -10,19 +10,19 @@
 
 
 class Window {
-private:
-    int _width;
-    int _height;
+protected:
+    float _x_scale;
+    float _y_scale;
     std::string _title;
 
 public:
 
-    Window( const std::string& title, const int width = 1, const int height = 1): _title(title) , _width(width), _height(height) {}
+    Window( const std::string& title, const float xscale = 1, const float yscale = 1): _title(title) , _x_scale(xscale), _y_scale(yscale) {}
 
-    const int& Width() const { return _width; }
-    const int& Height() const { return _height; }
-    int& Width() { return _width; }
-    int& Height() { return _height; }
+    const float& XScale() const { return _x_scale; }
+    const float& YScale() const { return _y_scale; }
+    float& XScale() { return _x_scale; }
+    float& YScale() { return _y_scale; }
 
     virtual void Draw() = 0;
 
@@ -52,8 +52,9 @@ public:
     PlotWindow( const std::string& title,
                 const std::string xlabel = "Always label your axes",
                 const std::string ylabel = "Alawys label your axes",
-                 const int width = 1, const int height = 1):
-        Window(title,width,height),
+                const float xscale = 1,
+                const float yscale = 1):
+        Window(title,xscale,yscale),
         _xlabel(xlabel),
         _ylabel(ylabel),
         rect(-1,-1,1,1),

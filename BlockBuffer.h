@@ -73,11 +73,12 @@ public:
 
     void Add( const vec2_t& vertex );
 
-    void Draw();
+    void Draw( const float xscale = 1. , const float yscale = 1. );
 
     void DoTicks();
 
     void SetNow( const float now );
+    void DoFixedTicks(const float xscale, const float yscale);
 
 };
 }

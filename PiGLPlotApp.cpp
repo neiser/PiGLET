@@ -66,7 +66,7 @@ void PiGLPlotApp::Draw() {
 
             glDrawArrays(GL_LINE_LOOP, 0, 4);
 
-            graph.Draw();
+            graph.Draw( 1. , 1.);
 
             glPopMatrix();
 

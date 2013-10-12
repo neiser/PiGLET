@@ -35,7 +35,7 @@ void PlotWindow::Draw(){
         glColor4f(0,0,0,0);
         rect.Draw(GL_TRIANGLE_FAN);
         glColor4f(1,1,1,1);
-        graph.Draw();
+        graph.Draw( _x_scale , _y_scale );
 
         glDisable(GL_STENCIL_TEST);
 
@@ -63,12 +63,12 @@ void PlotWindow::Draw(){
 }
 
 std::ostream& operator<<( std::ostream& stream, const Window& win ) {
-	stream << "[ " << win.Width() << " x " << win.Height() << " ]";
+    stream << "[ " << win.XScale() << " x " << win.YScale() << " ]";
 	return stream;
 }
 
 
 std::ostream& operator<<( std::ostream& stream, const PlotWindow& win ) {
-	stream << "[ " << win.Width() << " x " << win.Height() << " ]: " << win.Xlabel() << " vs. " << win.Ylabel();
+    stream << "[ " << win.XScale() << " x " << win.YScale() << " ]: " << win.Xlabel() << " vs. " << win.Ylabel();
 	return stream;
 }
