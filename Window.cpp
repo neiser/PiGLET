@@ -35,7 +35,7 @@ void PlotWindow::Draw(){
         glColor4f(0,0,0,0);
         rect.Draw(GL_TRIANGLE_FAN);
         glColor4f(1,1,1,1);
-        graph.Draw( _x_scale , _y_scale );
+        graph.Draw();
 
         glDisable(GL_STENCIL_TEST);
 

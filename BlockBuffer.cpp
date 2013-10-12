@@ -75,13 +75,12 @@ void PiGLPlot::BlockList::Add(const vec2_t &vertex)
 
 }
 
-void PiGLPlot::BlockList::Draw(const float xscale, const float yscale)
+void PiGLPlot::BlockList::Draw()
 {
 
     glPushMatrix();
 
     glScalef( 2.0 / _xrange.Length(), 1 ,1);
-    DoFixedTicks( xscale , yscale );
 
     glTranslatef(-_xrange.Center(), 0, 0);
 
@@ -122,12 +121,12 @@ void PiGLPlot::BlockList::DoTicks()
 
 }
 
-<<<<<<< HEAD
 void PiGLPlot::BlockList::SetNow(const float now)
 {
     _xrange.Max() = now;
     _xrange.Min() = now - _backlen;
-=======
+}
+
 void PiGLPlot::BlockList::DoFixedTicks( const float xscale , const float yscale )
 {
     glColor4f(.6,.6,.6,0);
@@ -150,5 +149,6 @@ void PiGLPlot::BlockList::DoFixedTicks( const float xscale , const float yscale 
     glVertexPointer(2, GL_FLOAT, 0, ticks.data());
     glDrawArrays(GL_LINES, 0, ticks.size());
 
->>>>>>>  added fixed ticks
+
 }
+

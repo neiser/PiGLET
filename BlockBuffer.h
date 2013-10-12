@@ -71,9 +71,11 @@ protected:
 public:
     BlockList( const float backlen );
 
+    const Interval& XRange() const { return _xrange; }
+
     void Add( const vec2_t& vertex );
 
-    void Draw( const float xscale = 1. , const float yscale = 1. );
+    void Draw();
 
     void DoTicks();
 

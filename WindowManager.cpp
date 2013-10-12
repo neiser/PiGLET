@@ -42,6 +42,19 @@ void WindowManager::align_windws(){
         cout << "  " <<_rows.at(r) << endl;
     }
     cout << endl;
+
+    float wscaley = 1. / _rows.size();
+    float wscalex = 1.;
+    int i_window = 0;
+
+    for ( int row = 0; row < _rows.size() ; ++row){
+        for ( int in_row = 0 ; in_row < _rows.at(row) ; ++in_row ){
+            wscalex = 1. / _rows.at(row);
+            _window_list.at(i_window)->XScale() = wscalex;
+            _window_list.at(i_window)->YScale() = wscaley;
+            i_window++;
+        }
+    }
 }
 
 void WindowManager::Draw(){
@@ -60,8 +73,6 @@ void WindowManager::Draw(){
             glPushMatrix();
             glTranslatef(-1 + (dx / 2) + (in_row * dx ),1 - (dy / 2. ) - (row * dy ),0.);
             glScalef( wscalex , wscaley ,1);
-            _window_list.at(i_window)->XScale() = wscalex;
-            _window_list.at(i_window)->YScale() = wscaley;
             _window_list.at(i_window)->Draw();
             i_window++;
             glPopMatrix();

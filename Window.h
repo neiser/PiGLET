@@ -10,7 +10,7 @@
 
 
 class Window {
-protected:
+private:
     float _x_scale;
     float _y_scale;
     std::string _title;
