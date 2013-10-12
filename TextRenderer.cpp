@@ -172,7 +172,7 @@ void Rectangle::Draw(GLenum mode)
 
 
 TextLabel::TextLabel(const vec2_t &center, const float width, const float height):
-    Rectangle(center,width,height)
+    Rectangle(center,width,height), _color( dTextColor )
 {
     glGenTextures(1, &_texture);
 }
@@ -183,7 +183,7 @@ TextLabel::~TextLabel()
 }
 
 TextLabel::TextLabel(const float x1, const float y1, const float x2, const float y2):
-    Rectangle(x1,y1,x2,y2)
+    Rectangle(x1,y1,x2,y2),_color( dTextColor )
 {
     glGenTextures(1,&_texture);
 }
@@ -195,7 +195,7 @@ void TextLabel::Draw(GLenum mode)
     glEnable(GL_BLEND);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     glBlendFunc(GL_SRC_ALPHA,GL_ONE);
-    glColor4f(.5f,1.0f,1.0f,1.0f);
+    _color.Activate();
 
     glTexCoordPointer(2, GL_FLOAT, 0, _texcoords);
 
@@ -271,7 +271,8 @@ void NumberLabel::Draw( int i )
     glEnable(GL_BLEND);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     glBlendFunc(GL_SRC_ALPHA,GL_ONE);
-    glColor4f(.5f,.1f,.1f,1.0f);
+
+    _color.Activate();
 
     glTexCoordPointer(2, GL_FLOAT, 0, _texcoords);
 

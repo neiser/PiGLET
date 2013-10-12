@@ -6,6 +6,7 @@
 #include "system.h"
 #include "StopWatch.h"
 #include "Structs.h"
+#include "GLTools.h"
 
 
 class TextRenderer {
@@ -65,6 +66,7 @@ class TextLabel: public Rectangle {
 private:
     std::string _text;
     GLuint _texture;
+    Color _color;
 
 public:
     static const vec2_t _texcoords[4];
@@ -77,6 +79,8 @@ public:
 
     void SetText( const std::string& text );
     const std::string& GetText() const { return _text; }
+    void SetColor( const Color& c ) { _color = c; }
+    Color GetColor() const { return _color; }
 };
 
 class NumberLabel {
@@ -87,12 +91,17 @@ private:
     static Rectangle r;
     void _maketextures();
 
+    Color _color;
+
 public:
-    NumberLabel() {}
+    NumberLabel(): _color(1,1,1) {}
     virtual ~NumberLabel();
 
     void Draw( int i );
     void Init() { _maketextures(); }
+
+    void SetColor( const Color& c ) { _color = c; }
+    Color GetColor() const { return _color; }
 };
 
 
