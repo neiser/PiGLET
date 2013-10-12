@@ -185,6 +185,11 @@ TextLabel::TextLabel(const vec2_t &center, const float width, const float height
     glGenTextures(1, &_texture);
 }
 
+TextLabel::~TextLabel()
+{
+    glDeleteTextures(1, &_texture);
+}
+
 TextLabel::TextLabel(const float x1, const float y1, const float x2, const float y2):
     Rectangle(x1,y1,x2,y2)
 {
@@ -225,7 +230,10 @@ void NumberLabel::_maketextures()
     float maxw =0;
     float maxh =0;
     float w,h;
-    if(!_hasTex) {
+    if(_num_objetcs==0) {
+
+        _num_objetcs++;
+
         glGenTextures(10, _textures);
         for( int i=0; i<10; ++i ) {
             stringstream s;
@@ -250,11 +258,17 @@ void NumberLabel::_maketextures()
         _texcoords[3].y = maxh;
 
         r.SetWidth(maxw/maxh);
-
-        _hasTex = true;
-
     }
 
+}
+
+NumberLabel::~NumberLabel()
+{
+    --_num_objetcs;
+
+    if( _num_objetcs == 0) {
+        glDeleteTextures(10, _textures);
+    }
 }
 
 vec2_t NumberLabel::_texcoords[4];
@@ -288,6 +302,6 @@ void NumberLabel::Draw( int i )
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 }
 
-bool NumberLabel::_hasTex = false;
+unsigned int NumberLabel::_num_objetcs = 0;
 GLuint NumberLabel::_textures[10];
 Rectangle NumberLabel::r(0,0,1,1);

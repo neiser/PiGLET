@@ -73,7 +73,7 @@ public:
     TextLabel( const float x1, const float y1, const float x2, const float y2);
     TextLabel(const vec2_t& center, const float width, const float height);
 
-    virtual ~TextLabel() {}
+    virtual ~TextLabel();
 
     void Draw( GLenum mode=GL_TRIANGLE_FAN );
 
@@ -85,13 +85,13 @@ class NumberLabel {
 private:
     static GLuint _textures[10];
     static vec2_t _texcoords[4];
-    static bool _hasTex;
+    static unsigned int _num_objetcs;
     static Rectangle r;
     void _maketextures();
 
 public:
     NumberLabel() {}
-    virtual ~NumberLabel() {}
+    virtual ~NumberLabel();
 
     void Draw( int i );
     void Init() { _maketextures(); }
