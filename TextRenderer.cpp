@@ -18,20 +18,12 @@ TextRenderer::TextRenderer()
     MagickSetOption(mw,"background","rgba(0,0,0,0)");   // transparent background
     MagickSetOption(mw,"encoding","unicode");   // does this do anything?
     MagickSetGravity(mw,CenterGravity);
-//    cout << "ctor" <<endl;
 }
 
 TextRenderer::~TextRenderer()
 {
-    if(mw)DestroyMagickWand(mw);
-}
-
-void TextRenderer::test(const string &text)
-{
-    MagickReadImage(mw, text.c_str());
-    MagickWriteImage(mw,"caption.gif");
-    MagickReadImage(mw, "label:A");
-    MagickWriteImage(mw,"caption2.gif");
+    if(mw)
+        DestroyMagickWand(mw);
 }
 
 void TextRenderer::Text2Texture(const GLuint texhandle, const string &text, const int w, const int h) {
