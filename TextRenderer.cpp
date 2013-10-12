@@ -210,7 +210,7 @@ void TextLabel::Draw(GLenum mode)
 
 void TextLabel::SetText(const string &text)
 {
-    TextRenderer::I().Text2Texture(_texture, text, 512, 64);
+    TextRenderer::I().Text2Texture(_texture, text, 1024, 64);
 }
 
 const vec2_t TextLabel::_texcoords[4] = { {0,1},{0,0},{1,0},{1,1} };
