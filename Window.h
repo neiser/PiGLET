@@ -36,7 +36,7 @@ private:
     // Window Frame:
     Rectangle rect;
 
-    PiGLPlot::BlockList graph;
+    SimpleGraph graph;
 
     TextLabel text;
 
@@ -58,7 +58,7 @@ public:
         _xlabel(xlabel),
         _ylabel(ylabel),
         rect(-1,-1,1,1),
-        graph(100.0),
+        graph(this,PiGLPlot::BlockList(10.0)),
         text(-.95,0.82,.95,.98),
         frame(0)
     {

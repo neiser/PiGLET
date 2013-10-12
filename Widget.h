@@ -3,6 +3,7 @@
 
 #include "BlockBuffer.h"
 #include "Window.h"
+#include "Structs.h"
 
 class Widget{
 
@@ -22,6 +23,10 @@ private:
 
 public:
     SimpleGraph( Window* owner, const PiGLPlot::BlockList&  blocklist ): Widget(owner), _blocklist(blocklist) {}
+
+    void AddToBlockList( const vec2_t& p){
+        _blocklist.Add(p);
+    }
 
     void DrawTicks();
     void Draw();
