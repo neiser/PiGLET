@@ -1,6 +1,25 @@
 #include "Window.h"
 #include <sstream>
 #include <cmath>
+#include "Widget.h"
+
+PlotWindow::PlotWindow( const std::string& title,
+            const std::string &xlabel,
+            const std::string &ylabel,
+            const float xscale,
+            const float yscale):
+    Window(title,xscale,yscale),
+    _xlabel(xlabel),
+    _ylabel(ylabel),
+    rect(-1,-1,1,1),
+    graph(this,PiGLPlot::BlockList(10.0)),
+    text(-.95,0.82,.95,.98),
+    frame(0)
+{
+
+    num.Init();
+    text.SetText(title);
+}
 
 void PlotWindow::Draw(){
 
@@ -49,7 +68,7 @@ void PlotWindow::Draw(){
         vec2_t n;
         n.x = frame/100.0;
         n.y = sin(3.14157*frame/1000.0);
-        graph.Add(n);
+    	graph.AddToBlockList(n);
         num.Set( n.y );
 
         if( n.y > .8 )

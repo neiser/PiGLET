@@ -2,8 +2,9 @@
 #define WIDGET_H
 
 #include "BlockBuffer.h"
-#include "Window.h"
 #include "Structs.h"
+
+class Window;
 
 class Widget{
 

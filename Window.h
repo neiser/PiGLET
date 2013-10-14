@@ -7,7 +7,7 @@
 #include "Structs.h"
 #include "TextRenderer.h"
 #include "BlockBuffer.h"
-
+#include "Widget.h"
 
 class Window {
 private:
@@ -50,22 +50,11 @@ public:
     std::string& Ylabel() { return _ylabel; }
 
     PlotWindow( const std::string& title,
-                const std::string xlabel = "Always label your axes",
-                const std::string ylabel = "Alawys label your axes",
+                const std::string& xlabel = "Always label your axes",
+                const std::string& ylabel = "Alawys label your axes",
                 const float xscale = 1,
-                const float yscale = 1):
-        Window(title,xscale,yscale),
-        _xlabel(xlabel),
-        _ylabel(ylabel),
-        rect(-1,-1,1,1),
-        graph(this,PiGLPlot::BlockList(10.0)),
-        text(-.95,0.82,.95,.98),
-        frame(0)
-    {
+                const float yscale = 1);
 
-        num.Init();
-        text.SetText(title);
-    }
 
     virtual void Draw();
 };
