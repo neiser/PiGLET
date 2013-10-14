@@ -9,6 +9,22 @@ using namespace std;
 
 static GLApp* currentInstance;
 static bool fullscreen = false;
+static int _width =  DEFAULT_WINDOW_WIDTH;
+static int _height = DEFAULT_WINDOW_HEIGHT;
+
+
+void Reshape( int w, int h ) {
+    _width = w;
+    _height = h;
+}
+
+int GetWindowWidth() {
+    return _width;
+}
+
+int GetWindowHeight() {
+    return _height;
+}
 
 static void drawCallback() {
     currentInstance->Draw();
@@ -45,7 +61,7 @@ void InitGL(){
     int iArgc = 0;
     glutInit(&iArgc, NULL);
     glutInitDisplayMode( GLUT_DOUBLE | GLUT_RGB | GLUT_STENCIL );
-    glutInitWindowSize(720, 720);
+    glutInitWindowSize(_width, _height);
 
     glutInitWindowPosition(0, 0);
     glutCreateWindow("PiGLPlot");
@@ -55,6 +71,7 @@ void InitGL(){
     glOrtho(-1.0, 1.0, -1.0, 1.0, -1.0, 1.0);
     glutIdleFunc(drawCallback);
     glutKeyboardFunc(keyPressed);
+    glutReshapeFunc(Reshape);
 }
 
 void RunGL(GLApp &app) {
@@ -63,3 +80,4 @@ void RunGL(GLApp &app) {
     cout << "Press ESC to quit" << endl;
     glutMainLoop();
 }
+
