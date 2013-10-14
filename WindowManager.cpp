@@ -15,7 +15,7 @@ void WindowManager::align_windws(){
     int row = -1;
     int i = 0;
     while ( i < NumWindows() ){
-        if ( i < 3 ){
+        if ( i < 2 ){
             _rows.push_back(1);
             i++;
         } else{
