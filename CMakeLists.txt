@@ -57,4 +57,5 @@ add_executable(${PROJECT_NAME} ${SRC_LIST} ${SYSTEM_SRC_LIST})
 target_link_libraries(${PROJECT_NAME}
   ${SYSTEM_LIBS}
   ${M_LIB}
-  ${ImageMagick_LIBRARIES})
+  ${ImageMagick_LIBRARIES}
+  rt)
