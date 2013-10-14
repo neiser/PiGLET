@@ -232,19 +232,13 @@ void Rectangle::Draw(GLenum mode)
 }
 
 
-TextLabel::TextLabel(const vec2_t &center, const float width, const float height):
-    Rectangle(center,width,height), _color( dTextColor )
-{
-    glGenTextures(1, &_texture);
-}
-
 TextLabel::~TextLabel()
 {
     glDeleteTextures(1, &_texture);
 }
 
 TextLabel::TextLabel(const float x1, const float y1, const float x2, const float y2):
-    Rectangle(x1,y1,x2,y2),_color( dTextColor )
+    Rectangle(x1, y1, x2, y2), _color( dTextColor ),_box(*this)
 {
     glGenTextures(1,&_texture);
 }
@@ -266,16 +260,38 @@ void TextLabel::Draw(GLenum mode)
     glDisable(GL_BLEND);
     glDisable(GL_TEXTURE_2D);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    //glLineWidth(1);
+   // _box.Draw( GL_LINE_LOOP );
+   // Rectangle::Draw( GL_LINE_LOOP );
 
 }
 
 void TextLabel::SetText(const string &text)
 {
-    TextRenderer::I().Text2Texture(_texture, text, 1024, 64);
+    float w,h;
+    TextRenderer::I().Text2Texture3(_texture, text, w,h);
+
+    const float tex_ratio = w/h;
+
+    if( tex_ratio >= 1.0 ) {
+        _box= Rectangle( Center(), Width(), 1.0/tex_ratio * Width() );
+    } else {
+        _box= Rectangle( Center(), tex_ratio * Height(), Height() );
+    }
+
+    _texcoords[0].x = 0;
+    _texcoords[0].y = h;
+
+    _texcoords[1].x = 0;
+    _texcoords[1].y = 0;
+
+    _texcoords[2].x = w;
+    _texcoords[2].y = 0;
+
+    _texcoords[3].x = w;
+    _texcoords[3].y = h;
+
 }
-
-const vec2_t TextLabel::_texcoords[4] = { {0,1},{0,0},{1,0},{1,1} };
-
 
 
 void NumberLabel::_maketextures()

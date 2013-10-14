@@ -65,14 +65,16 @@ public:
 
 class TextLabel: public Rectangle {
 private:
-    std::string _text;
-    GLuint _texture;
-    Color _color;
+
+    std::string _text;      // the text to draw
+    GLuint      _texture;   // texture handle
+    Color       _color;     // color for the text
+    Rectangle   _box;       // the actual drawing box, always smaller than the user defined text rectangle
+    vec2_t _texcoords[4];      // texture coordinates
 
 public:
-    static const vec2_t _texcoords[4];
-    TextLabel( const float x1, const float y1, const float x2, const float y2);
-    TextLabel(const vec2_t& center, const float width, const float height);
+
+    TextLabel(const float x1, const float y1,const float x2, const float y2);
 
     virtual ~TextLabel();
 
