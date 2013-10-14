@@ -23,12 +23,14 @@ public:
 
 };
 
-#define kRed   Color(1.0f, 0.0f, 0.0f)
-#define kGreen Color(0.0f, 1.0f, 0.0f)
-#define kBlue  Color(0.0f, 0.0f, 1.0f)
-#define kWhite Color(1.0f, 1.0f, 1.0f)
-#define kBlack Color(0.0f, 0.0f, 0.0f)
-
+#define kRed    Color(1.0f, 0.0f, 0.0f)
+#define kGreen  Color(0.0f, 1.0f, 0.0f)
+#define kBlue   Color(0.0f, 0.0f, 1.0f)
+#define kWhite  Color(1.0f, 1.0f, 1.0f)
+#define kBlack  Color(0.0f, 0.0f, 0.0f)
+#define kPink   Color(1.0f, 0.0f, 1.0f)
+#define kYellow Color(1.0f, 1.0f, 0.0f)
+#define kCyan   Color(0.0f, 1.0f, 1.0f)
 
 #define dTextColor  kWhite
 #define dBackColor  kBlack
