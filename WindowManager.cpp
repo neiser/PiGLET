@@ -50,8 +50,8 @@ void WindowManager::align_windws(){
     for ( int row = 0; row < _rows.size() ; ++row){
         for ( int in_row = 0 ; in_row < _rows.at(row) ; ++in_row ){
             wscalex = 1. / _rows.at(row);
-            _window_list.at(i_window)->XScale() = wscalex;
-            _window_list.at(i_window)->YScale() = wscaley;
+            _window_list.at(i_window)->XPixels() = wscalex * GetWindowWidth();
+            _window_list.at(i_window)->YPixels() = wscaley * GetWindowHeight();
             i_window++;
         }
     }

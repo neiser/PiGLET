@@ -14,7 +14,8 @@ PlotWindow::PlotWindow( const std::string& title,
     rect(-1,-1,1,1),
     graph(this,PiGLPlot::BlockList(10.0)),
     text(-.95,0.82,.95,.98),
-    frame(0)
+    frame(0),
+    num(this)
 {
 
     num.Init();
@@ -82,12 +83,12 @@ void PlotWindow::Draw(){
 }
 
 std::ostream& operator<<( std::ostream& stream, const Window& win ) {
-    stream << "[ " << win.XScale() << " x " << win.YScale() << " ]";
+    stream << "[ " << win.XPixels() << " x " << win.YPixels() << " ]";
 	return stream;
 }
 
 
 std::ostream& operator<<( std::ostream& stream, const PlotWindow& win ) {
-    stream << "[ " << win.XScale() << " x " << win.YScale() << " ]: " << win.Xlabel() << " vs. " << win.Ylabel();
+    stream << "[ " << win.XPixels() << " x " << win.YPixels() << " ]: " << win.Xlabel() << " vs. " << win.Ylabel();
 	return stream;
 }

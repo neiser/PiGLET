@@ -356,7 +356,7 @@ void NumberLabel::Draw()
     glTexCoordPointer(2, GL_FLOAT, 0, _texcoords);
 
     glPushMatrix();
-    float s = 1.0/(6*r.Width());
+    float s = 1.0/(6*r.Width()) / GetWindowAspect();
     glScalef(s,s,s);
     glTranslatef(.5*r.Width(),0,0);
 

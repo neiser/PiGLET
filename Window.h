@@ -11,18 +11,18 @@
 
 class Window {
 private:
-    float _x_scale;
-    float _y_scale;
+    float _x_pixles;
+    float _y_pixels;
     std::string _title;
 
 public:
 
-    Window( const std::string& title, const float xscale = 1, const float yscale = 1): _title(title) , _x_scale(xscale), _y_scale(yscale) {}
+    Window( const std::string& title, const float xscale = 1, const float yscale = 1): _title(title) , _x_pixles(xscale), _y_pixels(yscale) {}
 
-    const float& XScale() const { return _x_scale; }
-    const float& YScale() const { return _y_scale; }
-    float& XScale() { return _x_scale; }
-    float& YScale() { return _y_scale; }
+    const float& XPixels() const { return _x_pixles; }
+    const float& YPixels() const { return _y_pixels; }
+    float& XPixels() { return _x_pixles; }
+    float& YPixels() { return _y_pixels; }
 
     virtual void Draw() = 0;
 

@@ -10,6 +10,7 @@ class Widget{
 
 protected:
     Window* _owner;
+    float GetWindowAspect() const;
 
 public:
     Widget( Window* owner): _owner(owner){}

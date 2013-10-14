@@ -8,6 +8,7 @@
 #include "Structs.h"
 #include "GLTools.h"
 #include <vector>
+#include "Widget.h"
 
 class TextRenderer {
 protected:
@@ -87,7 +88,7 @@ public:
 };
 
 
-class NumberLabel {
+class NumberLabel: public Widget {
 private:
 
 #define NUMBERLABEL_NUM_TEX 14
@@ -106,7 +107,7 @@ private:
     unsigned char _prec;
 
 public:
-    NumberLabel(): _color(dTextColor), _prec(2) {}
+    NumberLabel( Window* owner ): Widget(owner), _color(dTextColor), _prec(2) {}
     virtual ~NumberLabel();
 
     void Draw();

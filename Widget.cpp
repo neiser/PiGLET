@@ -4,6 +4,7 @@
 #include "Window.h"
 
 #include <cmath>
+#include <iostream>
 
 
 using namespace std;
@@ -17,7 +18,7 @@ void SimpleGraph::DrawTicks()
     glScalef( 2.0 / xlen, 1 ,1);
     glColor4f(.6,.6,.6,0);
 
-    int nt = 5 * _owner->XScale();
+    int nt = 5 * _owner->XPixels();
     vector<vec2_t> ticks;
     ticks.reserve( nt * 2 );
 
@@ -40,5 +41,12 @@ void SimpleGraph::DrawTicks()
 void SimpleGraph::Draw()
 {
     _blocklist.Draw();
-    DrawTicks();
+ //   DrawTicks();
+}
+
+
+float Widget::GetWindowAspect() const
+{
+    cout << "Win XScale=" << _owner->XPixels() << " YScale=" << _owner->YPixels() << endl;
+    return _owner->XPixels() / _owner->YPixels();
 }

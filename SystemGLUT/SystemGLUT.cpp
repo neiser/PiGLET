@@ -71,7 +71,7 @@ void InitGL(){
     glOrtho(-1.0, 1.0, -1.0, 1.0, -1.0, 1.0);
     glutIdleFunc(drawCallback);
     glutKeyboardFunc(keyPressed);
-    glutReshapeFunc(Reshape);
+//    glutReshapeFunc(Reshape);
 }
 
 void RunGL(GLApp &app) {
