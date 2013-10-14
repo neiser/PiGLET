@@ -31,7 +31,7 @@ public:
     void Text2Texture(const GLuint texhandle, const std::string& text );
     void Text2Texture(const GLuint texhandle, const std::string& text, const int w, const int h);
     void Text2Texture2(const GLuint texhandle, const std::string &text, const int w, const int h, float& texw, float& texh);
-    void Text2Texture3(const GLuint texhandle, const std::string &text, float& texw, float& texh);
+    void Text2Texture3(const GLuint texhandle, const std::string &text, float& texw, float& texh, float& aspect);
 
 
 };

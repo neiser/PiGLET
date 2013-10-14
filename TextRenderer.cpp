@@ -126,7 +126,7 @@ uint32_t RoundPow2( uint32_t val ) {
     return val;
 }
 
-void TextRenderer::Text2Texture3(const GLuint texhandle, const string &text, float& texw, float& texh)
+void TextRenderer::Text2Texture3(const GLuint texhandle, const string &text, float& texw, float& texh, float& aspect)
 {
     _watch.Start();
 
@@ -172,6 +172,7 @@ void TextRenderer::Text2Texture3(const GLuint texhandle, const string &text, flo
 
     texw = ((float)_w) / width;
     texh = ((float)_h) / height;
+    aspect = (float) _w / (float) _h;
 
 }
 
@@ -250,28 +251,30 @@ void TextLabel::Draw(GLenum mode)
     glBlendFunc(GL_SRC_ALPHA,GL_ONE);
     _color.Activate();
 
+    glPushMatrix();
+
     glTexCoordPointer(2, GL_FLOAT, 0, _texcoords);
 
+    glPopMatrix();
+
     glBindTexture(GL_TEXTURE_2D, _texture);
-    Rectangle::Draw( GL_TRIANGLE_FAN );
+
+    _box.Draw( GL_TRIANGLE_FAN );
 
     glDisable(GL_BLEND);
     glDisable(GL_TEXTURE_2D);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-    //glLineWidth(1);
-   // _box.Draw( GL_LINE_LOOP );
-   // Rectangle::Draw( GL_LINE_LOOP );
 
 }
 
 void TextLabel::SetText(const string &text)
 {
-    float w,h;
-    TextRenderer::I().Text2Texture3(_texture, text, w,h);
+    float w,h, tex_ratio;
+    TextRenderer::I().Text2Texture3(_texture, text, w,h, tex_ratio);
 
-    const float tex_ratio = w/h;
+    const float rect_ratio = Width()/Height();
 
-    if( tex_ratio >= 1.0 ) {
+    if( tex_ratio >= rect_ratio ) {
         _box= Rectangle( Center(), Width(), 1.0/tex_ratio * Width() );
     } else {
         _box= Rectangle( Center(), tex_ratio * Height(), Height() );
