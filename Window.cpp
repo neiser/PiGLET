@@ -42,14 +42,20 @@ void PlotWindow::Draw(){
 	glPopMatrix();
 
 	text.Draw( GL_LINE_LOOP );
-    num.Draw(frame/100);
+    num.Draw();
 
     // feed some data
-    if( frame %100 == 0 ) {
+    if( frame %10 == 0 ) {
         vec2_t n;
         n.x = frame/100.0;
         n.y = sin(3.14157*frame/1000.0);
         graph.Add(n);
+        num.Set( n.y );
+
+        if( n.y > .8 )
+            num.SetColor(kRed);
+        else
+            num.SetColor(dTextColor);
     } else {
         graph.SetNow(frame/100.0);
     }

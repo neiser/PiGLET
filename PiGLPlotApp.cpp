@@ -74,7 +74,7 @@ void PiGLPlotApp::Draw() {
 
             text.Draw( GL_LINE_LOOP );
 
-            num.Draw(frame);
+            num.Draw();
 
             glDisableClientState(GL_VERTEX_ARRAY);
 

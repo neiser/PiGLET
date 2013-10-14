@@ -2,6 +2,7 @@
 #include <iostream>
 #include <sstream>
 #include <stdint.h>  // for uint32_t
+#include <iomanip>
 using namespace std;
 
 
@@ -300,10 +301,14 @@ void NumberLabel::_maketextures()
 
         _num_objetcs++;
 
-        glGenTextures(10, _textures);
-        for( int i=0; i<10; ++i ) {
+        glGenTextures(NUMBERLABEL_NUM_TEX, _textures);
+
+        const char chars[] = NUMBERLABEL_CHARS;
+
+        for( int i=0; i<NUMBERLABEL_NUM_TEX; ++i ) {
             stringstream s;
-            s << i;
+            s << chars[i];
+
             TextRenderer::I().Text2Texture2(_textures[i], s.str(),64,64,w,h);
             if(w>maxw)
                 maxw=w;
@@ -333,13 +338,13 @@ NumberLabel::~NumberLabel()
     --_num_objetcs;
 
     if( _num_objetcs == 0) {
-        glDeleteTextures(10, _textures);
+        glDeleteTextures(NUMBERLABEL_NUM_TEX, _textures);
     }
 }
 
 vec2_t NumberLabel::_texcoords[4];
 
-void NumberLabel::Draw( int i )
+void NumberLabel::Draw()
 {
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_BLEND);
@@ -355,10 +360,8 @@ void NumberLabel::Draw( int i )
     glScalef(s,s,s);
     glTranslatef(.5*r.Width(),0,0);
 
-    for( int p=0;p<6;++p ) {
-        int d = i % 10;
-        i /= 10;
-        glBindTexture(GL_TEXTURE_2D, _textures[d]);
+    for( int p=0;p<_digtex.size();++p ) {
+        glBindTexture(GL_TEXTURE_2D, _digtex[p]);
         r.Draw( GL_TRIANGLE_FAN );
         glTranslatef(-r.Width(),0,0);
     }
@@ -369,6 +372,37 @@ void NumberLabel::Draw( int i )
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 }
 
+void NumberLabel::Set(const float v)
+{
+    // generate text string from number
+    stringstream stream;
+    stream << fixed << setprecision(_prec) << v;
+    string s = stream.str();
+
+    _digtex.resize(s.size());
+
+    for( int p=0; p< s.size(); ++p) {
+
+        const char& c = s[p];
+        unsigned char texnum;
+
+        if ( c>='0' && c<= '9') {
+            texnum = c - '0';
+        } else {
+            if( c == '.' )
+                texnum = 10;
+            else if( c == '-')
+                texnum = 11;
+            else if( c == 'E' || c == 'e' )
+                texnum = 12;
+            else
+                texnum = 13;
+        }
+         _digtex[s.size() - p-1] = _textures[texnum];
+
+    }
+}
+
 unsigned int NumberLabel::_num_objetcs = 0;
-GLuint NumberLabel::_textures[10];
+GLuint NumberLabel::_textures[NUMBERLABEL_NUM_TEX];
 Rectangle NumberLabel::r(0,0,1,1);
