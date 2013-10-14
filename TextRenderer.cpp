@@ -35,7 +35,6 @@ void TextRenderer::Text2Texture(const GLuint texhandle, const string &text)
 {
     _watch.Start();
 
-    MagickReadImage(mw, text.c_str());
     std::stringstream rendercmd;
     rendercmd << "label:" << text;
 
@@ -74,7 +73,6 @@ void TextRenderer::Text2Texture2(const GLuint texhandle, const string &text, con
 
     MagickSetSize(mw,0,0);
 
-    MagickReadImage(mw, text.c_str());
     std::stringstream rendercmd;
     rendercmd << "label:" << text;
 
@@ -133,7 +131,6 @@ void TextRenderer::Text2Texture3(const GLuint texhandle, const string &text, flo
 
     MagickSetSize(mw,0,0);
 
-    MagickReadImage(mw, text.c_str());
     std::stringstream rendercmd;
     rendercmd << "label:" << text;
 
