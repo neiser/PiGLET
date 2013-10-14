@@ -1,7 +1,7 @@
 #include "TextRenderer.h"
 #include <iostream>
 #include <sstream>
-
+#include <stdint.h>  // for uint32_t
 using namespace std;
 
 
@@ -113,6 +113,67 @@ void TextRenderer::Text2Texture2(const GLuint texhandle, const string &text, con
 
     texw = ((float)_w) / w;
     texh = ((float)_h) / w;
+
+}
+
+uint32_t RoundPow2( uint32_t val ) {
+    val--;
+    val = (val >> 1) | val;
+    val = (val >> 2) | val;
+    val = (val >> 4) | val;
+    val = (val >> 8) | val;
+    val = (val >> 16) | val;
+    val++; // Val is now the next highest power of 2.
+    return val;
+}
+
+void TextRenderer::Text2Texture3(const GLuint texhandle, const string &text, float& texw, float& texh)
+{
+    _watch.Start();
+
+    MagickSetSize(mw,0,0);
+
+    MagickReadImage(mw, text.c_str());
+    std::stringstream rendercmd;
+    rendercmd << "label:" << text;
+
+    MagickReadImage(mw, rendercmd.str().c_str());
+
+    const size_t _w = MagickGetImageWidth(mw);
+    const size_t _h = MagickGetImageHeight(mw);
+
+    const size_t nw = RoundPow2( _w );
+    const size_t nh = RoundPow2( _h );
+
+    MagickExtentImage(mw,nw,nh,0,0);
+
+    const size_t width = MagickGetImageWidth(mw);
+    const size_t height = MagickGetImageHeight(mw);
+
+    cout << "Generated: " << _w << "x" << _h << " padded:" << width << "x" << height << "  calc was " << nw << "x" << nh << endl;
+
+    unsigned char *Buffer = NULL;
+
+    Buffer = new unsigned char[width * height];
+
+    // Export the whole image
+    MagickExportImagePixels(mw, 0, 0, width, height, "I", CharPixel, Buffer);
+
+    glBindTexture(GL_TEXTURE_2D, texhandle);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, width, height, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, Buffer);
+
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+
+    delete [] Buffer;
+
+    _watch.Stop();
+
+    cout << "Text generation took: " << _watch.TimeElapsed() << " s" << endl;
+
+    texw = ((float)_w) / width;
+    texh = ((float)_h) / height;
 
 }
 
