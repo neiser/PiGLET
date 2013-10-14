@@ -80,6 +80,7 @@ public:
     void DoTicks();
 
     void SetNow( const float now );
+    void SetBackLength( const float len ) { _backlen = len; }
     void DoFixedTicks(const float xscale, const float yscale);
 
 };

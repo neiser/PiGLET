@@ -20,7 +20,6 @@ protected:
 
     int frame;
 
-    NumberLabel num;
 
 public:
     PiGLPlotApp();

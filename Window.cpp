@@ -12,7 +12,7 @@ PlotWindow::PlotWindow( const std::string& title,
     _xlabel(xlabel),
     _ylabel(ylabel),
     rect(-1,-1,1,1),
-    graph(this,PiGLPlot::BlockList(10.0)),
+    graph(this, 10),
     text(-.95,0.82,.95,.98),
     frame(0),
     num(this)

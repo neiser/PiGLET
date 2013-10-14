@@ -12,7 +12,6 @@ PiGLPlotApp::PiGLPlotApp(): graph(10.0), phase(0.0), text(-.95,0.82,.95,.98), fr
 void PiGLPlotApp::Init() {
 
    text.SetText("Hallo Welt");
-   num.Init();
 
    cout << "App init done" << endl;
 
@@ -74,7 +73,7 @@ void PiGLPlotApp::Draw() {
 
             text.Draw( GL_LINE_LOOP );
 
-            num.Draw();
+           // num.Draw();
 
             glDisableClientState(GL_VERTEX_ARRAY);
 

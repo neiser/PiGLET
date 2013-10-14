@@ -18,22 +18,22 @@ public:
 
 };
 
-class SimpleGraph: public Widget{
+class SimpleGraph: public Widget {
 
 private:
     PiGLPlot::BlockList _blocklist;
 
 public:
-    SimpleGraph( Window* owner, const PiGLPlot::BlockList&  blocklist ): Widget(owner), _blocklist(blocklist) {}
+    SimpleGraph( Window* owner, const float backlength ): Widget(owner), _blocklist(backlength) {}
 
-    void AddToBlockList( const vec2_t& p){
+    void AddToBlockList( const vec2_t& p) {
         _blocklist.Add(p);
     }
 
     void DrawTicks();
     void Draw();
     void SetNow( const float now ) { _blocklist.SetNow(now); }
-
+    void SetBackLength( const float len ) { _blocklist.SetBackLength( len ); }
 
 };
 
