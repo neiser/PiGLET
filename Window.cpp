@@ -13,7 +13,7 @@ PlotWindow::PlotWindow( const std::string& title,
     _ylabel(ylabel),
     rect(-1,-1,1,1),
     graph(this, 10),
-    text(-.95,0.82,.95,.98),
+    text(this, -.95,0.82,.95,.98),
     frame(0),
     num(this)
 {
