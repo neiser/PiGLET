@@ -117,9 +117,9 @@ void testApp::Draw(){
 }
 void testApp::Init(){
     cout << "Starting a test app!" << endl;
-    for (int i = 0 ; i < 6; i++){
+    for (int i = 0 ; i < 4; i++){
         stringstream ss;
-        ss << "Hello Window " << i;
+        ss << "DAQ:Livetime-vme-exptrigger " << i;
         windowman.AddWindow( new PlotWindow(ss.str()));
     }
 }
