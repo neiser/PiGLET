@@ -57,7 +57,7 @@ public:
         _xlabel(xlabel),
         _ylabel(ylabel),
         rect(-1,-1,1,1),
-        graph(10.0),
+        graph(100.0),
         text(-.95,0.82,.95,.98),
         frame(0)
     {

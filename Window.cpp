@@ -42,13 +42,17 @@ void PlotWindow::Draw(){
 	glPopMatrix();
 
 	text.Draw( GL_LINE_LOOP );
-        num.Draw(frame);
+    num.Draw(frame/100);
 
     // feed some data
-	vec2_t n;
-	n.x = frame/100.0;
-    n.y = sin(3.14157*frame/1000.0);
-	graph.Add(n);
+    if( frame %100 == 0 ) {
+        vec2_t n;
+        n.x = frame/100.0;
+        n.y = sin(3.14157*frame/1000.0);
+        graph.Add(n);
+    } else {
+        graph.SetNow(frame/100.0);
+    }
 	++frame;
 }
 

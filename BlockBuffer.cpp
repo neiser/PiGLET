@@ -65,7 +65,7 @@ void PiGLPlot::BlockList::Add(const vec2_t &vertex)
 
     h->Add( vertex );
 
-    _xrange = Interval(vertex.x - _backlen, vertex.x );
+  //  _xrange = Interval(vertex.x - _backlen, vertex.x );
 
     Block* last = _blocks.back();
 
@@ -83,7 +83,7 @@ void PiGLPlot::BlockList::Draw()
     glScalef( 2.0 / _xrange.Length(), 1 ,1);
     glTranslatef(-_xrange.Center(), 0, 0);
 
-    DoTicks();
+  //  DoTicks();
 
     blist::iterator i;
 
@@ -120,4 +120,10 @@ void PiGLPlot::BlockList::DoTicks()
     glVertexPointer(2, GL_FLOAT, 0, ticks.data());
     glDrawArrays(GL_LINES, 0, ticks.size());
 
+}
+
+void PiGLPlot::BlockList::SetNow(const float now)
+{
+    _xrange.Max() = now;
+    _xrange.Min() = now - _backlen;
 }

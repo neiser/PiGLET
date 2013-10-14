@@ -77,6 +77,8 @@ public:
 
     void DoTicks();
 
+    void SetNow( const float now );
+
 };
 }
 
