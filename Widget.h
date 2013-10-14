@@ -31,6 +31,7 @@ public:
 
     void DrawTicks();
     void Draw();
+    void SetNow( const float now ) { _blocklist.SetNow(now); }
 
 
 };
