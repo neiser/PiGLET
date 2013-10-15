@@ -52,7 +52,7 @@ public:
 
     virtual ~TextLabel();
 
-    void Draw( GLenum mode=GL_TRIANGLE_FAN );
+    void Draw() const;
 
     void SetText( const std::string& text );
     const std::string& GetText() const { return _text; }

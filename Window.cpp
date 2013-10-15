@@ -59,7 +59,7 @@ void PlotWindow::Draw(){
 
 	glPopMatrix();
 
-	text.Draw( GL_LINE_LOOP );
+    text.Draw();
 
 
 

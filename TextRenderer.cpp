@@ -136,7 +136,7 @@ TextLabel::TextLabel( Window* owner, const float x1, const float y1, const float
     glGenTextures(1,&_texture);
 }
 
-void TextLabel::Draw(GLenum mode)
+void TextLabel::Draw() const
 {
 
     glEnable(GL_TEXTURE_2D);
