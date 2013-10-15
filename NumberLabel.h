@@ -18,24 +18,20 @@ private:
 
     static Rectangle r;
 
-    void _maketextures();
+    static void _maketextures();
     std::vector<GLuint> _digtex;
 
     Color _color;
     unsigned char _prec;
     unsigned char _digits;
 
-    Rectangle _box;
-
-    void _makebox();
-
 public:
-    NumberLabel( Window* owner, const Vector2& pos ): Widget(owner), _color(dTextColor), _prec(2), _digits(7), _box(pos.Stuct(),0,0) {}
+    NumberLabel( Window* owner, const Vector2& pos ): Widget(owner), _color(dTextColor), _prec(2), _digits(7) { _maketextures(); }
     virtual ~NumberLabel();
 
     void Draw();
     void Set( const float v );
-    void Init() { _maketextures(); _makebox(); }
+    void Init() {  }
 
     void SetColor( const Color& c ) { _color = c; }
     Color GetColor() const { return _color; }

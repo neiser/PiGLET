@@ -62,7 +62,7 @@ void PlotWindow::Draw(){
 	glPopMatrix();
 
 	text.Draw( GL_LINE_LOOP );
-    glTranslatef(-.8,0,0);
+
     num.Draw();
 
     // feed some data

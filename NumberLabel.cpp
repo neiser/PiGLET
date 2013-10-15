@@ -6,14 +6,6 @@
 
 using namespace std;
 
-void NumberLabel::_makebox()
-{
-    const float length = _digits * r.Width();
-    _box.SetWidth( length );
-    _box.SetHeight( r.Height() );
-
-}
-
 NumberLabel::~NumberLabel()
 {
     --_num_objetcs;
@@ -27,6 +19,7 @@ vec2_t NumberLabel::_texcoords[4];
 
 void NumberLabel::Draw()
 {
+
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_BLEND);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -37,16 +30,19 @@ void NumberLabel::Draw()
     glTexCoordPointer(2, GL_FLOAT, 0, _texcoords);
 
     glPushMatrix();
-    float s = 1.0/ _box.Width() / GetWindowAspect();
-    glScalef(s,s,s);
 
-    glTranslatef( (_digits-1) * r.Width(), 0, 0);
+        glScalef( 2.0f / (_digtex.size() * r.Width() ), 1.0f , 1.0f ); //scale to fit -1:1 ranges
 
-    for( int p=0;p<_digtex.size();++p ) {
-        glBindTexture(GL_TEXTURE_2D, _digtex[p]);
-        r.Draw( GL_TRIANGLE_FAN );
-        glTranslatef(-r.Width(),0,0);
-    }
+        glTranslatef( (_digtex.size()-1), 0.0, 0.0);
+
+        for( int p=0;p<_digtex.size();++p ) {
+
+            glBindTexture(GL_TEXTURE_2D, _digtex[p]);
+            r.Draw( GL_TRIANGLE_FAN );
+            glTranslatef( -2.0f, 0.0f, 0.0f );
+
+        }
+
     glPopMatrix();
 
     glDisable(GL_BLEND);
@@ -87,7 +83,7 @@ void NumberLabel::Set(const float v)
 
 unsigned int NumberLabel::_num_objetcs = 0;
 GLuint NumberLabel::_textures[NUMBERLABEL_NUM_TEX];
-Rectangle NumberLabel::r(0,0,1,1);
+Rectangle NumberLabel::r(-1,-1,1,1);
 
 void NumberLabel::_maketextures()
 {
@@ -125,7 +121,6 @@ void NumberLabel::_maketextures()
         _texcoords[3].x = maxw;
         _texcoords[3].y = maxh;
 
-        r.SetWidth(maxw/maxh);
     }
 
 }
