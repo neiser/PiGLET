@@ -37,11 +37,11 @@ void WindowManager::align_windws(){
             }
         }
     }
-    cout << endl << "New tiling:" << endl;
-    for ( int r = 0 ; r < _rows.size() ; ++r ){
-        cout << "  " <<_rows.at(r) << endl;
-    }
-    cout << endl;
+    //cout << endl << "New tiling:" << endl;
+    //for ( int r = 0 ; r < _rows.size() ; ++r ){
+     //   cout << "  " <<_rows.at(r) << endl;
+    //}
+    //cout << endl;
 
     float wscaley = 1. / _rows.size();
     float wscalex = 1.;

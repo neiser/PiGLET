@@ -30,7 +30,6 @@ void PiGLPlot::BlockList::PopBack()
     Block* last = _blocks.back();
     delete last;
     _blocks.pop_back();
-    cout << "delete!" << endl;
 }
 
 void PiGLPlot::BlockList::NewBlock()
