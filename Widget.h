@@ -25,7 +25,7 @@ private:
     PiGLPlot::BlockList _blocklist;
     std::vector<vec2_t> _xticks;
     std::vector<vec2_t> _yticks;
-    float dXticks( const float& xlen, const int& target_nt );
+    float dXticks( const float& len, const int& target_nt );
 
 public:
     SimpleGraph( Window* owner, const float backlength ): Widget(owner), _blocklist(backlength) { UpdateTicks();}

@@ -8,25 +8,25 @@
 
 using namespace std;
 
-float SimpleGraph::dXticks( const float& xlen, const int& nt ){
+float SimpleGraph::dXticks( const float& len, const int& nt ){
     float dx = 1.;
-    if ( xlen / dx > nt){
+    if ( len / dx > nt){
         while ( true ){
             dx*=2;
-            if ( xlen / dx <= nt ) return dx;
+            if ( len / dx <= nt ) return dx;
             dx*=5./2;
-            if ( xlen / dx <= nt ) return dx;
+            if ( len / dx <= nt ) return dx;
             dx*= 20./ 5.;
-            if ( xlen / dx <= nt ) return dx;
+            if ( len / dx <= nt ) return dx;
         }
     }
     while ( true ){
       dx*=0.5;
-      if ( xlen / dx > nt ) return dx;
+      if ( len / dx > nt ) return dx;
       dx*=2./5;
-      if ( xlen / dx > nt ) return dx;
+      if ( len / dx > nt ) return dx;
       dx*= 5. / 20;
-      if ( xlen / dx > nt ) return dx;
+      if ( len / dx > nt ) return dx;
     }
     return dx;
 }
@@ -35,21 +35,41 @@ float SimpleGraph::dXticks( const float& xlen, const int& nt ){
 void SimpleGraph::UpdateTicks(){
     const float xlen = _blocklist.GetBackLenght();
     //calulate rough estimate how many ticks:
-    const int nt = _owner->XPixels() / 150;
+    const int ntx = _owner->XPixels() / 150;
+    // replace with epics values:
+    const float ylen = 2; // (maximum values of sin - function
+    const int nty = _owner->YPixels() / 150;
+
     _xticks.clear();
-    _xticks.reserve( nt * 2);
+    _xticks.reserve( ntx * 2);
 
     //get optimized distance close to calculated:
-    float dx = dXticks(xlen,nt);
+    float dx = dXticks(xlen,ntx);
 
-    //do ticks
-    for( int i=0; i < xlen ; ++i ){
-        vec2_t t;
+    vec2_t t;
+    t.x = xlen / 2;
+    int i = 0;
+    while(t.x > -xlen / 2){
         t.x = xlen / 2 - ( i + 1 ) * dx;
-        t.y = -1;
+        t.y = -ylen/2;
         _xticks.push_back(t);
-        t.y = 1;
+        t.y = ylen/2;
         _xticks.push_back(t);
+        i++;
+    }
+
+    _yticks.clear();
+    _yticks.reserve( nty * 2 );
+    float dy = dXticks(ylen,nty);
+    t.y = ylen / 2;
+    i = 0;
+    while(t.y > - ylen / 2){
+        t.x = -xlen / 2;
+        t.y = ylen / 2 - ( i +1 ) * dy;
+        _yticks.push_back(t);
+        t.x = xlen / 2;
+        _yticks.push_back(t);
+        i++;
     }
 }
 
@@ -62,6 +82,8 @@ void SimpleGraph::DrawTicks()
 
     glVertexPointer(2, GL_FLOAT, 0, _xticks.data());
     glDrawArrays(GL_LINES, 0, _xticks.size());
+    glVertexPointer(2,GL_FLOAT, 0,_yticks.data());
+    glDrawArrays(GL_LINES,0,_yticks.size());
 
     glPopMatrix();
 }
