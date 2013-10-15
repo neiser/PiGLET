@@ -63,7 +63,11 @@ void PlotWindow::Draw(){
 
 	text.Draw( GL_LINE_LOOP );
 
+    glPushMatrix();
+    glTranslatef(-.6,.65,0);
+    glScalef(.3,.3,.3);
     num.Draw();
+    glPopMatrix();
 
     // feed some data
     if( frame %10 == 0 ) {

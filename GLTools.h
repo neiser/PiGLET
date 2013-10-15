@@ -95,6 +95,29 @@ public:
 
 };
 
+class UnitBorderBox {
+public:
+    Color fillcolor;
+    Color bordercolor;
+    float borderwidth;
+
+    UnitBorderBox( const Color& fill=dBackColor, const Color& border=dTextColor, const float& borderw=2.0f ):
+        fillcolor(fill),
+        bordercolor(border),
+        borderwidth(borderw) {}
+
+    void Draw() const {
+
+        fillcolor.Activate();
+        Rectangle::unit.Draw(GL_TRIANGLE_FAN);
+
+        bordercolor.Activate();
+        glLineWidth(borderwidth);
+        Rectangle::unit.Draw(GL_LINE_LOOP);
+    }
+
+};
+
 
 
 #endif

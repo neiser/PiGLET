@@ -26,11 +26,12 @@ private:
 
     std::vector<GLuint> _digtex;
 
-
     Color _color;
     unsigned char _prec;
     unsigned char _digits;
     bool _align_right;
+
+    UnitBorderBox Box;
 
 public:
     NumberLabel( Window* owner, const Vector2& pos );

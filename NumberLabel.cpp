@@ -41,19 +41,22 @@ void NumberLabel::Draw() const
 
     if( digits > 0 ) {
 
+        glPushMatrix();
+
+        glScalef(1 , _texratio , 1.0f );
+
+        Box.Draw();
+
+        glScalef(2.0f / (digits * 2.0),1,1);
+
+        glTranslatef( (digits-1), 0.0, 0.0);
+
         glEnable(GL_TEXTURE_2D);
         glEnable(GL_BLEND);
         glEnableClientState(GL_TEXTURE_COORD_ARRAY);
         glBlendFunc(GL_SRC_ALPHA,GL_ONE);
-
-        _color.Activate();
-
         glTexCoordPointer(2, GL_FLOAT, 0, _texcoords);
 
-        glPushMatrix();
-
-        glScalef( 2.0f / (digits * 2.0), _texratio , 1.0f );
-        glTranslatef( (digits-1), 0.0, 0.0);
 
         for( int p=0;p<_digtex.size();++p ) {
 
