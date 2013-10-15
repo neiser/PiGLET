@@ -21,7 +21,7 @@
 
 using namespace std;
 
-MyGLWindow::MyGLWindow(EGLconfig *_config) : EGLWindow(_config), graph(20), phase(0.0f), frames(0)
+MyGLWindow::MyGLWindow(EGLconfig *_config) : EGLWindow(_config), frames(0)
 {
 	std::cout<<"My GL Window Ctor\n";
 	makeSurface();

@@ -20,7 +20,6 @@
 #include "EGLWindow.h"
 
 #include <vector>
-#include "BlockBuffer.h"
 #include "Structs.h"
 #include <time.h>
 
@@ -50,8 +49,6 @@ class MyGLWindow : public EGLWindow
 
         static const vec2_t square[4];
 
-        PiGLPlot::BlockList graph;
-        float phase;
         unsigned int frames;
         timespec start_fps;
 };

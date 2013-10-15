@@ -27,10 +27,10 @@ void RunGL(GLApp& app) {
     bcm_host_deinit();
 }
 
-void GetWindowWidth() {
+int GetWindowWidth() {
     return win->getWidth();
 }
 
-void GetWindowHeight() {
+int GetWindowHeight() {
     return win->getHeight();
 }
