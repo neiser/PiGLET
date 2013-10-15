@@ -52,6 +52,7 @@ void WindowManager::align_windws(){
             wscalex = 1. / _rows.at(row);
             _window_list.at(i_window)->XPixels() = wscalex * GetWindowWidth();
             _window_list.at(i_window)->YPixels() = wscaley * GetWindowHeight();
+            _window_list.at(i_window)->Update();
             i_window++;
         }
     }

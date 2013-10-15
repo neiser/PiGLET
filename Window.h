@@ -27,6 +27,8 @@ public:
     float& XPixels() { return _x_pixles; }
     float& YPixels() { return _y_pixels; }
 
+    virtual void Update() = 0;
+
     virtual void Draw() = 0;
 
 };
@@ -61,6 +63,7 @@ public:
     virtual ~PlotWindow(){}
 
 
+    virtual void Update() { graph.UpdateTicks(); }
     virtual void Draw();
 };
 

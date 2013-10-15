@@ -31,40 +31,45 @@ float SimpleGraph::dXticks( const float& xlen, const int& nt ){
     return dx;
 }
 
+
+void SimpleGraph::UpdateTicks(){
+    const float xlen = _blocklist.GetBackLenght();
+    //calulate rough estimate how many ticks:
+    const int nt = _owner->XPixels() / 150;
+    _xticks.clear();
+    _xticks.reserve( nt * 2);
+
+    //get optimized distance close to calculated:
+    float dx = dXticks(xlen,nt);
+
+    //do ticks
+    for( int i=0; i < xlen ; ++i ){
+        vec2_t t;
+        t.x = xlen / 2 - ( i + 1 ) * dx;
+        t.y = -1;
+        _xticks.push_back(t);
+        t.y = 1;
+        _xticks.push_back(t);
+    }
+}
+
 void SimpleGraph::DrawTicks()
 {
     glPushMatrix();
 
-    const float xlen = _blocklist.GetBackLenght();
-
-    glScalef( 2.0 / xlen, 1 ,1);
+    glScalef( 2.0 / _blocklist.GetBackLenght(), 1 ,1);
     glColor4f(.6,.6,.6,0);
 
-    const int nt = _owner->XPixels() / 150;
-    vector<vec2_t> ticks;
-    ticks.reserve( nt * 2 );
+    glVertexPointer(2, GL_FLOAT, 0, _xticks.data());
+    glDrawArrays(GL_LINES, 0, _xticks.size());
 
-    float dx = dXticks(xlen,nt);
-
-    for( int i=0 ; i< xlen / dx ; ++i){
-        vec2_t t;
-        t.x = xlen / 2 - ( i + 1 ) * dx;
-        t.y = -1;
-        ticks.push_back(t);
-        t.y = 1;
-        ticks.push_back(t);
-    }
-
-    glVertexPointer(2, GL_FLOAT, 0, ticks.data());
-    glDrawArrays(GL_LINES, 0, ticks.size());
     glPopMatrix();
-//MakeXLabels()
 }
 
 void SimpleGraph::Draw()
 {
-    _blocklist.Draw();
     DrawTicks();
+    _blocklist.Draw();
 }
 
 
