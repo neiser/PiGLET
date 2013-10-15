@@ -30,6 +30,7 @@ private:
     unsigned char _prec;
     unsigned char _digits;
     bool _align_right;
+    bool _draw_box;
 
     UnitBorderBox Box;
 
@@ -76,6 +77,10 @@ public:
 
     bool GetAlignRight() const { return _align_right; }
     void SetAlignRight(bool align_right) { _align_right = align_right; }
+
+    void SetDrawBox( const bool box ) { _draw_box = box; }
+    bool GetDrawBox() const { return _draw_box; }
+
 };
 
 #endif

@@ -12,7 +12,8 @@ NumberLabel::NumberLabel( Window* owner ):
     _color(dTextColor),
     _prec(2),
     _digits(7),
-    _align_right(true)
+    _align_right(true),
+    _draw_box(true)
 {
     _maketextures();
 }
@@ -31,8 +32,6 @@ vec2_t NumberLabel::_texcoords[4];
 void NumberLabel::Draw() const
 {
 
-
-
     unsigned char digits = 0;
     if( _align_right ) {
         digits = max((int)_digits, (int)_digtex.size());
@@ -44,9 +43,10 @@ void NumberLabel::Draw() const
 
         glPushMatrix();
 
-        glScalef(1 , _texratio , 1.0f );
+        glScalef(1 , _texratio, 1.0f );
 
-        Box.Draw();
+        if (_draw_box)
+            Box.Draw();
 
         glScalef(2.0f / (digits * 2.0),1,1);
 
