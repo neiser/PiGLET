@@ -9,7 +9,7 @@
 #include "BlockBuffer.h"
 #include "Widget.h"
 #include "NumberLabel.h"
-
+#include "SimpleGraph.h"
 class Window {
 private:
     float _x_pixles;
@@ -46,7 +46,6 @@ private:
     TextLabel text;
 
     int frame;          //for debug
-    NumberLabel num;    //for debug
 
 public:
     const std::string& Xlabel() const { return _xlabel; }

@@ -16,11 +16,8 @@ PlotWindow::PlotWindow( const std::string& title,
     PlotArea( dPlotBackground, dWindowBorderColor),
     graph(this, 10),
     text(this, -.95,0.82,.95,.98),
-    frame(0),
-    num(this, Vector2(0,0))
+    frame(0)
 {
-
-    num.Init();
     text.SetText(title);
 }
 
@@ -65,11 +62,7 @@ void PlotWindow::Draw(){
 
 	text.Draw( GL_LINE_LOOP );
 
-    glPushMatrix();
-    glTranslatef(-.6,.65,0);
-    glScalef(.3,.3,.3);
-    num.Draw();
-    glPopMatrix();
+
 
     // feed some data
     if( frame %10 == 0 ) {
@@ -77,12 +70,7 @@ void PlotWindow::Draw(){
         n.x = frame/100.0;
         n.y = sin(3.14157*frame/1000.0);
     	graph.AddToBlockList(n);
-        num.Set( n.y *100);
 
-        if( n.y > .8 )
-            num.SetColor(kRed);
-        else
-            num.SetColor(dTextColor);
     } else {
         graph.SetNow(frame/100.0);
     }
