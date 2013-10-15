@@ -70,6 +70,7 @@ public:
 #define dPlotBackground  kDarkGray
 #define dPlotBorderColor  kGray
 #define dPlotColor kBlue
+#define dPlotTicks dPlotBorderColor
 
 #define dWindowBorderColor  kGray
 #define dWindowBackground  dBackColor

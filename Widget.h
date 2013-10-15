@@ -3,6 +3,8 @@
 
 #include "BlockBuffer.h"
 #include "Structs.h"
+#include "GLTools.h"
+
 #include <vector>
 
 class Window;
@@ -28,7 +30,8 @@ private:
     float dXticks( const float& len, const int& target_nt );
 
 public:
-    SimpleGraph( Window* owner, const float backlength ): Widget(owner), _blocklist(backlength) { UpdateTicks();}
+    Color TickColor;
+    SimpleGraph( Window* owner, const float backlength ): Widget(owner), _blocklist(backlength), TickColor(dPlotTicks) { UpdateTicks();}
 
     void AddToBlockList( const vec2_t& p) {
         _blocklist.Add(p);

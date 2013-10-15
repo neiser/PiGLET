@@ -78,7 +78,7 @@ void SimpleGraph::DrawTicks()
     glPushMatrix();
 
     glScalef( 2.0 / _blocklist.GetBackLenght(), 1 ,1);
-    glColor4f(.6,.6,.6,0);
+    TickColor.Activate();
 
     glVertexPointer(2, GL_FLOAT, 0, _xticks.data());
     glDrawArrays(GL_LINES, 0, _xticks.size());

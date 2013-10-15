@@ -23,10 +23,10 @@ void testApp::Draw(){
 }
 void testApp::Init(){
     cout << "Starting a test app!" << endl;
-    for (int i = 0 ; i < 4; i++){
+    for (int i = 0 ; i < 2; i++){
         stringstream ss;
         ss << "DAQ:Livetime-vme-exptrigger " << i;
         windowman.AddWindow( new PlotWindow(ss.str()));
     }
-    windowman.RemoveWindow(2);
+    windowman.RemoveWindow(1);
 }
