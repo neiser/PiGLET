@@ -9,4 +9,7 @@
 void InitGL();
 void RunGL( GLApp& app );
 
+int GetWindowWidth();
+int GetWindowHeight();
+
 #endif
