@@ -47,7 +47,8 @@ void NumberLabel::Draw()
         for( int p=0;p<_digtex.size();++p ) {
 
             glBindTexture(GL_TEXTURE_2D, _digtex[p]);
-            r.Draw( GL_TRIANGLE_FAN );
+            //r.Draw( GL_TRIANGLE_FAN );
+            Rectangle::unit.Draw( GL_TRIANGLE_FAN );
             glTranslatef( -2.0f, 0.0f, 0.0f );
 
         }

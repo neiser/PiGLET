@@ -1,5 +1,6 @@
 #include "GLTools.h"
 
+const Rectangle Rectangle::unit(-1,-1,1,1);
 
 void Rectangle::_update_vertices()
 {
@@ -49,7 +50,7 @@ void Rectangle::SetHeight(const float height)
     _update_vertices();
 }
 
-void Rectangle::Draw(GLenum mode)
+void Rectangle::Draw(GLenum mode) const
 {
     glVertexPointer( 2, GL_FLOAT, 0, _vertices);
     glDrawArrays( mode, 0, 4);

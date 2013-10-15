@@ -85,7 +85,9 @@ public:
     void SetWidth( const float width );
     void SetHeight( const float height );
 
-    void Draw( GLenum mode );
+    void Draw( GLenum mode ) const;
+
+    static const Rectangle unit;
 
 };
 
