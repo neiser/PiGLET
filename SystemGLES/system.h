@@ -6,4 +6,9 @@
 #include <GLES/gl.h>
 #include "SystemGLES.h"
 
+
+inline void glColor4fv( const float* c ) {
+    glColor4f( c[0], c[1], c[2], c[3]);
+}
+
 #endif // SYSTEM_H
