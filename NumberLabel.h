@@ -65,7 +65,7 @@ public:
      * @note  Gets applied at the next call to Set()
      * @see GetDigits()
      */
-    void SetDigits( const unsigned char digits ) { _prec = digits; }
+    void SetDigits( const unsigned char digits ) { _digits = digits; }
 
     /**
      * @brief Get the number of digits to align text to

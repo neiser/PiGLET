@@ -30,7 +30,7 @@ void PlotWindow::Draw(){
 
         glScalef(0.8f,0.8f,0.8f);
 
-        glEnable(GL_STENCIL_TEST);
+//        glEnable(GL_STENCIL_TEST);
         glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
         glDepthMask(GL_FALSE);
         glStencilFunc(GL_NEVER, 1, 0xFF);

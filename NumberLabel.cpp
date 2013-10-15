@@ -5,6 +5,8 @@
 #include "TextRenderer.h"
 #include <algorithm>
 
+#include <iostream>
+
 using namespace std;
 
 NumberLabel::NumberLabel( Window* owner ):
@@ -119,8 +121,9 @@ void NumberLabel::_maketextures()
     float maxh =0;
     float w,h;
     if(_num_objetcs==0) {
+        cout << "make tex" << endl;
 
-        _num_objetcs++;
+
 
         glGenTextures(NUMBERLABEL_NUM_TEX, _textures);
 
@@ -151,5 +154,6 @@ void NumberLabel::_maketextures()
         _texratio = maxw / maxh;
 
     }
+    _num_objetcs++;
 
 }

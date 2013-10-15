@@ -1,6 +1,24 @@
 #include "SimpleGraph.h"
 #include "Window.h"
 
+void SimpleGraph::set_labels(){
+
+    for (int i = 0 ; i < _xlabels.size() ; ++i) delete _xlabels.at(i);
+    for (int i = 0 ; i < _ylabels.size() ; ++i) delete _ylabels.at(i);
+    _xlabels.clear();
+    _ylabels.clear();
+    _xlabels.reserve(1 + _xticks.size());
+    _ylabels.reserve(1 + _yticks.size());
+\
+    for (int i = 0 ; i < _xticks.size() ; ++i ){
+        _xlabels.push_back(new NumberLabel(this->_owner,Vector2()));
+        _xlabels.at(i)->SetColor(kRed);
+        _xlabels.at(i)->SetDigits(5);
+        _xlabels.at(i)->SetPrec(1);
+        _xlabels.at(i)->Set(_xticks.at(i).x);
+    }
+}
+
 SimpleGraph::SimpleGraph( Window* owner, const float backlength ):
     Widget(owner),
     _blocklist(backlength),
@@ -10,7 +28,7 @@ SimpleGraph::SimpleGraph( Window* owner, const float backlength ):
     UpdateTicks();
 }
 
-float SimpleGraph::dXticks( const float& len, const int& nt ){
+float SimpleGraph::dticks( const float& len, const int& nt ){
     float dx = 1.;
     if ( len / dx > nt){
         while ( true ){
@@ -46,7 +64,7 @@ void SimpleGraph::UpdateTicks(){
     _xticks.reserve( ntx * 2);
 
     //get optimized distance close to calculated:
-    float dx = dXticks(xlen,ntx);
+    float dx = dticks(xlen,ntx);
 
     vec2_t t;
     t.x = xlen / 2;
@@ -62,7 +80,7 @@ void SimpleGraph::UpdateTicks(){
 
     _yticks.clear();
     _yticks.reserve( nty * 2 );
-    float dy = dXticks(ylen,nty);
+    float dy = dticks(ylen,nty);
     t.y = ylen / 2;
     i = 0;
     while(t.y > - ylen / 2){
@@ -73,6 +91,7 @@ void SimpleGraph::UpdateTicks(){
         _yticks.push_back(t);
         i++;
     }
+    set_labels();
 }
 
 void SimpleGraph::DrawTicks()
@@ -86,6 +105,14 @@ void SimpleGraph::DrawTicks()
     glDrawArrays(GL_LINES, 0, _xticks.size());
     glVertexPointer(2,GL_FLOAT, 0,_yticks.data());
     glDrawArrays(GL_LINES,0,_yticks.size());
+
+    for ( int i = 0 ; i < _xlabels.size() ; ++i){
+        glPushMatrix();
+        glTranslatef(_xticks.at(i).x,-1.1,0);
+        glScalef(0.15 * _blocklist.GetBackLenght() / 2,0.15,0.15);
+        _xlabels.at(i)->Draw();
+        glPopMatrix();
+    }
 
     glPopMatrix();
 

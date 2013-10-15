@@ -10,11 +10,17 @@
 class SimpleGraph: public Widget {
 
 private:
-    PiGLPlot::BlockList _blocklist;
     std::vector<vec2_t> _xticks;
     std::vector<vec2_t> _yticks;
-    float dXticks( const float& len, const int& target_nt );
+    std::vector<NumberLabel*> _xlabels;
+    std::vector<NumberLabel*> _ylabels;
+
+    PiGLPlot::BlockList _blocklist;
     NumberLabel ValueDisplay;
+
+    float dticks( const float& len, const int& target_nt );
+
+    void set_labels();
 
 public:
     Color TickColor;
