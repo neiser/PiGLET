@@ -13,7 +13,7 @@ PlotWindow::PlotWindow( const std::string& title,
     _xlabel(xlabel),
     _ylabel(ylabel),
     WindowArea( dBackColor, dWindowBorderColor),
-    PlotArea( dPlotBackground, dWindowBorderColor),
+    PlotArea( dPlotBackground, dPlotBorderColor),
     graph(this, 10),
     text(this, -.95,0.82,.95,.98),
     frame(0)
@@ -53,7 +53,6 @@ void PlotWindow::Draw(){
 
         PlotArea.Draw();
 
-        glColor4f(1,1,1,1);
         graph.Draw();
 
         glDisable(GL_STENCIL_TEST);
