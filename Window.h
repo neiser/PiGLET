@@ -19,6 +19,8 @@ public:
 
     Window( const std::string& title, const float xscale = 1, const float yscale = 1): _title(title) , _x_pixles(xscale), _y_pixels(yscale) {}
 
+    virtual ~Window(){}
+
     const float& XPixels() const { return _x_pixles; }
     const float& YPixels() const { return _y_pixels; }
     float& XPixels() { return _x_pixles; }
@@ -54,6 +56,8 @@ public:
                 const std::string& ylabel = "Alawys label your axes",
                 const float xscale = 1,
                 const float yscale = 1);
+
+    virtual ~PlotWindow(){}
 
 
     virtual void Draw();

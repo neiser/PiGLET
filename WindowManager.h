@@ -33,6 +33,9 @@ public:
         align_windws();
     }
 
+    // remove window number n; returns false if it doesn't exist
+    const bool RemoveWindow( const int n );
+
     void Draw();
 
 
