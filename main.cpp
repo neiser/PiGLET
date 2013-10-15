@@ -3,9 +3,13 @@
 #include "system.h"
 
 #include "PiGLPlotApp.h"
+#include "ConfigManager.h"
 
 int main()
 {
+    // start the config manager
+    ConfigManager::I().go();
+
     // system-specific InitGL
     InitGL();
     // ..now some system-wide GL stuff

@@ -11,9 +11,7 @@ ConfigManager::ConfigManager()
 
 ConfigManager::~ConfigManager()
 {
-
     pthread_mutex_destroy(&m_mutex);
-
 }
 
 void ConfigManager::go() {
