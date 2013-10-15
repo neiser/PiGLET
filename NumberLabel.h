@@ -26,7 +26,7 @@ private:
     unsigned char _digits;
 
 public:
-    NumberLabel( Window* owner, const Vector2& pos ): Widget(owner), _color(dTextColor), _prec(2), _digits(7) { _maketextures(); }
+    NumberLabel( Window* owner, const Vector2& pos );
     virtual ~NumberLabel();
 
     void Draw();

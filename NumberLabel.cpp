@@ -6,6 +6,15 @@
 
 using namespace std;
 
+NumberLabel::NumberLabel( Window* owner, const Vector2& pos ):
+    Widget(owner),
+    _color(dTextColor),
+    _prec(2),
+    _digits(7)
+{
+    _maketextures();
+}
+
 NumberLabel::~NumberLabel()
 {
     --_num_objetcs;
