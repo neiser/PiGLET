@@ -62,7 +62,7 @@ message(STATUS "Looking for EPICS... - Found ${EPICS_BASE}")
 message(STATUS "Looking for EPICS... - Found host arch ${EPICS_HOST_ARCH}")
 
 # find the includes directories
-find_path(EPICS_BASE_INCLUDE NAMES tsDefs.h 
+find_path(EPICS_BASE_INCLUDE NAMES cadef.h
   PATHS "${EPICS_BASE}/include"
   NO_DEFAULT_PATH
   )
@@ -79,6 +79,15 @@ if(NOT EPICS_BASE_INCLUDE_OS)
     "EPICS incomplete or unsupported platform?")
 endif()
 
+find_path(EPICS_BASE_INCLUDE_COMPILER NAMES compilerSpecific.h
+  PATHS "${EPICS_BASE_INCLUDE}/compiler"
+  PATH_SUFFIXES gcc
+  NO_DEFAULT_PATH
+  )
+if(EPICS_BASE_INCLUDE_COMPILER)
+  message(STATUS "Looking for EPICS... - Compiler-specific ${EPICS_BASE_INCLUDE_COMPILER} found.")
+  list(APPEND EPICS_INCLUDES ${EPICS_BASE_INCLUDE_COMPILER})
+endif()
 
 # find required libraries
 # -lca -lCom -lezca
@@ -108,5 +117,5 @@ endif()
 
 
 
-set(EPICS_INCLUDES ${EPICS_BASE_INCLUDE} ${EPICS_BASE_INCLUDE_OS})
+list(APPEND EPICS_INCLUDES ${EPICS_BASE_INCLUDE} ${EPICS_BASE_INCLUDE_OS} )
 set(EPICS_FOUND TRUE)
