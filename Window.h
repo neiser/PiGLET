@@ -38,8 +38,8 @@ private:
     std::string _xlabel;
     std::string _ylabel;
 
-    // Window Frame:
-    Rectangle rect;
+    UnitBorderBox WindowArea;
+    UnitBorderBox PlotArea;
 
     SimpleGraph graph;
 

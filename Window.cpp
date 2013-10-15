@@ -2,6 +2,7 @@
 #include <sstream>
 #include <cmath>
 #include "Widget.h"
+#include "GLTools.h"
 
 PlotWindow::PlotWindow( const std::string& title,
             const std::string &xlabel,
@@ -11,7 +12,8 @@ PlotWindow::PlotWindow( const std::string& title,
     Window(title,xscale,yscale),
     _xlabel(xlabel),
     _ylabel(ylabel),
-    rect(-1,-1,1,1),
+    WindowArea( dBackColor, dWindowBorderColor),
+    PlotArea( dPlotBackground, dWindowBorderColor),
     graph(this, 10),
     text(this, -.95,0.82,.95,.98),
     frame(0),
@@ -25,13 +27,11 @@ PlotWindow::PlotWindow( const std::string& title,
 void PlotWindow::Draw(){
 
     // Window border
-	rect.Draw( GL_LINE_LOOP );
+    WindowArea.Draw();
 
 	glPushMatrix();
 
         glScalef(0.8f,0.8f,0.8f);
-
-        rect.Draw(GL_LINE_LOOP);
 
         glEnable(GL_STENCIL_TEST);
         glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
@@ -42,7 +42,9 @@ void PlotWindow::Draw(){
         // draw stencil pattern
         glStencilMask(0xFF);
         glClear(GL_STENCIL_BUFFER_BIT);  // needs mask=0xFF
-        rect.Draw(GL_TRIANGLE_FAN);
+
+        PlotArea.Draw();
+
         glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
         glDepthMask(GL_TRUE);
         glStencilMask(0x00);
@@ -52,8 +54,8 @@ void PlotWindow::Draw(){
         // draw only where stencil's value is 1
         glStencilFunc(GL_EQUAL, 1, 0xFF);
 
-        glColor4f(0,0,0,0);
-        rect.Draw(GL_TRIANGLE_FAN);
+        PlotArea.Draw();
+
         glColor4f(1,1,1,1);
         graph.Draw();
 
