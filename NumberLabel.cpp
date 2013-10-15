@@ -10,7 +10,8 @@ NumberLabel::NumberLabel( Window* owner, const Vector2& pos ):
     Widget(owner),
     _color(dTextColor),
     _prec(2),
-    _digits(7)
+    _digits(7),
+    _align_right(true)
 {
     _maketextures();
 }
@@ -26,38 +27,50 @@ NumberLabel::~NumberLabel()
 
 vec2_t NumberLabel::_texcoords[4];
 
-void NumberLabel::Draw()
+void NumberLabel::Draw() const
 {
 
-    glEnable(GL_TEXTURE_2D);
-    glEnable(GL_BLEND);
-    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-    glBlendFunc(GL_SRC_ALPHA,GL_ONE);
 
-    _color.Activate();
 
-    glTexCoordPointer(2, GL_FLOAT, 0, _texcoords);
+    unsigned char digits = 0;
+    if( _align_right ) {
+        digits = _digits;
+    } else {
+        digits = _digtex.size();
+    }
 
-    glPushMatrix();
+    if( digits > 0 ) {
 
-        glScalef( 2.0f / (_digtex.size() * r.Width() ), 1.0f , 1.0f ); //scale to fit -1:1 ranges
+        glEnable(GL_TEXTURE_2D);
+        glEnable(GL_BLEND);
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+        glBlendFunc(GL_SRC_ALPHA,GL_ONE);
 
-        glTranslatef( (_digtex.size()-1), 0.0, 0.0);
+        _color.Activate();
+
+        glTexCoordPointer(2, GL_FLOAT, 0, _texcoords);
+
+        glPushMatrix();
+
+        glScalef( 2.0f / (digits * 2.0), _texratio , 1.0f );
+        glTranslatef( (digits-1), 0.0, 0.0);
 
         for( int p=0;p<_digtex.size();++p ) {
 
             glBindTexture(GL_TEXTURE_2D, _digtex[p]);
-            //r.Draw( GL_TRIANGLE_FAN );
             Rectangle::unit.Draw( GL_TRIANGLE_FAN );
             glTranslatef( -2.0f, 0.0f, 0.0f );
 
         }
 
-    glPopMatrix();
+        glPopMatrix();
 
-    glDisable(GL_BLEND);
-    glDisable(GL_TEXTURE_2D);
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+        glDisable(GL_BLEND);
+        glDisable(GL_TEXTURE_2D);
+        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+
+    }
+
 }
 
 void NumberLabel::Set(const float v)
@@ -93,7 +106,7 @@ void NumberLabel::Set(const float v)
 
 unsigned int NumberLabel::_num_objetcs = 0;
 GLuint NumberLabel::_textures[NUMBERLABEL_NUM_TEX];
-Rectangle NumberLabel::r(-1,-1,1,1);
+float NumberLabel::_texratio = 1.0;
 
 void NumberLabel::_maketextures()
 {
@@ -130,6 +143,8 @@ void NumberLabel::_maketextures()
 
         _texcoords[3].x = maxw;
         _texcoords[3].y = maxh;
+
+        _texratio = maxw / maxh;
 
     }
 

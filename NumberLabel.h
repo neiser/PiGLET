@@ -11,25 +11,32 @@ private:
 #define NUMBERLABEL_NUM_TEX 14
 #define NUMBERLABEL_CHARS "0123456789.-E?"
 
+    // array of texture handles
     static GLuint _textures[NUMBERLABEL_NUM_TEX];
     static vec2_t _texcoords[4];
+    static unsigned int _num_objetcs;   // Number of instances alive
 
-    static unsigned int _num_objetcs;
-
-    static Rectangle r;
-
+    /**
+     * @brief Generate textures for all characters we can render
+     */
     static void _maketextures();
+
+    // aspect ratio of the textures
+    static float _texratio;
+
     std::vector<GLuint> _digtex;
+
 
     Color _color;
     unsigned char _prec;
     unsigned char _digits;
+    bool _align_right;
 
 public:
     NumberLabel( Window* owner, const Vector2& pos );
     virtual ~NumberLabel();
 
-    void Draw();
+    void Draw() const;
     void Set( const float v );
     void Init() {  }
 
@@ -50,6 +57,25 @@ public:
      * @see SetPrec()
      */
     unsigned char GetPrec() const { return _prec; }
+
+    /**
+     * @brief Sets the number of digits to aling text to
+     * @param digits number of digits
+     * @note  Gets applied at the next call to Set()
+     * @see GetDigits()
+     */
+    void SetDigits( const unsigned char digits ) { _prec = digits; }
+
+    /**
+     * @brief Get the number of digits to align text to
+     * @return number of digits
+     * @see SetDigits();
+     */
+    unsigned char GetDigits() const { return _digits; }
+
+
+    bool GetAlignRight() const { return _align_right; }
+    void SetAlignRight(bool align_right) { _align_right = align_right; }
 };
 
 #endif
