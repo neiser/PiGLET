@@ -7,8 +7,12 @@
 
 int main()
 {
+
+
     // start the config manager
     ConfigManager::I().go();
+
+
 
     // system-specific InitGL
     InitGL();
