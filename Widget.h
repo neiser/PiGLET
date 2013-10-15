@@ -22,6 +22,7 @@ class SimpleGraph: public Widget {
 
 private:
     PiGLPlot::BlockList _blocklist;
+    float dXticks( const float& xlen, const int& target_nt );
 
 public:
     SimpleGraph( Window* owner, const float backlength ): Widget(owner), _blocklist(backlength) {}
