@@ -32,7 +32,7 @@ private:
     GLfloat _color[4];
 
 public:
-    Color( const float r=0, const float g=0, float b=0, float a=1.0f) {
+    Color( const float r=0, const float g=0, const float b=0, const float a=1.0f) {
         _color[0] = r;
         _color[1] = g;
         _color[2] = b;
@@ -44,7 +44,12 @@ public:
     inline float& Blue()  { return _color[2]; }
     inline float& Alpha() { return _color[3]; }
 
-    inline void Activate() { glColor4fv( _color ); }
+    inline const float& Red()   const { return _color[0]; }
+    inline const float& Green() const { return _color[1]; }
+    inline const float& Blue()  const { return _color[2]; }
+    inline const float& Alpha() const { return _color[3]; }
+
+    inline void Activate() const { glColor4fv( _color ); }
 
 };
 
@@ -78,7 +83,6 @@ public:
 
     float Width() const { return _width; }
     float Height() const { return _height; }
-
     const Vector2& Center() const { return _center; }
 
     void SetCenter( const Vector2& center );
