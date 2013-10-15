@@ -39,7 +39,6 @@ public:
 
     void Draw() const;
     void Set( const float v );
-    void Init() {  }
 
     void SetColor( const Color& c ) { _color = c; }
     Color GetColor() const { return _color; }
