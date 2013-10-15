@@ -45,6 +45,9 @@ aux_source_directory(${SYSTEM_DIR} SYSTEM_SRC_LIST)
 # then all other needed libraries
 find_library(M_LIB m REQUIRED)
 find_library(RT_LIB rt REQUIRED)
+
+find_package(Threads REQUIRED)
+
 find_package(ImageMagick COMPONENTS MagickWand REQUIRED)
 add_definitions(-DMAGICKCORE_HDRI_ENABLE=0 -DMAGICKCORE_QUANTUM_DEPTH=16)
 include_directories(${ImageMagick_INCLUDE_DIRS})
@@ -58,4 +61,5 @@ add_executable(${PROJECT_NAME} ${SRC_LIST} ${SYSTEM_SRC_LIST})
 target_link_libraries(${PROJECT_NAME}
   ${SYSTEM_LIBS}
   ${M_LIB} ${RT_LIB}
-  ${ImageMagick_LIBRARIES})
+  ${ImageMagick_LIBRARIES}
+  ${CMAKE_THREAD_LIBS_INIT})
