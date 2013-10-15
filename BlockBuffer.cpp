@@ -47,7 +47,7 @@ void PiGLPlot::BlockList::NewBlock()
 
 }
 
-PiGLPlot::BlockList::BlockList(const float backlen): _backlen(backlen)
+PiGLPlot::BlockList::BlockList(const float backlen): _backlen(backlen), color(dPlotColor)
 {
 }
 
@@ -86,7 +86,8 @@ void PiGLPlot::BlockList::Draw()
 
     blist::iterator i;
 
-    glColor4f(1,1,1,0);
+    color.Activate();
+
     for( i= _blocks.begin(); i != _blocks.end(); ++i )
         (*i)->Draw();
 

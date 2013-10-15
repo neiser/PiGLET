@@ -6,6 +6,7 @@
 
 #include "Structs.h"
 #include "Interval.h"
+#include "GLTools.h"
 
 #define DATA_BLOCK_SIZE 256
 
@@ -69,6 +70,8 @@ protected:
     void NewBlock();
 
 public:
+    Color color;
+
     BlockList( const float backlen );
 
     const Interval& XRange() const { return _xrange; }

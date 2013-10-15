@@ -61,9 +61,18 @@ public:
 #define kPink   Color(1.0f, 0.0f, 1.0f)
 #define kYellow Color(1.0f, 1.0f, 0.0f)
 #define kCyan   Color(0.0f, 1.0f, 1.0f)
+#define kDarkGray   Color(0.2f, 0.2f, 0.2f)
+#define kGray   Color(0.4f, 0.4f, 0.4f)
 
 #define dTextColor  kWhite
 #define dBackColor  kBlack
+
+#define dPlotBackground  kDarkGray
+#define dPlotBorderColor  kGray
+#define dPlotColor kBlue
+
+#define dWindowBorderColor  kGray
+#define dWindowBackground  dBackColor
 
 
 class Rectangle {
