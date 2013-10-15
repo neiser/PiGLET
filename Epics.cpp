@@ -14,20 +14,21 @@ struct PiGLPlot::PV {
 };
 
 static void exceptionCallback( exception_handler_args args ) {
-  std::string pvname = ( args.chid ? ca_name( args.chid ) : "unknown" );
-  throw string( "CA Exception:\n Status: " + string( ca_message(args.stat) )
-               + "\n Channel: " + pvname);
+  string pvname = ( args.chid ? ca_name( args.chid ) : "unknown" );
+  cerr << "CA Exception: " << endl
+       << "Status: " << ca_message(args.stat) << endl
+       << "Channel: " + pvname << endl;
 }
 
 static void connectionCallback( connection_handler_args args ) {
-#ifdef DEBUG
-  std::cout << "ConnectionCallback:"
-            << "\n PV:       " << ca_name( args.chid )
-            << "\n Type:     " << ca_field_type( args.chid )
-            << "\n Elements: " << ca_element_count( args.chid )
-            << "\n Host:     " << ca_host_name( args.chid )
-            << "\n Event:    " << ( args.op == CA_OP_CONN_UP ? "Connected" : " Disconnected" )
-            << "\n";
+#ifndef NDEBUG
+  cout << "ConnectionCallback:" << endl
+            << "PV:       " << ca_name( args.chid ) << endl
+            << "Type:     " << ca_field_type( args.chid ) << endl
+            << "Elements: " << ca_element_count( args.chid ) << endl
+            << "Host:     " << ca_host_name( args.chid ) << endl
+            << "Event:    " << ( args.op == CA_OP_CONN_UP ? "Connected" : " Disconnected" )
+            << endl;
 #endif
   
   if ( args.op == CA_OP_CONN_UP ) {
@@ -49,22 +50,21 @@ static void connectionCallback( connection_handler_args args ) {
 
   } else { // args.op == CA_OP_CONN_DOWN
     // channel has disconnected
-    std::cerr << "Epics has lost connection to Channel "
+    cerr << "Epics has lost connection to Channel "
               << ca_name( args.chid )
-              << "\n\n";
+              << endl;
     PV* puser = (PV*)ca_puser( args.chid );
     puser->connected = false;
   }
 }
 
 static void eventCallback( event_handler_args args ) {
-#ifdef DEBUG
-  std::cout << "eventCallback:"
-	    << "\n PV:      " << ca_name( args.chid )
-	    << "\n Type     " << ca_field_type( args.chid )
-	    << "\n Elements " << ca_element_count( args.chid )
-	    << "\n Host     " << ca_host_name( args.chid )
-	    << "\n";
+#ifndef NDEBUG
+  cout << "eventCallback:" << endl
+	    << "PV:      " << ca_name( args.chid ) << endl
+	    << "Type     " << ca_field_type( args.chid ) << endl
+	    << "Elements " << ca_element_count( args.chid ) << endl
+	    << "Host     " << ca_host_name( args.chid ) << endl;
 #endif
 
   if ( args.status != ECA_NORMAL ) {
@@ -86,11 +86,16 @@ PiGLPlot::Epics::~Epics () {
 void PiGLPlot::Epics::init() {
 
   if( isInitialized_ ) {
-    std::cout << "Epics has already been initialized." << std::endl;
+    cout << "Epics has already been initialized." << endl;
     return;
   }
-
+  
+  ca_context_create( ca_enable_preemptive_callback );
+  ca_add_exception_event( exceptionCallback, NULL );
+  PV* puser = new PV;
+  subscribe("MyTestRecord", puser);
   ca_pend_event(1.e-12);
+  pvs.push_back(puser); 
 
   isInitialized_ = true;
 }
@@ -106,17 +111,14 @@ void PiGLPlot::Epics::close() {
   ca_context_destroy();
 }
 
-void PiGLPlot::Epics::subscribe( std::string& pvname, PV* puser ) {
+void PiGLPlot::Epics::subscribe(const std::string& pvname, PV* puser ) {
   int ca_rtn = ca_create_channel( pvname.c_str(),      // PV name
                                   connectionCallback,  // name of connection callback function
                                   puser,               // 
                                   CA_PRIORITY_DEFAULT, // CA Priority
                                   &puser->mychid );    // Unique channel id
   
-  if ( ca_rtn != ECA_NORMAL )
-    throw string( "Epics: Unable to create channel '" + pvname
-                 + "'\n'ca_create_channel' returned: "
-                 + ca_message( ca_rtn ) );
+  SEVCHK(ca_rtn, "ca_create_channel failed");
   
   ca_rtn = ca_create_subscription( DBR_TIME_DOUBLE,          // CA data type
                                    1,                        // number of elements
@@ -126,11 +128,6 @@ void PiGLPlot::Epics::subscribe( std::string& pvname, PV* puser ) {
                                    puser,
                                    &puser->myevid );         // unique event id needed to clear subscription
     
-  if ( ca_rtn != ECA_NORMAL )
-    throw string( "Epics: Unable to subscribe to channel '" + pvname
-                 + "'\n'ca_create_subscription' returned: "
-                 + ca_message( ca_rtn ) );
-
-
+  SEVCHK(ca_rtn, "ca_create_subscription failed");
   pvs.push_back(puser); 
 }

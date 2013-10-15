@@ -4,16 +4,17 @@
 
 #include "PiGLPlotApp.h"
 #include "ConfigManager.h"
+#include "Epics.h"
+
+using namespace PiGLPlot;
 
 int main()
 {
-
-
     // start the config manager
     ConfigManager::I().go();
-
-
-
+    // start EPICS
+    Epics::I().init();
+    //return 0;
     // system-specific InitGL
     InitGL();
     // ..now some system-wide GL stuff

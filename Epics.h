@@ -36,7 +36,7 @@ private:
     Epics(Epics const& copy);            // Not Implemented
     Epics& operator=(Epics const& copy); // Not Implemented
     
-    void subscribe( std::string&, PV* );
+    void subscribe(const std::string&, PV* );
     
     // Storage for values
     std::vector<PV*> pvs;
