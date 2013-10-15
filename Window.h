@@ -8,6 +8,7 @@
 #include "TextRenderer.h"
 #include "BlockBuffer.h"
 #include "Widget.h"
+#include "NumberLabel.h"
 
 class Window {
 private:

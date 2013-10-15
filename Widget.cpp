@@ -70,6 +70,5 @@ void SimpleGraph::Draw()
 
 float Widget::GetWindowAspect() const
 {
-    cout << "Win XScale=" << _owner->XPixels() << " YScale=" << _owner->YPixels() << endl;
     return _owner->XPixels() / _owner->YPixels();
 }

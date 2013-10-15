@@ -15,7 +15,7 @@ PlotWindow::PlotWindow( const std::string& title,
     graph(this, 10),
     text(this, -.95,0.82,.95,.98),
     frame(0),
-    num(this)
+    num(this, Vector2(0,0))
 {
 
     num.Init();
@@ -62,6 +62,7 @@ void PlotWindow::Draw(){
 	glPopMatrix();
 
 	text.Draw( GL_LINE_LOOP );
+    glTranslatef(-.8,0,0);
     num.Draw();
 
     // feed some data
@@ -70,7 +71,7 @@ void PlotWindow::Draw(){
         n.x = frame/100.0;
         n.y = sin(3.14157*frame/1000.0);
     	graph.AddToBlockList(n);
-        num.Set( n.y );
+        num.Set( n.y *100);
 
         if( n.y > .8 )
             num.SetColor(kRed);
