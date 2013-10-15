@@ -5,7 +5,7 @@ SimpleGraph::SimpleGraph( Window* owner, const float backlength ):
     Widget(owner),
     _blocklist(backlength),
     TickColor(dPlotTicks),
-    ValueDisplay(this->_owner, Vector2(0,0))
+    ValueDisplay(this->_owner)
 {
     UpdateTicks();
 }

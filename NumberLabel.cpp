@@ -7,7 +7,7 @@
 
 using namespace std;
 
-NumberLabel::NumberLabel( Window* owner, const Vector2& pos ):
+NumberLabel::NumberLabel( Window* owner ):
     Widget(owner),
     _color(dTextColor),
     _prec(2),

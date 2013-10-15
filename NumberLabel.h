@@ -34,7 +34,7 @@ private:
     UnitBorderBox Box;
 
 public:
-    NumberLabel( Window* owner, const Vector2& pos );
+    NumberLabel( Window* owner );
     virtual ~NumberLabel();
 
     void Draw() const;
