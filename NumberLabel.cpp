@@ -3,6 +3,7 @@
 #include <string>
 #include <iomanip>
 #include "TextRenderer.h"
+#include <algorithm>
 
 using namespace std;
 
@@ -34,7 +35,7 @@ void NumberLabel::Draw() const
 
     unsigned char digits = 0;
     if( _align_right ) {
-        digits = _digits;
+        digits = max((int)_digits, (int)_digtex.size());
     } else {
         digits = _digtex.size();
     }
@@ -57,8 +58,9 @@ void NumberLabel::Draw() const
         glBlendFunc(GL_SRC_ALPHA,GL_ONE);
         glTexCoordPointer(2, GL_FLOAT, 0, _texcoords);
 
+        _color.Activate();
 
-        for( int p=0;p<_digtex.size();++p ) {
+        for( int p=0; p<_digtex.size(); ++p ) {
 
             glBindTexture(GL_TEXTURE_2D, _digtex[p]);
             Rectangle::unit.Draw( GL_TRIANGLE_FAN );
