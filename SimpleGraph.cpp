@@ -1,5 +1,8 @@
 #include "SimpleGraph.h"
 #include "Window.h"
+#include <cmath>
+
+using namespace std;
 
 void SimpleGraph::set_labels(){
 
@@ -7,16 +10,29 @@ void SimpleGraph::set_labels(){
     for (int i = 0 ; i < _ylabels.size() ; ++i) delete _ylabels.at(i);
     _xlabels.clear();
     _ylabels.clear();
-    _xlabels.reserve(1 + _xticks.size());
-    _ylabels.reserve(1 + _yticks.size());
+    _xlabels.reserve(_xticks.size());
+    _ylabels.reserve(_yticks.size());
 \
     for (int i = 0 ; i < _xticks.size() ; ++i ){
-        _xlabels.push_back(new NumberLabel(this->_owner,Vector2()));
+        _xlabels.push_back(new NumberLabel(this->_owner));
+        _xlabels.at(i)->SetDrawBox(false);
+        _xlabels.at(i)->SetAlignRight(false);
         _xlabels.at(i)->SetColor(kRed);
         _xlabels.at(i)->SetDigits(5);
         _xlabels.at(i)->SetPrec(1);
         _xlabels.at(i)->Set(_xticks.at(i).x);
     }
+
+    for ( int i = 0 ; i < _yticks.size() ; ++i ){
+        _ylabels.push_back(new NumberLabel(this->_owner));
+        _ylabels.at(i)->SetDrawBox(false);
+        _ylabels.at(i)->SetAlignRight(true);
+        _ylabels.at(i)->SetColor(kRed);
+        _ylabels.at(i)->SetDigits(5);
+        _ylabels.at(i)->SetPrec(1);
+        _ylabels.at(i)->Set(_yticks.at(i).y);
+    }
+
 }
 
 SimpleGraph::SimpleGraph( Window* owner, const float backlength ):
@@ -29,7 +45,7 @@ SimpleGraph::SimpleGraph( Window* owner, const float backlength ):
 }
 
 float SimpleGraph::dticks( const float& len, const int& nt ){
-    float dx = 1.;
+ /*   float dx = 1.;
     if ( len / dx > nt){
         while ( true ){
             dx*=2;
@@ -47,18 +63,36 @@ float SimpleGraph::dticks( const float& len, const int& nt ){
       if ( len / dx > nt ) return dx;
       dx*= 5. / 20;
       if ( len / dx > nt ) return dx;
+    }*/
+    const float finedx = len / nt;
+    float dx = 1;
+
+    while ( dx < finedx ){
+        float dx_old = dx;
+        for (int i = 0 ; i < 10 ; ++i ){
+            dx+= 0.1 * dx_old;
+            if ( dx > finedx ) return dx;
+        }
     }
-    return dx;
+    while ( dx >= finedx){
+        float dx_old = dx;
+        for ( int i = 0 ; i < 10 ; ++i ){
+            dx-= 0.1 * dx_old;
+            if ( dx < finedx ) return dx;
+        }
+    }
+
+    return len / nt;
 }
 
 
 void SimpleGraph::UpdateTicks(){
     const float xlen = _blocklist.GetBackLenght();
     //calulate rough estimate how many ticks:
-    const int ntx = _owner->XPixels() / 150;
+    const int ntx = ceil ( 6 *  _owner->XPixels() / DEFAULT_WINDOW_WIDTH) ;
     // replace with epics values:
     const float ylen = 2; // (maximum values of sin - function
-    const int nty = _owner->YPixels() / 150;
+    const int nty = ceil( 4 *  _owner->YPixels() / DEFAULT_WINDOW_WIDTH );
 
     _xticks.clear();
     _xticks.reserve( ntx * 2);
@@ -69,8 +103,9 @@ void SimpleGraph::UpdateTicks(){
     vec2_t t;
     t.x = xlen / 2;
     int i = 0;
-    while(t.x > -xlen / 2){
-        t.x = xlen / 2 - ( i + 1 ) * dx;
+    while( true ){
+        t.x = xlen / 2 - ( i) * dx;
+        if ( t.x < -xlen / 2 ) break;
         t.y = -ylen/2;
         _xticks.push_back(t);
         t.y = ylen/2;
@@ -83,9 +118,10 @@ void SimpleGraph::UpdateTicks(){
     float dy = dticks(ylen,nty);
     t.y = ylen / 2;
     i = 0;
-    while(t.y > - ylen / 2){
+    while(true){
         t.x = -xlen / 2;
-        t.y = ylen / 2 - ( i +1 ) * dy;
+        t.y = ylen / 2 - ( i ) * dy;
+        if ( t.y < -ylen / 2) break;
         _yticks.push_back(t);
         t.x = xlen / 2;
         _yticks.push_back(t);
@@ -111,6 +147,14 @@ void SimpleGraph::DrawTicks()
         glTranslatef(_xticks.at(i).x,-1.1,0);
         glScalef(0.15 * _blocklist.GetBackLenght() / 2,0.15,0.15);
         _xlabels.at(i)->Draw();
+        glPopMatrix();
+    }
+
+    for ( int i = 0 ; i < _ylabels.size() ; ++i ){
+        glPushMatrix();
+        glTranslatef( -1.1 * _blocklist.GetBackLenght() / 2.,_yticks.at(i).y, 1.);
+        glScalef(0.15 * _blocklist.GetBackLenght() / 2 , 0.15 , 0.15);
+        _ylabels.at(i)->Draw();
         glPopMatrix();
     }
 
