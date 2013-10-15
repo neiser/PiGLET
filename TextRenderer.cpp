@@ -15,7 +15,7 @@ TextRenderer::TextRenderer()
 
     MagickSetSize(mw,256,64);
     MagickSetPointsize(mw,48);
-    MagickSetFont(mw,"Sans");
+    MagickSetFont(mw,"DejaVu-Sans-Mono-Book");
     MagickSetOption(mw,"colorspace","GRAY");    // does this do anything?
     MagickSetOption(mw,"fill","white");
     MagickSetOption(mw,"background","rgba(0,0,0,0)");   // transparent background
@@ -29,50 +29,9 @@ TextRenderer::~TextRenderer()
         DestroyMagickWand(mw);
 }
 
-void TextRenderer::Text2Texture(const GLuint texhandle, const string &text, const int w, const int h) {
-    MagickSetSize(mw,w,h);
-    Text2Texture(texhandle,text);
-}
-
-void TextRenderer::Text2Texture(const GLuint texhandle, const string &text)
+void TextRenderer::Text2TextureFixedSize(const GLuint texhandle, const string &text, const int w, const int h, float& texw, float& texh)
 {
-    _watch.Start();
-
-    std::stringstream rendercmd;
-    rendercmd << "label:" << text;
-
-    MagickReadImage(mw, rendercmd.str().c_str());
-
-    cout << "handle=" << texhandle << " Text=" << text << endl;
-
-    unsigned char *Buffer = NULL;
-    size_t width = MagickGetImageWidth(mw);
-    size_t height = MagickGetImageHeight(mw);
-    Buffer = new unsigned char[width * height];
-
-    cout << "w="<<width << " h="<<height << endl;
-
-    // Export the whole image
-    MagickExportImagePixels(mw, 0, 0, width, height, "I", CharPixel, Buffer);
-
-    glBindTexture(GL_TEXTURE_2D, texhandle);
-
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, width, height, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, Buffer);
-
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-
-    delete [] Buffer;
-
-    _watch.Stop();
-
-    cout << "Text generation took: " << _watch.TimeElapsed() << " s" << endl;
-
-}
-
-void TextRenderer::Text2Texture2(const GLuint texhandle, const string &text, const int w, const int h, float& texw, float& texh)
-{
-    _watch.Start();
+   // _watch.Start();
 
     MagickSetSize(mw,0,0);
 
@@ -88,29 +47,11 @@ void TextRenderer::Text2Texture2(const GLuint texhandle, const string &text, con
     size_t width = MagickGetImageWidth(mw);
     size_t height = MagickGetImageHeight(mw);
 
-    cout << "Generated: " << _w << "x" << _h << " padded:" << width << "x" << height << endl;
+    CopyToTexture( texhandle, width, height);
 
-    unsigned char *Buffer = NULL;
+    //_watch.Stop();
 
-    Buffer = new unsigned char[width * height];
-
-    cout << "w="<<width << " h="<<height << endl;
-
-    // Export the whole image
-    MagickExportImagePixels(mw, 0, 0, width, height, "I", CharPixel, Buffer);
-
-    glBindTexture(GL_TEXTURE_2D, texhandle);
-
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, width, height, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, Buffer);
-
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-
-    delete [] Buffer;
-
-    _watch.Stop();
-
-    cout << "Text generation took: " << _watch.TimeElapsed() << " s" << endl;
+    //cout << "Text generation took: " << _watch.TimeElapsed() << " s" << endl;
 
     texw = ((float)_w) / w;
     texh = ((float)_h) / w;
@@ -128,9 +69,29 @@ uint32_t RoundPow2( uint32_t val ) {
     return val;
 }
 
+void TextRenderer::CopyToTexture( const GLuint texhandle, const int width, const int height ) {
+
+    unsigned char *Buffer = NULL;
+
+    Buffer = new unsigned char[width * height];
+
+    // Export the whole image
+    MagickExportImagePixels(mw, 0, 0, width, height, "I", CharPixel, Buffer);
+
+    glBindTexture(GL_TEXTURE_2D, texhandle);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, width, height, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, Buffer);
+
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+
+    delete [] Buffer;
+
+}
+
 void TextRenderer::Text2Texture3(const GLuint texhandle, const string &text, float& texw, float& texh, float& aspect)
 {
-    _watch.Start();
+    //_watch.Start();
 
     MagickSetSize(mw,0,0);
 
@@ -150,27 +111,11 @@ void TextRenderer::Text2Texture3(const GLuint texhandle, const string &text, flo
     const size_t width = MagickGetImageWidth(mw);
     const size_t height = MagickGetImageHeight(mw);
 
-    cout << "Generated: " << _w << "x" << _h << " padded:" << width << "x" << height << "  calc was " << nw << "x" << nh << endl;
+    CopyToTexture( texhandle, width, height );
 
-    unsigned char *Buffer = NULL;
+    //_watch.Stop();
 
-    Buffer = new unsigned char[width * height];
-
-    // Export the whole image
-    MagickExportImagePixels(mw, 0, 0, width, height, "I", CharPixel, Buffer);
-
-    glBindTexture(GL_TEXTURE_2D, texhandle);
-
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, width, height, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, Buffer);
-
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-
-    delete [] Buffer;
-
-    _watch.Stop();
-
-    cout << "Text generation took: " << _watch.TimeElapsed() << " s" << endl;
+  //  cout << "Text generation took: " << _watch.TimeElapsed() << " s" << endl;
 
     texw = ((float)_w) / width;
     texh = ((float)_h) / height;

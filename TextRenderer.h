@@ -21,6 +21,8 @@ private:
     TextRenderer(TextRenderer const& copy);            // Not Implemented
     TextRenderer& operator=(TextRenderer const& copy); // Not Implemented
 
+    void CopyToTexture( const GLuint texhandle, const int width, const int height );
+
 public:
 
     static TextRenderer& I() {
@@ -28,11 +30,8 @@ public:
         return instance;
     }
 
-    void Text2Texture(const GLuint texhandle, const std::string& text );
-    void Text2Texture(const GLuint texhandle, const std::string& text, const int w, const int h);
-    void Text2Texture2(const GLuint texhandle, const std::string &text, const int w, const int h, float& texw, float& texh);
+    void Text2TextureFixedSize(const GLuint texhandle, const std::string &text, const int w, const int h, float& texw, float& texh);
     void Text2Texture3(const GLuint texhandle, const std::string &text, float& texw, float& texh, float& aspect);
-
 
 };
 

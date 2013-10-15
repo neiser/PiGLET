@@ -129,8 +129,7 @@ void NumberLabel::_maketextures()
         for( int i=0; i<NUMBERLABEL_NUM_TEX; ++i ) {
             stringstream s;
             s << chars[i];
-
-            TextRenderer::I().Text2Texture2(_textures[i], s.str(),64,64,w,h);
+            TextRenderer::I().Text2TextureFixedSize(_textures[i], s.str(),64,64,w,h);
             if(w>maxw)
                 maxw=w;
             if(h>maxh)
