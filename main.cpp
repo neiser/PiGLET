@@ -22,7 +22,7 @@ int main()
     // but the GL_TEXTURE_COORD_ARRAY must not be enabled globally (otherwise: segfault!)
     glEnableClientState(GL_VERTEX_ARRAY);
     //  PiGLPlotApp app;
-    testApp app;
+    PiGLPlotApp app;
 //    PiGLPlotApp app;
     RunGL(app);
 }

@@ -60,6 +60,7 @@ void WindowManager::align_windws(){
 
 const bool WindowManager::RemoveWindow(const int n){
     if ( n >= NumWindows() ) return false;
+    delete _window_list.at(n);
     _window_list.erase(_window_list.begin() + n);
     align_windws();
     return true;

@@ -103,7 +103,7 @@ void SimpleGraph::UpdateTicks(){
     i = 0;
     while(true){
         t.x = -xlen;
-        t.y = ylen / 2 - ( i ) * dy;
+        t.y = ylen / 2 - ( i ) * dy;   // TODO: optimize startpoint!!
         if ( t.y < -ylen / 2) break;
         _yticks.push_back(t);
         t.x = 0;

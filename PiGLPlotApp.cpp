@@ -7,7 +7,7 @@
 
 using namespace std;
 
-void testApp::Draw(){
+void PiGLPlotApp::Draw(){
     // Start with a clear screen
 
     glClearColor(.1,.1,.1,0);
@@ -22,7 +22,7 @@ void testApp::Draw(){
     
     ReportGLError();
 }
-void testApp::Init(){
+void PiGLPlotApp::Init(){
     cout << "Starting a test app!" << endl;
     for (int i = 0 ; i < 3; i++){
         stringstream ss;
