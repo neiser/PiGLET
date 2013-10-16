@@ -31,6 +31,11 @@ void ConfigManager::go() {
 void ConfigManager::setCmd(string cmd, ConfigManager::ConfigCallback cb)
 {
     pthread_mutex_lock(&m_mutex);
+    // check if there is already a callback for that command
+    if(_callbacks.count(cmd)!=0) {
+        cerr << "Cmd " << cmd << " was already added. This should never happen." << endl;
+        exit(EXIT_FAILURE);        
+    }
     _callbacks[cmd] = cb;
     pthread_mutex_unlock(&m_mutex);
 }
