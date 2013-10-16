@@ -1,4 +1,5 @@
 #include <iostream>
+#include <iomanip>
 #include "Epics.h"
 
 using namespace std;
@@ -11,15 +12,15 @@ void Epics::exceptionCallback( exception_handler_args args ) {
 }
 
 void Epics::connectionCallback( connection_handler_args args ) {
-#ifndef NDEBUG
-  cout << "ConnectionCallback:" << endl
-            << "PV:       " << ca_name( args.chid ) << endl
-            << "Type:     " << ca_field_type( args.chid ) << endl
-            << "Elements: " << ca_element_count( args.chid ) << endl
-            << "Host:     " << ca_host_name( args.chid ) << endl
-            << "Event:    " << ( args.op == CA_OP_CONN_UP ? "Connected" : " Disconnected" )
-            << endl;
-#endif
+//#ifndef NDEBUG
+//  cout << "ConnectionCallback:" << endl
+//            << "PV:       " << ca_name( args.chid ) << endl
+//            << "Type:     " << ca_field_type( args.chid ) << endl
+//            << "Elements: " << ca_element_count( args.chid ) << endl
+//            << "Host:     " << ca_host_name( args.chid ) << endl
+//            << "Event:    " << ( args.op == CA_OP_CONN_UP ? "Connected" : " Disconnected" )
+//            << endl;
+//#endif
   
   if ( args.op == CA_OP_CONN_UP ) {
     // channel has connected
@@ -50,21 +51,20 @@ void Epics::connectionCallback( connection_handler_args args ) {
 }
 
 void Epics::eventCallback( event_handler_args args ) {
-#ifndef NDEBUG
-  cout << "eventCallback:" << endl
-	    << "PV:      " << ca_name( args.chid ) << endl
-	    << "Type     " << ca_field_type( args.chid ) << endl
-	    << "Elements " << ca_element_count( args.chid ) << endl
-	    << "Host     " << ca_host_name( args.chid ) << endl;
-#endif
+//#ifndef NDEBUG
+//  cout << "eventCallback:" << endl
+//	    << "PV:      " << ca_name( args.chid ) << endl
+//	    << "Type     " << ca_field_type( args.chid ) << endl
+//	    << "Elements " << ca_element_count( args.chid ) << endl
+//	    << "Host     " << ca_host_name( args.chid ) << endl;
+//#endif
 
   if ( args.status != ECA_NORMAL ) {
       cerr << "Error in EPICS event callback" << endl;
   } else {
     dbr_time_double* dbr = (dbr_time_double*)args.dbr; // Convert void* to correct data type
     PV* puser = (PV*)ca_puser( args.chid );             // get pointer to corresponding PV struct
-    time_t t;
-    epicsTimeToTime_t(&t, &dbr->stamp);
+    double t = dbr->stamp.secPastEpoch + (double)dbr->stamp.nsec/1e9;
     (puser->cb)(EpicsNewValue, t, dbr->value);
   }
 }
@@ -107,7 +107,7 @@ void Epics::removePV(const string &name)
     cout << "PV unregisterd" << endl;
 }
 
-void Epics::TestCallback(const Epics::EpicsCallbackMode& m, const time_t& x, const double& y)
+void Epics::TestCallback(const Epics::EpicsCallbackMode& m, const double &t, const double& y)
 {
     switch(m) {
     case EpicsConnected:
@@ -117,7 +117,7 @@ void Epics::TestCallback(const Epics::EpicsCallbackMode& m, const time_t& x, con
         cout << "Disconnected from EPICS!" << endl;
         break;
     case EpicsNewValue:
-        cout << "New Value: x="<<x<<" y="<<y << endl;
+        cout << "New Value: x="<< std::setprecision(12) <<t<<" y="<<y << endl;
         break;
     default:
         break;

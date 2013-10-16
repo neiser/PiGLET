@@ -21,7 +21,7 @@ public:
         EpicsNewValue
     };
     
-    typedef Callback<void (const EpicsCallbackMode&, const time_t&, const double&)> EpicsCallback;
+    typedef Callback<void (const EpicsCallbackMode&, const double&, const double&)> EpicsCallback;
     void addPV(const std::string& pvname, EpicsCallback cb);
     void removePV(const std::string& name);
     
@@ -34,7 +34,7 @@ public:
         return instance;
     }
     
-    void TestCallback(const EpicsCallbackMode& m, const time_t& x, const double& y);
+    void TestCallback(const EpicsCallbackMode& m, const double& t, const double& y);
     
 private:
     
