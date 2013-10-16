@@ -10,6 +10,7 @@
 #include "NumberLabel.h"
 #include "TextLabel.h"
 #include "SimpleGraph.h"
+#include "Epics.h"
 
 class Window {
 private:
@@ -34,7 +35,7 @@ public:
 
 };
 
-class PlotWindow: public Window{
+class PlotWindow: public Window {
 private:
     std::string _xlabel;
     std::string _ylabel;
@@ -46,6 +47,8 @@ private:
     TextLabel text;
 
     int frame;          //for debug
+    
+    void callback_epics(const Epics::CallbackMode& m,  const double& t, const double& y);
 
 public:
     const std::string& Xlabel() const { return _xlabel; }

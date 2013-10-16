@@ -26,7 +26,7 @@ void Epics::connectionCallback( connection_handler_args args ) {
     // channel has connected
     PV* puser = (PV*)ca_puser( args.chid );
 
-    puser->cb(EpicsConnected, 0, 0);
+    puser->cb(Connected, 0, 0);
     
     // Create Subscription here or in init function?
     // PRO: 100% sure to use the correct datatype
@@ -46,7 +46,7 @@ void Epics::connectionCallback( connection_handler_args args ) {
               << ca_name( args.chid )
               << endl;
     PV* puser = (PV*)ca_puser( args.chid );
-    puser->cb(EpicsDisconnected, 0, 0);
+    puser->cb(Disconnected, 0, 0);
   }
 }
 
@@ -65,7 +65,7 @@ void Epics::eventCallback( event_handler_args args ) {
     dbr_time_double* dbr = (dbr_time_double*)args.dbr; // Convert void* to correct data type
     PV* puser = (PV*)ca_puser( args.chid );             // get pointer to corresponding PV struct
     double t = dbr->stamp.secPastEpoch + (double)dbr->stamp.nsec/1e9;
-    (puser->cb)(EpicsNewValue, t, dbr->value);
+    (puser->cb)(NewValue, t, dbr->value);
   }
 }
 
@@ -107,27 +107,9 @@ void Epics::removePV(const string &name)
     cout << "PV unregisterd" << endl;
 }
 
-void Epics::TestCallback(const Epics::EpicsCallbackMode& m, const double &t, const double& y)
-{
-    switch(m) {
-    case EpicsConnected:
-        cout << "Connected to EPICS!" << endl;
-        break;
-    case EpicsDisconnected:
-        cout << "Disconnected from EPICS!" << endl;
-        break;
-    case EpicsNewValue:
-        cout << "New Value: x="<< std::setprecision(12) <<t<<" y="<<y << endl;
-        break;
-    default:
-        break;
-    }
-}
-
 Epics::Epics () {
     ca_context_create( ca_enable_preemptive_callback );
     ca_add_exception_event( exceptionCallback, NULL );
-   
     ca_poll();
 }
 

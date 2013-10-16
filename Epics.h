@@ -15,13 +15,13 @@ const size_t MAX_PV_NAME_LEN = 40;
 
 class Epics  {
 public:   
-    enum EpicsCallbackMode {
-        EpicsConnected,
-        EpicsDisconnected,
-        EpicsNewValue
+    enum CallbackMode {
+        Connected,
+        Disconnected,
+        NewValue
     };
     
-    typedef Callback<void (const EpicsCallbackMode&, const double&, const double&)> EpicsCallback;
+    typedef Callback<void (const CallbackMode&, const double&, const double&)> EpicsCallback;
     void addPV(const std::string& pvname, EpicsCallback cb);
     void removePV(const std::string& name);
     
@@ -34,7 +34,7 @@ public:
         return instance;
     }
     
-    void TestCallback(const EpicsCallbackMode& m, const double& t, const double& y);
+    void TestCallback(const CallbackMode& m, const double& t, const double& y);
     
 private:
     

@@ -26,7 +26,8 @@ void PiGLPlotApp::Init(){
     cout << "Starting a test app!" << endl;
     for (int i = 0 ; i < 3; i++){
         stringstream ss;
-        ss << "DAQ:Livetime-vme-exptrigger " << i;
+        //ss << "DAQ:Livetime-vme-exptrigger " << i;
+        ss << "MyTestRecord" << i;
         windowman.AddWindow( new PlotWindow(ss.str()));
     }
 }

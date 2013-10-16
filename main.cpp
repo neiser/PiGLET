@@ -10,7 +10,6 @@ using namespace PiGLPlot;
 
 int main()
 {
-    Epics::I().addPV("MyTestRecord", BIND_MEM_CB(&Epics::TestCallback, &Epics::I()));
     
     // system-specific InitGL
     InitGL();

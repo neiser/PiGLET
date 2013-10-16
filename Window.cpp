@@ -3,12 +3,37 @@
 #include <cmath>
 #include "Widget.h"
 #include "GLTools.h"
+#include <iostream>
+#include <iomanip>
+
+using namespace std;
+
+void PlotWindow::callback_epics(const Epics::CallbackMode &m, const double &t, const double &y)
+{
+    
+    switch(m) {
+    case Epics::Connected:
+        cout << "Connected to EPICS!" << endl;
+        break;
+    case Epics::Disconnected:
+        cout << "Disconnected from EPICS!" << endl;
+        break;
+    case Epics::NewValue:
+        cout << "New Value: x="<< std::setprecision(12) <<t<<" y="<<y << endl;
+        graph.SetNow(t);
+        vec2_t n;
+        n.x = t;
+        n.y = y;
+        graph.AddToBlockList(n);
+        break;
+    }
+}
 
 PlotWindow::PlotWindow( const std::string& title,
-            const std::string &xlabel,
-            const std::string &ylabel,
-            const float xscale,
-            const float yscale):
+                        const std::string &xlabel,
+                        const std::string &ylabel,
+                        const float xscale,
+                        const float yscale):
     Window(title,xscale,yscale),
     _xlabel(xlabel),
     _ylabel(ylabel),
@@ -18,38 +43,39 @@ PlotWindow::PlotWindow( const std::string& title,
     frame(0)
 {
     text.SetText(title);
+    Epics::I().addPV(title, BIND_MEM_CB(&PlotWindow::callback_epics, this));
 }
 
 void PlotWindow::Draw(){
-
+    
     // Window border
     WindowArea.Draw();
-
+    
     graph.Draw();
-
+    
     text.Draw();
-
-
+    
+    
     // feed some data - only for testing
-    if( frame %10 == 0 ) {
-        vec2_t n;
-        n.x = frame/100.0;
-        n.y = sin(3.14157*frame/1000.0);
-    	graph.AddToBlockList(n);
-
-    } else {
-        graph.SetNow(frame/100.0);
-    }
-	++frame;
+    //    if( frame %10 == 0 ) {
+    //        vec2_t n;
+    //        n.x = frame/100.0;
+    //        n.y = sin(3.14157*frame/1000.0);
+    //    	graph.AddToBlockList(n);
+    
+    //    } else {
+    //graph.SetNow(frame/100.0);
+    //    }
+    ++frame;
 }
 
 std::ostream& operator<<( std::ostream& stream, const Window& win ) {
     stream << "[ " << win.XPixels() << " x " << win.YPixels() << " ]";
-	return stream;
+    return stream;
 }
 
 
 std::ostream& operator<<( std::ostream& stream, const PlotWindow& win ) {
     stream << "[ " << win.XPixels() << " x " << win.YPixels() << " ]: " << win.Xlabel() << " vs. " << win.Ylabel();
-	return stream;
+    return stream;
 }

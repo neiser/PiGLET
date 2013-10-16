@@ -1,4 +1,12 @@
-record (ao, "MyTestRecord")
+record (ao, "MyTestRecord0")
+{
+    field (DESC, "A simple record")
+}
+record (ao, "MyTestRecord1")
+{
+    field (DESC, "A simple record")
+}
+record (ao, "MyTestRecord2")
 {
     field (DESC, "A simple record")
 }
