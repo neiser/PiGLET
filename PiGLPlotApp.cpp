@@ -30,4 +30,9 @@ void PiGLPlotApp::Init(){
         ss << "MyTestRecord" << i;
         windowman.AddWindow( new PlotWindow(ss.str()));
     }
+
+    //Add one extra Image Window
+    ImageWindow* w = new ImageWindow("Image");
+    w->SetURL("https://i.chzbgr.com/maxW500/7846712320/h4B84CC02/");
+    windowman.AddWindow(w);
 }

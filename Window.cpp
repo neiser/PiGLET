@@ -5,6 +5,7 @@
 #include "GLTools.h"
 #include <iostream>
 #include <iomanip>
+#include "TextRenderer.h"
 
 using namespace std;
 
@@ -78,4 +79,37 @@ std::ostream& operator<<( std::ostream& stream, const Window& win ) {
 std::ostream& operator<<( std::ostream& stream, const PlotWindow& win ) {
     stream << "[ " << win.XPixels() << " x " << win.YPixels() << " ]: " << win.Xlabel() << " vs. " << win.Ylabel();
     return stream;
+}
+
+
+ImageWindow::ImageWindow( const std::string& title, const float xscale, const float yscale ):
+    Window(title, xscale, yscale),
+    _url("")
+{
+}
+
+void ImageWindow::SetURL(const std::string &url)
+{
+    _url = url;
+    UpdateImage();
+}
+
+void ImageWindow::UpdateImage()
+{
+    TextRenderer::I().LoadImage(_image, _url);
+}
+
+void ImageWindow::Draw()
+{
+    glPushMatrix();
+    glScalef(.9,.9,.9);
+    glEnable(GL_TEXTURE_2D);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+    _image.Activate();
+
+    Rectangle::unit.Draw( GL_TRIANGLE_FAN );
+
+    glDisable(GL_TEXTURE_2D);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    glPopMatrix();
 }
