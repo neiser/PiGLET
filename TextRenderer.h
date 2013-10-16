@@ -21,7 +21,7 @@ private:
     TextRenderer(TextRenderer const& copy);            // Not Implemented
     TextRenderer& operator=(TextRenderer const& copy); // Not Implemented
 
-    void CopyToTexture( const GLuint texhandle, const int width, const int height );
+    void CopyToTexture(const GLuint texhandle, const int width, const int height , GLenum TextureMode);
 
 public:
 
@@ -32,6 +32,8 @@ public:
 
     void Text2TextureFixedSize(const GLuint texhandle, const std::string &text, const int w, const int h, float& texw, float& texh);
     void Text2Texture3(const GLuint texhandle, const std::string &text, float& texw, float& texh, float& aspect);
+
+    void LoadImage(const GLuint texhandle, const std::string url, float& texw, float& texh, float& aspect);
 
 };
 
