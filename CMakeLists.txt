@@ -1,4 +1,4 @@
-project(PiGLPlot)
+project(PiGLET)
 cmake_minimum_required(VERSION 2.8)
 
 # check for in-source build, forbid it!

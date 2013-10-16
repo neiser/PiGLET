@@ -69,7 +69,7 @@ void InitGL(){
     glutInitWindowSize(_width, _height);
 
     glutInitWindowPosition(0, 0);
-    glutCreateWindow("PiGLPlot");
+    glutCreateWindow("PiGLET");
     glClearColor(0.0, 0.0, 0.0, 0.0);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
