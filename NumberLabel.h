@@ -12,7 +12,7 @@ private:
 #define NUMBERLABEL_CHARS "0123456789.-E?"
 
     // array of texture handles
-    static GLuint _textures[NUMBERLABEL_NUM_TEX];
+    static Texture* _textures;
     static vec2_t _texcoords[4];
     static unsigned int _num_objetcs;   // Number of instances alive
 
