@@ -45,25 +45,6 @@ SimpleGraph::SimpleGraph( Window* owner, const float backlength ):
 }
 
 float SimpleGraph::dticks( const float& len, const int& nt ){
- /*   float dx = 1.;
-    if ( len / dx > nt){
-        while ( true ){
-            dx*=2;
-            if ( len / dx <= nt ) return dx;
-            dx*=5./2;
-            if ( len / dx <= nt ) return dx;
-            dx*= 20./ 5.;
-            if ( len / dx <= nt ) return dx;
-        }
-    }
-    while ( true ){
-      dx*=0.5;
-      if ( len / dx > nt ) return dx;
-      dx*=2./5;
-      if ( len / dx > nt ) return dx;
-      dx*= 5. / 20;
-      if ( len / dx > nt ) return dx;
-    }*/
     const float finedx = len / nt;
     float dx = 1;
 
@@ -152,7 +133,7 @@ void SimpleGraph::DrawTicks()
 
     for ( int i = 0 ; i < _ylabels.size() ; ++i ){
         glPushMatrix();
-        glTranslatef( -1.1 * _blocklist.GetBackLenght() / 2.,_yticks.at(i).y, 1.);
+        glTranslatef( 1.1 * _blocklist.GetBackLenght() / 2.,_yticks.at(i).y, 1.);
         glScalef(0.15 * _blocklist.GetBackLenght() / 2 , 0.15 , 0.15);
         _ylabels.at(i)->Draw();
         glPopMatrix();
