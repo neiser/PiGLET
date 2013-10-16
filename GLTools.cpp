@@ -55,3 +55,20 @@ void Rectangle::Draw(GLenum mode) const
     glVertexPointer( 2, GL_FLOAT, 0, _vertices);
     glDrawArrays( mode, 0, 4);
 }
+
+
+void Texture::SetMaxUV( const float maxu, const float maxv )
+{
+
+    _texcoords[0].x = 0;
+    _texcoords[0].y = maxv;
+
+    _texcoords[1].x = 0;
+    _texcoords[1].y = 0;
+
+    _texcoords[2].x = maxu;
+    _texcoords[2].y = 0;
+
+    _texcoords[3].x = maxu;
+    _texcoords[3].y = maxv;
+}

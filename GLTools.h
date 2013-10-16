@@ -129,6 +129,37 @@ public:
 
 };
 
+class Texture {
+private:
+    GLuint _tex;
+    float  _aspect;
+
+    vec2_t _texcoords[4];
+
+public:
+    Texture(): _tex(0), _aspect(0.0f) {
+        glGenTextures(1, &_tex);
+        SetMaxUV(0,0);
+    }
+
+    virtual ~Texture() {
+        glDeleteTextures(1, &_tex);
+    }
+
+    void Activate() const {
+        glTexCoordPointer(2, GL_FLOAT, 0, _texcoords);
+        glBindTexture(GL_TEXTURE_2D, _tex);
+    }
+
+    const vec2_t* TextureCoords() const { return _texcoords; }
+    float GetAspectRatio() const { return _aspect; }
+    float GetMaxU() const { return _texcoords[2].x; }
+    float GetMaxV() const { return _texcoords[1].y; }
+
+    void SetMaxUV( const float maxu, const float maxv );
+
+};
+
 
 
 #endif
