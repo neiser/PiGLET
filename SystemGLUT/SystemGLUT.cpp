@@ -69,6 +69,7 @@ void InitGL(){
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glOrtho(-1.0, 1.0, -1.0, 1.0, -1.0, 1.0);
+    glMatrixMode(GL_MODELVIEW); // use for the following the much bigger Modelview stack
     glutIdleFunc(drawCallback);
     glutKeyboardFunc(keyPressed);
 //    glutReshapeFunc(Reshape);
