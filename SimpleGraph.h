@@ -6,10 +6,13 @@
 #include "BlockBuffer.h"
 #include "NumberLabel.h"
 
+#define NTICKSFULLX  6
+#define NTICKSFULLY  5
 
 class SimpleGraph: public Widget {
 
 private:
+
     std::vector<vec2_t> _xticks;
     std::vector<vec2_t> _yticks;
     std::vector<NumberLabel*> _xlabels;
@@ -25,6 +28,8 @@ private:
 
 public:
     Color TickColor;
+    Color TickLabelColor;
+
     SimpleGraph( Window* owner, const float backlength );
 
     void AddToBlockList( const vec2_t& p) {

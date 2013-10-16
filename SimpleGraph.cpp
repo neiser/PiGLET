@@ -15,9 +15,9 @@ void SimpleGraph::set_labels(){
 \
     for (int i = 0 ; i < _xticks.size() ; ++i ){
         _xlabels.push_back(new NumberLabel(this->_owner));
+        _xlabels.at(i)->SetColor(TickLabelColor);
         _xlabels.at(i)->SetDrawBox(false);
-        _xlabels.at(i)->SetAlignRight(false);
-        _xlabels.at(i)->SetColor(kRed);
+        _xlabels.at(i)->SetAlignRight(true);
         _xlabels.at(i)->SetDigits(5);
         _xlabels.at(i)->SetPrec(1);
         _xlabels.at(i)->Set(_xticks.at(i).x);
@@ -25,9 +25,9 @@ void SimpleGraph::set_labels(){
 
     for ( int i = 0 ; i < _yticks.size() ; ++i ){
         _ylabels.push_back(new NumberLabel(this->_owner));
+        _ylabels.at(i)->SetColor(TickLabelColor);
         _ylabels.at(i)->SetDrawBox(false);
         _ylabels.at(i)->SetAlignRight(true);
-        _ylabels.at(i)->SetColor(kRed);
         _ylabels.at(i)->SetDigits(5);
         _ylabels.at(i)->SetPrec(1);
         _ylabels.at(i)->Set(_yticks.at(i).y);
@@ -39,6 +39,7 @@ SimpleGraph::SimpleGraph( Window* owner, const float backlength ):
     Widget(owner),
     _blocklist(backlength),
     TickColor(dPlotTicks),
+    TickLabelColor(dPlotTickLabels),
     ValueDisplay(this->_owner),
     PlotArea( dPlotBackground, dPlotBorderColor)
 {
@@ -71,10 +72,10 @@ float SimpleGraph::dticks( const float& len, const int& nt ){
 void SimpleGraph::UpdateTicks(){
     const float xlen = _blocklist.GetBackLenght();
     //calulate rough estimate how many ticks:
-    const int ntx = ceil ( 6 *  _owner->XPixels() / DEFAULT_WINDOW_WIDTH) ;
+    const int ntx = ceil ( NTICKSFULLX *  _owner->XPixels() / DEFAULT_WINDOW_WIDTH) ;
     // replace with epics values:
     const float ylen = 2; // (maximum values of sin - function
-    const int nty = ceil( 4 *  _owner->YPixels() / DEFAULT_WINDOW_WIDTH );
+    const int nty = ceil( NTICKSFULLY *  _owner->YPixels() / DEFAULT_WINDOW_WIDTH );
 
     _xticks.clear();
     _xticks.reserve( ntx * 2);
@@ -83,11 +84,11 @@ void SimpleGraph::UpdateTicks(){
     float dx = dticks(xlen,ntx);
 
     vec2_t t;
-    t.x = xlen / 2;
+    t.x = 0;
     int i = 0;
     while( true ){
-        t.x = xlen / 2 - ( i) * dx;
-        if ( t.x < -xlen / 2 ) break;
+        t.x = xlen - ( i) * dx;
+        if ( t.x < -xlen ) break;
         t.y = -ylen/2;
         _xticks.push_back(t);
         t.y = ylen/2;
@@ -101,11 +102,11 @@ void SimpleGraph::UpdateTicks(){
     t.y = ylen / 2;
     i = 0;
     while(true){
-        t.x = -xlen / 2;
+        t.x = -xlen;
         t.y = ylen / 2 - ( i ) * dy;
         if ( t.y < -ylen / 2) break;
         _yticks.push_back(t);
-        t.x = xlen / 2;
+        t.x = 0;
         _yticks.push_back(t);
         i++;
     }
@@ -116,7 +117,9 @@ void SimpleGraph::DrawTicks()
 {
     glPushMatrix();
 
-    glScalef( 2.0 / _blocklist.GetBackLenght(), 1 ,1);
+    glScalef( 2./ _blocklist.GetBackLenght(), 1 ,1);
+    glTranslatef( _blocklist.GetBackLenght() / 2. , 0. , 0. );
+
     TickColor.Activate();
 
     glVertexPointer(2, GL_FLOAT, 0, _xticks.data());
@@ -134,7 +137,7 @@ void SimpleGraph::DrawTicks()
 
     for ( int i = 0 ; i < _ylabels.size() ; ++i ){
         glPushMatrix();
-        glTranslatef( 1.1 * _blocklist.GetBackLenght() / 2.,_yticks.at(i).y, 1.);
+        glTranslatef( 0.05 * _blocklist.GetBackLenght() ,_yticks.at(i).y, 1.);
         glScalef(0.15 * _blocklist.GetBackLenght() / 2 , 0.15 , 0.15);
         _ylabels.at(i)->Draw();
         glPopMatrix();
