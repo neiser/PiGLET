@@ -43,6 +43,6 @@ void ReportGLError() {
     GLenum err = glGetError();
     if(err != GL_NO_ERROR) {
         // theres is no string conversion on the RPI
-        cerr << "OpenGL Error (fix that!): " << err << endl;
+        std::cerr << "OpenGL Error (fix that!): " << err << std::endl;
     }
 }
