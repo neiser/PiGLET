@@ -45,14 +45,14 @@ void NumberLabel::Draw() const
 
         glPushMatrix();
 
-        glScalef(1 , _texratio, 1.0f );
+        glScalef( 1.0f / GetWindowAspect() , _texratio, 1.0f );
 
         if (_draw_box)
             Box.Draw();
 
-        glScalef(2.0f / (digits * 2.0),1,1);
+        glScalef(2.0f / (digits * 2.0f), 1.0f, 1.0f );
 
-        glTranslatef( (digits-1), 0.0, 0.0);
+        glTranslatef( (digits-1), 0.0f, 0.0f);
 
         glEnable(GL_TEXTURE_2D);
         glEnable(GL_BLEND);

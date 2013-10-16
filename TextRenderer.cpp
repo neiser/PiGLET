@@ -149,7 +149,12 @@ void TextLabel::Draw() const
 
     glBindTexture(GL_TEXTURE_2D, _texture);
 
-    _box.Draw( GL_TRIANGLE_FAN );
+    glPushMatrix();
+
+        glScalef( 1.0f / GetWindowAspect(), 1.0f, 1.0f );
+        _box.Draw( GL_TRIANGLE_FAN );
+
+    glPopMatrix();
 
     glDisable(GL_BLEND);
     glDisable(GL_TEXTURE_2D);
