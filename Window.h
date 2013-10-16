@@ -39,7 +39,6 @@ private:
     std::string _ylabel;
 
     UnitBorderBox WindowArea;
-    UnitBorderBox PlotArea;
 
     SimpleGraph graph;
 

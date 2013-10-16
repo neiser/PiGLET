@@ -17,6 +17,7 @@ private:
 
     PiGLPlot::BlockList _blocklist;
     NumberLabel ValueDisplay;
+    UnitBorderBox PlotArea;
 
     float dticks( const float& len, const int& target_nt );
 

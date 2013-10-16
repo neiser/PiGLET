@@ -39,7 +39,8 @@ SimpleGraph::SimpleGraph( Window* owner, const float backlength ):
     Widget(owner),
     _blocklist(backlength),
     TickColor(dPlotTicks),
-    ValueDisplay(this->_owner)
+    ValueDisplay(this->_owner),
+    PlotArea( dPlotBackground, dPlotBorderColor)
 {
     UpdateTicks();
 }
@@ -145,14 +146,45 @@ void SimpleGraph::DrawTicks()
 
 void SimpleGraph::Draw()
 {
-    DrawTicks();
-    _blocklist.Draw();
 
 
     glPushMatrix();
-    // Position the value label (pure guessing)
-    glTranslatef(-.7,.85,0);
-    glScalef(.3,.3,.3);
-    ValueDisplay.Draw();
+
+        glScalef(0.8f,0.8f,0.8f);
+
+        // limit draw area to plot area box
+        glEnable(GL_STENCIL_TEST);
+        glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+        glStencilFunc(GL_NEVER, 1, 0xFF);
+        glStencilOp(GL_REPLACE, GL_KEEP, GL_KEEP);  // draw 1s on test fail (always)
+
+        // draw stencil pattern
+        glStencilMask(0xFF);
+        glClear(GL_STENCIL_BUFFER_BIT);  // needs mask=0xFF
+
+        PlotArea.Draw();
+
+        glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+        glStencilMask(0x00);
+        glStencilFunc(GL_EQUAL, 1, 0xFF);
+        // draw area is now limited
+
+        PlotArea.Draw();
+
+        _blocklist.Draw();
+
+        // stop limiting draw area
+        glDisable(GL_STENCIL_TEST);
+
+        DrawTicks();
+
+        glPushMatrix();
+            glTranslatef(-.7,.85,0);
+            glScalef(.3,.3,.3);
+            ValueDisplay.Draw();
+        glPopMatrix();
+
+
     glPopMatrix();
+
 }

@@ -13,7 +13,6 @@ PlotWindow::PlotWindow( const std::string& title,
     _xlabel(xlabel),
     _ylabel(ylabel),
     WindowArea( dBackColor, dWindowBorderColor),
-    PlotArea( dPlotBackground, dPlotBorderColor),
     graph(this, 10),
     text(this, -.95,0.82,.95,.98),
     frame(0)
@@ -26,44 +25,12 @@ void PlotWindow::Draw(){
     // Window border
     WindowArea.Draw();
 
-	glPushMatrix();
-
-        glScalef(0.8f,0.8f,0.8f);
-
-//        glEnable(GL_STENCIL_TEST);
-        glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-        glDepthMask(GL_FALSE);
-        glStencilFunc(GL_NEVER, 1, 0xFF);
-        glStencilOp(GL_REPLACE, GL_KEEP, GL_KEEP);  // draw 1s on test fail (always)
-
-        // draw stencil pattern
-        glStencilMask(0xFF);
-        glClear(GL_STENCIL_BUFFER_BIT);  // needs mask=0xFF
-
-        PlotArea.Draw();
-
-        glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-        glDepthMask(GL_TRUE);
-        glStencilMask(0x00);
-        // draw where stencil's value is 0
-        glStencilFunc(GL_EQUAL, 0, 0xFF);
-        /* (nothing to draw) */
-        // draw only where stencil's value is 1
-        glStencilFunc(GL_EQUAL, 1, 0xFF);
-
-        PlotArea.Draw();
-
-        graph.Draw();
-
-        glDisable(GL_STENCIL_TEST);
-
-	glPopMatrix();
+    graph.Draw();
 
     text.Draw();
 
 
-
-    // feed some data
+    // feed some data - only for testing
     if( frame %10 == 0 ) {
         vec2_t n;
         n.x = frame/100.0;
