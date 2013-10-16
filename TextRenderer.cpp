@@ -131,6 +131,7 @@ void TextRenderer::LoadImage( Texture& tex, const string url )
 
     } else {
         cout << "ERROR loading from " << url << endl;
+        // TODO: Return or throw something!
         tex.SetAspect(0.0);
         tex.SetMaxUV(0,0);
     }
