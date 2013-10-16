@@ -155,8 +155,10 @@ public:
     float GetAspectRatio() const { return _aspect; }
     float GetMaxU() const { return _texcoords[2].x; }
     float GetMaxV() const { return _texcoords[1].y; }
+    GLuint GetTexHandle() const { return _tex; }
 
     void SetMaxUV( const float maxu, const float maxv );
+    void SetAspect( const float aspect ) { _aspect = aspect; }
 
 };
 
