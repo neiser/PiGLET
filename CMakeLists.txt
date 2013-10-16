@@ -38,6 +38,7 @@ include_directories(${ImageMagick_INCLUDE_DIRS})
 # we don't have an extra src directory...
 aux_source_directory(. SRC_LIST)
 include_directories(.)
+link_directories(.)
 
 # build the exe
 add_executable(${PROJECT_NAME} ${SRC_LIST} ${SYSTEM_SRC_LIST})
