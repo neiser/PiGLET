@@ -78,7 +78,6 @@ void ConfigManager::do_work() {
             if(n<=0) {
                 // close client socket
                 cout << "Client disconnected" << endl;
-                close(client);
                 client_connected = false;
                 continue;
             }
@@ -87,7 +86,6 @@ void ConfigManager::do_work() {
             line.erase(std::remove(line.begin(), line.end(), '\r'), line.end());
 
             if(line == "Exit:") {
-                close(client);      
                 client_connected = false;
                 continue;
             }
@@ -98,17 +96,16 @@ void ConfigManager::do_work() {
                 strcpy(&buf[0], "Invalid command. No colon ':' found in string.\n");
                 n = write(client, buf, strlen(buf)+1);
                 if(n<=0) {
-                    close(client);
                     client_connected = false;
                 }
                 continue;
             }                
             
+            // split the line at the colon
             string cmd = line.substr(0,pos);
             string arg = line.substr(pos+1,line.length()-pos);
             
-            cout << "Cmd: '"<< cmd <<"', Arg: '" << arg << "'" << endl;
-            
+            // be careful about unlocking the mutex properly
             pthread_mutex_lock(&m_mutex);
 
             if(_callbacks.count(cmd)==0) {
@@ -116,9 +113,7 @@ void ConfigManager::do_work() {
                 strcpy(&buf[0], "Command not found in list.\n");
                 n = write(client, buf, strlen(buf)+1);
                 if(n<=0) {
-                    close(client);
                     client_connected = false;
-                    
                 }
                 pthread_mutex_unlock(&m_mutex);
                 continue;
@@ -132,13 +127,15 @@ void ConfigManager::do_work() {
                 strcpy(&buf[0], "Command returned non-zero value.\n");
                 n = write(client, buf, strlen(buf)+1);
                 if(n<=0) {
-                    close(client);
                     client_connected = false;
                 }                
             }
             
             
         }
+        
+        // properly close the socket after exiting the client's while loop
+        close(client);        
     }
 }
 
