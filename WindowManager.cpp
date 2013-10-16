@@ -3,11 +3,25 @@
 #include <iostream>
 #include <stdlib.h>
 
+#include "ConfigManager.h"
+
 using namespace std;
 
 std::ostream& operator<<( std::ostream& stream, const WindowManager& wman ) {
     stream << "Main Window Size: " << wman.SizeX() << " x " << wman.SizeY() << " ]";
     return stream;
+}
+
+int WindowManager::callback_remove_window(string arg){
+    return RemoveWindow(atoi(arg.c_str()));
+}
+
+int WindowManager::callback_remove_all_windows(string arg){
+int i;
+for ( i = NumWindows() ; i > 0 ; --i){
+    RemoveWindow(0);
+}
+return i;
 }
 
 void WindowManager::align_windws(){
@@ -58,12 +72,18 @@ void WindowManager::align_windws(){
     }
 }
 
-const bool WindowManager::RemoveWindow(const int n){
-    if ( n >= NumWindows() ) return false;
+WindowManager::WindowManager(const int dx, const int dy): _size_x(dx), _size_y(dy)
+{
+    ConfigManager::I().setCmd("RemoveWindow",BIND_MEM_CB(&WindowManager::callback_remove_window,this));
+    ConfigManager::I().setCmd("RemoveWindows",BIND_MEM_CB(&WindowManager::callback_remove_all_windows,this));
+}
+
+int WindowManager::RemoveWindow(const int n){
+    if ( n >= NumWindows() ) return 1;
     delete _window_list.at(n);
     _window_list.erase(_window_list.begin() + n);
     align_windws();
-    return true;
+    return 0;
 }
 
 void WindowManager::Draw(){

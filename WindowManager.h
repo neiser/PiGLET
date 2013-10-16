@@ -3,9 +3,12 @@
 
 #include <ostream>
 #include <vector>
+#include <string>
 
 #include "Window.h"
 #include "Structs.h"
+
+
 
 
 
@@ -16,11 +19,16 @@ private:
     std::vector<Window*> _window_list;
     std::vector<int> _rows;
 
+    int callback_remove_window( std::string arg );
+    int callback_remove_all_windows(std::string arg );
+
+
+
     void align_windws();
 
 public:
 
-    WindowManager( const int dx = 1, const int dy = 1): _size_x(dx), _size_y(dy) {}
+    WindowManager( const int dx = 1, const int dy = 1);
 
     const int& SizeX() const { return _size_x; }
     const int& SizeY() const { return _size_y; }
@@ -34,7 +42,7 @@ public:
     }
 
     // remove window number n; returns false if it doesn't exist
-    const bool RemoveWindow( const int n );
+    int RemoveWindow( const int n );
 
     void Draw();
 
