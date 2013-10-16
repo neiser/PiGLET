@@ -24,8 +24,9 @@ void Epics::connectionCallback( connection_handler_args args ) {
   if ( args.op == CA_OP_CONN_UP ) {
     // channel has connected
     PV* puser = (PV*)ca_puser( args.chid );
-    puser->connected = true;
 
+    puser->cb(EpicsConnected, 0, 0);
+    
     // Create Subscription here or in init function?
     // PRO: 100% sure to use the correct datatype
     // CONTRA: how to invoke ca_pend_event()? should only be invoked after ALL subscribtions are made
@@ -44,8 +45,7 @@ void Epics::connectionCallback( connection_handler_args args ) {
               << ca_name( args.chid )
               << endl;
     PV* puser = (PV*)ca_puser( args.chid );
-    puser->connected = false;
-    
+    puser->cb(EpicsDisconnected, 0, 0);
   }
 }
 
@@ -59,61 +59,83 @@ void Epics::eventCallback( event_handler_args args ) {
 #endif
 
   if ( args.status != ECA_NORMAL ) {
-    // some error
+      cerr << "Error in EPICS event callback" << endl;
   } else {
-    dbr_time_double* temp = (dbr_time_double*)args.dbr; // Convert void* to correct data type
+    dbr_time_double* dbr = (dbr_time_double*)args.dbr; // Convert void* to correct data type
     PV* puser = (PV*)ca_puser( args.chid );             // get pointer to corresponding PV struct
-    puser->dbrval = *temp;                              // Store the new value
+    time_t t;
+    epicsTimeToTime_t(&t, &dbr->stamp);
+    (puser->cb)(EpicsNewValue, t, dbr->value);
   }
 }
 
-void Epics::addPV(const string &name, Epics::EpicsCallback cb)
+void Epics::addPV(const string &pvname, Epics::EpicsCallback cb)
 {
-    cout << "Added" << endl;
+    PV* puser = new PV;
+    puser->cb = cb;
+    int ca_rtn = ca_create_channel( pvname.c_str(),      // PV name
+                                    connectionCallback,  // name of connection callback function
+                                    puser,               // 
+                                    CA_PRIORITY_DEFAULT, // CA Priority
+                                    &puser->mychid );    // Unique channel id
+    
+    SEVCHK(ca_rtn, "ca_create_channel failed");
+    
+    ca_rtn = ca_create_subscription( DBR_TIME_DOUBLE,          // CA data type
+                                     1,                        // number of elements
+                                     puser->mychid,            // unique channel id
+                                     DBE_VALUE | DBE_ALARM,    // event mask (change of value and alarm)
+                                     eventCallback,            // name of event callback function
+                                     puser,
+                                     &puser->myevid );         // unique event id needed to clear subscription
+      
+    SEVCHK(ca_rtn, "ca_create_subscription failed");
+    
+    pvs[pvname] = puser;
+    
+    // dont know if this is really meaningful here (also done in ctor)
+    ca_poll();        
+    cout << "PV registered" << endl;
 }
 
 void Epics::removePV(const string &name)
 {
-    cout << "Removed" << endl;
+    PV* pv = pvs[name];
+    ca_clear_subscription ( pv->myevid );
+    ca_clear_channel( pv->mychid );
+    delete pv;
+    cout << "PV unregisterd" << endl;
+}
+
+void Epics::TestCallback(const Epics::EpicsCallbackMode& m, const time_t& x, const double& y)
+{
+    switch(m) {
+    case EpicsConnected:
+        cout << "Connected to EPICS!" << endl;
+        break;
+    case EpicsDisconnected:
+        cout << "Disconnected from EPICS!" << endl;
+        break;
+    case EpicsNewValue:
+        cout << "New Value: x="<<x<<" y="<<y << endl;
+        break;
+    default:
+        break;
+    }
 }
 
 Epics::Epics () {
     ca_context_create( ca_enable_preemptive_callback );
     ca_add_exception_event( exceptionCallback, NULL );
-    PV* puser = new PV;
-    subscribe("MyTestRecord", puser);
+   
     ca_poll();
-    pvs.push_back(puser); 
 }
 
 Epics::~Epics () {
-    std::vector<PV*>::const_iterator it;
-    for ( it = pvs.begin(); it != pvs.end(); ++it ) {
-      ca_clear_subscription ( (*it)->myevid );
-      ca_clear_channel( (*it)->mychid );
-      delete *it;
+    for (map<string, PV*>::iterator it = pvs.begin(); it != pvs.end(); ++it ) {
+        removePV(it->first);
     }
     pvs.clear();
     ca_context_destroy();
-}
-
-
-void Epics::subscribe(const std::string& pvname, PV* puser ) {
-  int ca_rtn = ca_create_channel( pvname.c_str(),      // PV name
-                                  connectionCallback,  // name of connection callback function
-                                  puser,               // 
-                                  CA_PRIORITY_DEFAULT, // CA Priority
-                                  &puser->mychid );    // Unique channel id
-  
-  SEVCHK(ca_rtn, "ca_create_channel failed");
-  
-  ca_rtn = ca_create_subscription( DBR_TIME_DOUBLE,          // CA data type
-                                   1,                        // number of elements
-                                   puser->mychid,            // unique channel id
-                                   DBE_VALUE | DBE_ALARM,    // event mask (change of value and alarm)
-                                   eventCallback,            // name of event callback function
-                                   puser,
-                                   &puser->myevid );         // unique event id needed to clear subscription
-    
-  SEVCHK(ca_rtn, "ca_create_subscription failed");
+    cout << "EPICS dtor" << endl;
 }

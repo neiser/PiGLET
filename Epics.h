@@ -16,13 +16,13 @@ const size_t MAX_PV_NAME_LEN = 40;
 class Epics  {
 public:   
     enum EpicsCallbackMode {
-        Connected,
-        Disconnected,
-        NewValue
+        EpicsConnected,
+        EpicsDisconnected,
+        EpicsNewValue
     };
-
-    typedef Callback<void (EpicsCallbackMode, double x, double y)> EpicsCallback;
-    void addPV(const std::string& name, EpicsCallback cb);
+    
+    typedef Callback<void (const EpicsCallbackMode&, const time_t&, const double&)> EpicsCallback;
+    void addPV(const std::string& pvname, EpicsCallback cb);
     void removePV(const std::string& name);
     
     // Implement a singleton
@@ -33,6 +33,8 @@ public:
         static Epics instance;
         return instance;
     }
+    
+    void TestCallback(const EpicsCallbackMode& m, const time_t& x, const double& y);
     
 private:
     
@@ -45,16 +47,13 @@ private:
     Epics& operator=(Epics const& copy); // Not Implemented
     
     struct PV {
-      chid            mychid;
-      evid            myevid;
-      dbr_time_double dbrval;
-      bool            connected;
+        chid            mychid;
+        evid            myevid;
+        EpicsCallback   cb;
     };
-    
-    void subscribe(const std::string&, PV* );
-    
+        
     // Storage for values
-    std::vector<PV*> pvs;
+    std::map<std::string, PV*> pvs;
     
     static void connectionCallback( connection_handler_args args );
     static void eventCallback( event_handler_args args );
