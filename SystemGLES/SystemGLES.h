@@ -12,4 +12,6 @@ void RunGL( GLApp& app );
 int GetWindowWidth();
 int GetWindowHeight();
 
+
+void ReportGLError();
 #endif

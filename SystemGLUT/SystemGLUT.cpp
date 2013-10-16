@@ -87,3 +87,10 @@ void RunGL(GLApp &app) {
     glutMainLoop();
 }
 
+void ReportGLError() {
+    GLenum err = glGetError();
+    if(err != GL_NO_ERROR) {
+        cerr << "OpenGL Error (fix that!): " << gluErrorString(err) << endl;        
+    }
+    
+}

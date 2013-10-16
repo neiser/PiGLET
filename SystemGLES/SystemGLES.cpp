@@ -38,3 +38,11 @@ int GetWindowWidth() {
 int GetWindowHeight() {
     return win->getHeight();
 }
+
+void ReportGLError() {
+    GLenum err = glGetError();
+    if(err != GL_NO_ERROR) {
+        // theres is no string conversion on the RPI
+        cerr << "OpenGL Error (fix that!): " << err << endl;
+    }
+}
