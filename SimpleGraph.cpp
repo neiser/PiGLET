@@ -72,10 +72,10 @@ float SimpleGraph::dticks( const float& len, const int& nt ){
 void SimpleGraph::UpdateTicks(){
     const float xlen = _blocklist.GetBackLenght();
     //calulate rough estimate how many ticks:
-    const int ntx = ceil ( NTICKSFULLX *  _owner->XPixels() / DEFAULT_WINDOW_WIDTH) ;
+    const int ntx = ceil ( NTICKSFULLX *  _owner->XPixels() / GetWindowWidth()) ;
     // replace with epics values:
     const float ylen = 2; // (maximum values of sin - function
-    const int nty = ceil( NTICKSFULLY *  _owner->YPixels() / DEFAULT_WINDOW_WIDTH );
+    const int nty = ceil( NTICKSFULLY *  _owner->YPixels() / GetWindowWidth());
 
     _xticks.clear();
     _xticks.reserve( ntx * 2);
