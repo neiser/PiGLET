@@ -60,7 +60,8 @@ private:
 
     // Compute and save fibonacci numbers as fast as possible
     void do_work();
-
+    bool SendToClient(int client, std::string msg);
+    
     void InitSocket();
     
     int Kill(std::string arg);

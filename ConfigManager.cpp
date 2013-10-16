@@ -1,5 +1,6 @@
 #include "ConfigManager.h"
 #include <iostream>
+#include <sstream>
 #include <unistd.h>
 #include <algorithm>
 #include <string.h>
@@ -51,7 +52,6 @@ void ConfigManager::do_work() {
             close(_socket);
             exit(EXIT_FAILURE);
         }
-        cout << "client connected" << endl;
         // set keepalive
         int optval = 1;
         socklen_t optlen = sizeof(optval);
@@ -77,27 +77,18 @@ void ConfigManager::do_work() {
             }
             if(n<=0) {
                 // close client socket
-                cout << "Client disconnected" << endl;
                 client_connected = false;
                 continue;
             }
-            // remove newline at the end
+            // remove newline characters
             line.erase(std::remove(line.begin(), line.end(), '\n'), line.end());
             line.erase(std::remove(line.begin(), line.end(), '\r'), line.end());
 
-            if(line == "Exit:") {
-                client_connected = false;
-                continue;
-            }
+            
             
             size_t pos = line.find_first_of(':');
             if(pos == string::npos) {
-                bzero(buf, BUFFER_SIZE);
-                strcpy(&buf[0], "Invalid command. No colon ':' found in string.\n");
-                n = write(client, buf, strlen(buf)+1);
-                if(n<=0) {
-                    client_connected = false;
-                }
+                client_connected = SendToClient(client, "Invalid command. No colon ':' found in string.");
                 continue;
             }                
             
@@ -105,16 +96,28 @@ void ConfigManager::do_work() {
             string cmd = line.substr(0,pos);
             string arg = line.substr(pos+1,line.length()-pos);
             
+            // some meta-commands
+            if(cmd=="Exit") {
+                client_connected = false;
+                continue;
+            }
+            else if(cmd=="List") {
+                stringstream ss;
+                ss << "Available commands: Exit List ";
+                for (map<string, ConfigCallback>::iterator it = _callbacks.begin(); it != _callbacks.end(); ++it) {
+                    ss << it->first << " ";
+                }
+                client_connected = SendToClient(client,  ss.str());
+                continue;
+            }
+            
+            
+            
             // be careful about unlocking the mutex properly
             pthread_mutex_lock(&m_mutex);
 
             if(_callbacks.count(cmd)==0) {
-                bzero(buf, BUFFER_SIZE);
-                strcpy(&buf[0], "Command not found in list.\n");
-                n = write(client, buf, strlen(buf)+1);
-                if(n<=0) {
-                    client_connected = false;
-                }
+                client_connected = SendToClient(client, "Command not found. Try 'List:'.");
                 pthread_mutex_unlock(&m_mutex);
                 continue;
             }            
@@ -122,13 +125,10 @@ void ConfigManager::do_work() {
             int ret = _callbacks[cmd](arg);
             pthread_mutex_unlock(&m_mutex);
             
-            if(ret>0) {
-                bzero(buf, BUFFER_SIZE);
-                strcpy(&buf[0], "Command returned non-zero value.\n");
-                n = write(client, buf, strlen(buf)+1);
-                if(n<=0) {
-                    client_connected = false;
-                }                
+            if(ret>0) {         
+                stringstream ss;
+                ss << "Command returned non-zero value: " << ret;
+                client_connected = SendToClient(client,  ss.str());        
             }
             
             
@@ -137,6 +137,13 @@ void ConfigManager::do_work() {
         // properly close the socket after exiting the client's while loop
         close(client);        
     }
+}
+
+bool ConfigManager::SendToClient(int client, string msg)
+{
+    msg += "\n";
+    int n = write(client, msg.c_str(), msg.length()+1);
+    return n == msg.length()+1;
 }
 
 void ConfigManager::InitSocket()
