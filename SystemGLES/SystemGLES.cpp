@@ -1,6 +1,8 @@
 #include "SystemGLES.h"
 #include <iostream>
 
+#include "../ConfigManager.h"
+
 static MyGLWindow* win;
 
 void InitGL() {
@@ -22,7 +24,9 @@ void RunGL(GLApp& app) {
     app.Init();
     win->app = &app;
     while(1) {
+        pthread_mutex_lock(ConfigManager::I().Mutex());
         win->paintGL();
+        pthread_mutex_unlock(ConfigManager::I().Mutex());
     }
     bcm_host_deinit();
 }

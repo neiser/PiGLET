@@ -4,7 +4,10 @@
 #include <iostream>
 #include "stdlib.h"
 
+#include "../ConfigManager.h"
+
 using namespace std;
+
 
 
 static GLApp* currentInstance;
@@ -27,10 +30,12 @@ int GetWindowHeight() {
 }
 
 static void drawCallback() {
+    pthread_mutex_lock(ConfigManager::I().Mutex());
     currentInstance->Draw();
     glFlush();
     glFinish();
     glutSwapBuffers();
+    pthread_mutex_unlock(ConfigManager::I().Mutex());
 }
 
 void toggleFullscreen() {
