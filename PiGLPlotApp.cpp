@@ -20,6 +20,10 @@ void testApp::Draw(){
 
     windowman.Draw();
 
+    GLenum err = glGetError();
+    if(err != GL_NO_ERROR) {
+        cerr << "OpenGL Error (fix that!): " << gluErrorString(err) << endl;        
+    }
 }
 void testApp::Init(){
     cout << "Starting a test app!" << endl;
