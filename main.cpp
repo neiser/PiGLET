@@ -10,11 +10,8 @@ using namespace PiGLPlot;
 
 int main()
 {
-    // start the config manager
-    ConfigManager::I().go();
-    // start EPICS
-    Epics::I().init();
-    //return 0;
+    Epics::I().removePV("Test");
+    
     // system-specific InitGL
     InitGL();
     // ..now some system-wide GL stuff

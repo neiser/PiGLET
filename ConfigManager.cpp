@@ -16,16 +16,14 @@ ConfigManager::ConfigManager() :
     InitSocket();
     
     setCmd("Kill", BIND_MEM_CB(&ConfigManager::Kill, this));
+    
+    pthread_create(&m_thread, 0, &ConfigManager::start_thread, this);
 }
 
 ConfigManager::~ConfigManager()
 {
     pthread_mutex_destroy(&m_mutex);
     close(_socket);
-}
-
-void ConfigManager::go() {
-    pthread_create(&m_thread, 0, &ConfigManager::start_thread, this);
 }
 
 void ConfigManager::setCmd(string cmd, ConfigManager::ConfigCallback cb)

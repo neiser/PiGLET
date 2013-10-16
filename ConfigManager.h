@@ -3,7 +3,6 @@
 
 #include <iostream>
 #include <map>
-#include <functional>
 
 extern "C" {
 #include <pthread.h>
@@ -22,8 +21,6 @@ class ConfigManager
 {
 public:
 
-    // Create the thread and start work
-    void go();
     typedef Callback<int (const std::string&)> ConfigCallback;
     void setCmd(std::string cmd, ConfigCallback cb);
 

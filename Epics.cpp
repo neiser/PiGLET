@@ -1,26 +1,16 @@
 #include <iostream>
-#include <cadef.h>
 #include "Epics.h"
 
 using namespace std;
-using namespace PiGLPlot;
 
-
-struct PiGLPlot::PV {
-  chid            mychid;
-  evid            myevid;
-  dbr_time_double dbrval;
-  bool            connected;
-};
-
-static void exceptionCallback( exception_handler_args args ) {
+void Epics::exceptionCallback( exception_handler_args args ) {
   string pvname = ( args.chid ? ca_name( args.chid ) : "unknown" );
   cerr << "CA Exception: " << endl
        << "Status: " << ca_message(args.stat) << endl
        << "Channel: " + pvname << endl;
 }
 
-static void connectionCallback( connection_handler_args args ) {
+void Epics::connectionCallback( connection_handler_args args ) {
 #ifndef NDEBUG
   cout << "ConnectionCallback:" << endl
             << "PV:       " << ca_name( args.chid ) << endl
@@ -55,10 +45,11 @@ static void connectionCallback( connection_handler_args args ) {
               << endl;
     PV* puser = (PV*)ca_puser( args.chid );
     puser->connected = false;
+    
   }
 }
 
-static void eventCallback( event_handler_args args ) {
+void Epics::eventCallback( event_handler_args args ) {
 #ifndef NDEBUG
   cout << "eventCallback:" << endl
 	    << "PV:      " << ca_name( args.chid ) << endl
@@ -76,42 +67,38 @@ static void eventCallback( event_handler_args args ) {
   }
 }
 
-PiGLPlot::Epics::Epics () {
-
+void Epics::addPV(const string &name, Epics::EpicsCallback cb)
+{
+    cout << "Added" << endl;
 }
 
-PiGLPlot::Epics::~Epics () {
+void Epics::removePV(const string &name)
+{
+    cout << "Removed" << endl;
 }
 
-void PiGLPlot::Epics::init() {
-
-  if( isInitialized_ ) {
-    cout << "Epics has already been initialized." << endl;
-    return;
-  }
-  
-  ca_context_create( ca_enable_preemptive_callback );
-  ca_add_exception_event( exceptionCallback, NULL );
-  PV* puser = new PV;
-  subscribe("MyTestRecord", puser);
-  ca_pend_event(1.e-12);
-  pvs.push_back(puser); 
-
-  isInitialized_ = true;
+Epics::Epics () {
+    ca_context_create( ca_enable_preemptive_callback );
+    ca_add_exception_event( exceptionCallback, NULL );
+    PV* puser = new PV;
+    subscribe("MyTestRecord", puser);
+    ca_poll();
+    pvs.push_back(puser); 
 }
 
-void PiGLPlot::Epics::close() {
-  std::vector<PV*>::const_iterator it;
-  for ( it = pvs.begin(); it != pvs.end(); ++it ) {
-    ca_clear_subscription ( (*it)->myevid );
-    ca_clear_channel( (*it)->mychid );
-  }
-  
-  pvs.clear();
-  ca_context_destroy();
+Epics::~Epics () {
+    std::vector<PV*>::const_iterator it;
+    for ( it = pvs.begin(); it != pvs.end(); ++it ) {
+      ca_clear_subscription ( (*it)->myevid );
+      ca_clear_channel( (*it)->mychid );
+      delete *it;
+    }
+    pvs.clear();
+    ca_context_destroy();
 }
 
-void PiGLPlot::Epics::subscribe(const std::string& pvname, PV* puser ) {
+
+void Epics::subscribe(const std::string& pvname, PV* puser ) {
   int ca_rtn = ca_create_channel( pvname.c_str(),      // PV name
                                   connectionCallback,  // name of connection callback function
                                   puser,               // 
@@ -129,5 +116,4 @@ void PiGLPlot::Epics::subscribe(const std::string& pvname, PV* puser ) {
                                    &puser->myevid );         // unique event id needed to clear subscription
     
   SEVCHK(ca_rtn, "ca_create_subscription failed");
-  pvs.push_back(puser); 
 }
