@@ -5,6 +5,7 @@
 #include <vector>
 #include <string>
 #include <cadef.h>
+#include <time.h>
 
 #include "Callback.h"
 using util::Callback; // Callback lives in the util namespace
@@ -36,6 +37,11 @@ public:
     
     void TestCallback(const CallbackMode& m, const double& t, const double& y);
     
+    // the reference timepoint for 
+    // timestamps given to the
+    // epics callbacks
+    double t0;
+    
 private:
     
     Epics ();
@@ -54,6 +60,7 @@ private:
         
     // Storage for values
     std::map<std::string, PV*> pvs;
+       
     
     static void connectionCallback( connection_handler_args args );
     static void eventCallback( event_handler_args args );

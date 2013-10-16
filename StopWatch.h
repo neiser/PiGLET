@@ -5,7 +5,7 @@
 
 class StopWatch {
 public:
-    typedef struct timespec timespec;
+    //typedef struct timespec timespec;
 
     /**
      * @brief Calculate the differnce in seconds of two timespec values
@@ -13,14 +13,14 @@ public:
      * @param stop The later time point
      * @return difference in seconds
      */
-    float time_difference( const StopWatch::timespec& start, const StopWatch::timespec& stop ) {
+    float time_difference( const timespec& start, const timespec& stop ) {
         float time = stop.tv_sec - start.tv_sec + (stop.tv_nsec - start.tv_nsec) * 1E-9;
         return time;
     }
 
 protected:
-    StopWatch::timespec _start;
-    StopWatch::timespec _stop;
+    timespec _start;
+    timespec _stop;
 
 public:
     StopWatch();

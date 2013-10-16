@@ -67,6 +67,9 @@ void PlotWindow::Draw(){
     //    } else {
     //graph.SetNow(frame/100.0);
     //    }
+    timespec now;
+    clock_gettime(CLOCK_REALTIME, &now);
+    graph.SetNow(now.tv_sec + now.tv_nsec/1.0e9-Epics::I().t0);
     ++frame;
 }
 

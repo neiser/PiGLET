@@ -2,6 +2,7 @@
 #include <iomanip>
 #include "Epics.h"
 
+
 using namespace std;
 
 void Epics::exceptionCallback( exception_handler_args args ) {
@@ -64,7 +65,9 @@ void Epics::eventCallback( event_handler_args args ) {
   } else {
     dbr_time_double* dbr = (dbr_time_double*)args.dbr; // Convert void* to correct data type
     PV* puser = (PV*)ca_puser( args.chid );             // get pointer to corresponding PV struct
-    double t = dbr->stamp.secPastEpoch + (double)dbr->stamp.nsec/1e9;
+    timespec stamp;
+    epicsTimeToTimespec(&stamp, &dbr->stamp);
+    double t =  (stamp.tv_sec + stamp.tv_nsec/1.0e9) - I().t0;
     (puser->cb)(NewValue, t, dbr->value);
   }
 }
@@ -111,6 +114,9 @@ Epics::Epics () {
     ca_context_create( ca_enable_preemptive_callback );
     ca_add_exception_event( exceptionCallback, NULL );
     ca_poll();
+    timespec t;
+    clock_gettime(CLOCK_REALTIME, &t);
+    t0 = t.tv_sec + t.tv_nsec/1.0e9;
 }
 
 Epics::~Epics () {
