@@ -30,12 +30,12 @@ int GetWindowHeight() {
 }
 
 static void drawCallback() {
-    pthread_mutex_lock(ConfigManager::I().Mutex());
+    ConfigManager::I().MutexLock();
     currentInstance->Draw();
     glFlush();
     glFinish();
     glutSwapBuffers();
-    pthread_mutex_unlock(ConfigManager::I().Mutex());
+    ConfigManager::I().MutexUnlock();
 }
 
 void toggleFullscreen() {

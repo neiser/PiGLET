@@ -24,7 +24,10 @@ public:
     typedef Callback<int (const std::string&)> ConfigCallback;
     void setCmd(std::string cmd, ConfigCallback cb);
 
-    pthread_mutex_t* Mutex();
+    void MutexLock();
+    void MutexUnlock();
+    
+    
     
     // access to the singleton instance
     static ConfigManager& I() {

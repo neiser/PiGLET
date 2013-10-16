@@ -1,7 +1,7 @@
 #include <iostream>
 #include <iomanip>
 #include "Epics.h"
-
+#include "ConfigManager.h"
 
 using namespace std;
 
@@ -12,54 +12,22 @@ void Epics::exceptionCallback( exception_handler_args args ) {
        << "Channel: " + pvname << endl;
 }
 
-void Epics::connectionCallback( connection_handler_args args ) {
-//#ifndef NDEBUG
-//  cout << "ConnectionCallback:" << endl
-//            << "PV:       " << ca_name( args.chid ) << endl
-//            << "Type:     " << ca_field_type( args.chid ) << endl
-//            << "Elements: " << ca_element_count( args.chid ) << endl
-//            << "Host:     " << ca_host_name( args.chid ) << endl
-//            << "Event:    " << ( args.op == CA_OP_CONN_UP ? "Connected" : " Disconnected" )
-//            << endl;
-//#endif
-  
+void Epics::connectionCallback( connection_handler_args args ) { 
+  ConfigManager::I().MutexLock();  
   if ( args.op == CA_OP_CONN_UP ) {
     // channel has connected
     PV* puser = (PV*)ca_puser( args.chid );
-
     puser->cb(Connected, 0, 0);
-    
-    // Create Subscription here or in init function?
-    // PRO: 100% sure to use the correct datatype
-    // CONTRA: how to invoke ca_pend_event()? should only be invoked after ALL subscribtions are made
-
-    // ca_create_subscription( dbf_type_to_DBR_TIME( ca_field_type ( args.chid ) ), // CA data type
-    //                         ca_element_count ( args.chid ),                      // number of elements
-    //                         args.chid,                                           // unique channel id
-    //                         DBE_VALUE | DBE_ALARM,                               // event mask (change of value and alarm)
-    //                         eventCallback,                                       // name of event callback function
-    //                         puser,
-    //                         &puser->myevid );                                    // unique event id needed to clear subscription
-
-  } else { // args.op == CA_OP_CONN_DOWN
-    // channel has disconnected
-    cerr << "Epics has lost connection to Channel "
-              << ca_name( args.chid )
-              << endl;
+   } 
+  else { // args.op == CA_OP_CONN_DOWN
     PV* puser = (PV*)ca_puser( args.chid );
     puser->cb(Disconnected, 0, 0);
   }
+  ConfigManager::I().MutexUnlock();
 }
 
 void Epics::eventCallback( event_handler_args args ) {
-//#ifndef NDEBUG
-//  cout << "eventCallback:" << endl
-//	    << "PV:      " << ca_name( args.chid ) << endl
-//	    << "Type     " << ca_field_type( args.chid ) << endl
-//	    << "Elements " << ca_element_count( args.chid ) << endl
-//	    << "Host     " << ca_host_name( args.chid ) << endl;
-//#endif
-
+  ConfigManager::I().MutexLock();
   if ( args.status != ECA_NORMAL ) {
       cerr << "Error in EPICS event callback" << endl;
   } else {
@@ -70,10 +38,12 @@ void Epics::eventCallback( event_handler_args args ) {
     double t =  (stamp.tv_sec + stamp.tv_nsec/1.0e9) - I().t0;
     (puser->cb)(NewValue, t, dbr->value);
   }
+  ConfigManager::I().MutexUnlock();
 }
 
 void Epics::addPV(const string &pvname, Epics::EpicsCallback cb)
 {
+    ConfigManager::I().MutexLock();
     PV* puser = new PV;
     puser->cb = cb;
     int ca_rtn = ca_create_channel( pvname.c_str(),      // PV name
@@ -98,16 +68,21 @@ void Epics::addPV(const string &pvname, Epics::EpicsCallback cb)
     
     // dont know if this is really meaningful here (also done in ctor)
     ca_poll();        
+    ConfigManager::I().MutexUnlock();
     cout << "PV registered" << endl;
 }
 
 void Epics::removePV(const string &name)
 {
+    ConfigManager::I().MutexLock();
     PV* pv = pvs[name];
     ca_clear_subscription ( pv->myevid );
     ca_clear_channel( pv->mychid );
-    delete pv;
+    pvs.erase(name);
+    delete pv;    
+    ConfigManager::I().MutexUnlock();
     cout << "PV unregisterd" << endl;
+    
 }
 
 Epics::Epics () {

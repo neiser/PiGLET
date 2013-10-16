@@ -38,9 +38,14 @@ void ConfigManager::setCmd(string cmd, ConfigManager::ConfigCallback cb)
     pthread_mutex_unlock(&m_mutex);
 }
 
-pthread_mutex_t *ConfigManager::Mutex()
+void ConfigManager::MutexLock()
 {
-    return &m_mutex;
+    pthread_mutex_lock(&m_mutex);
+}
+
+void ConfigManager::MutexUnlock()
+{
+    pthread_mutex_unlock(&m_mutex);
 }
 
 

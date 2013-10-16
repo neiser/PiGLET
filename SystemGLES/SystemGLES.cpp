@@ -24,9 +24,9 @@ void RunGL(GLApp& app) {
     app.Init();
     win->app = &app;
     while(1) {
-        pthread_mutex_lock(ConfigManager::I().Mutex());
+        ConfigManager::I().MutexLock();
         win->paintGL();
-        pthread_mutex_unlock(ConfigManager::I().Mutex());
+        ConfigManager::I().MutexUnlock();
     }
     bcm_host_deinit();
 }
