@@ -189,7 +189,7 @@ void ConfigManager::InitSocket()
     listen(_socket,0);
 }
 
-int ConfigManager::Kill(string arg)
+int ConfigManager::Kill(const string& arg)
 {
     exit(EXIT_SUCCESS);
 }

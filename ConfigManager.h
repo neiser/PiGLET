@@ -12,7 +12,7 @@ extern "C" {
 #include <sys/socket.h>
 }
 
-#include <Callback.h>
+#include "Callback.h"
 
 #define BUFFER_SIZE 1024
 
@@ -24,7 +24,7 @@ public:
 
     // Create the thread and start work
     void go();
-    typedef Callback<int (std::string)> ConfigCallback;
+    typedef Callback<int (const std::string&)> ConfigCallback;
     void setCmd(std::string cmd, ConfigCallback cb);
 
     pthread_mutex_t* Mutex();
@@ -64,7 +64,7 @@ private:
     
     void InitSocket();
     
-    int Kill(std::string arg);
+    int Kill(const std::string& arg);
 };
 
 #endif // CONFIGMANAGER_H
