@@ -29,35 +29,6 @@ TextRenderer::~TextRenderer()
         DestroyMagickWand(mw);
 }
 
-void TextRenderer::Text2TextureFixedSize(const GLuint texhandle, const string &text, const int w, const int h, float& texw, float& texh)
-{
-   // _watch.Start();
-
-    MagickSetSize(mw,0,0);
-
-    std::stringstream rendercmd;
-    rendercmd << "label:" << text;
-
-    MagickReadImage(mw, rendercmd.str().c_str());
-
-    size_t _w = MagickGetImageWidth(mw);
-    size_t _h = MagickGetImageHeight(mw);
-    MagickExtentImage(mw,w,h,0,0);
-
-    size_t width = MagickGetImageWidth(mw);
-    size_t height = MagickGetImageHeight(mw);
-
-    CopyToTexture( texhandle, width, height, GL_LUMINANCE);
-
-    //_watch.Stop();
-
-    //cout << "Text generation took: " << _watch.TimeElapsed() << " s" << endl;
-
-    texw = ((float)_w) / w;
-    texh = ((float)_h) / w;
-
-}
-
 uint32_t RoundPow2( uint32_t val ) {
     val--;
     val = (val >> 1) | val;
@@ -69,7 +40,7 @@ uint32_t RoundPow2( uint32_t val ) {
     return val;
 }
 
-void TextRenderer::CopyToTexture( const GLuint texhandle, const int width, const int height, GLenum TextureMode ) {
+void TextRenderer::CopyToTexture(Texture &tex, const int width, const int height, GLenum TextureMode ) {
 
     string exportMode = "I";
     unsigned char bytes = 1;
@@ -99,7 +70,7 @@ void TextRenderer::CopyToTexture( const GLuint texhandle, const int width, const
     // Export the whole image
     MagickExportImagePixels(mw, 0, 0, width, height, exportMode.c_str(), CharPixel, Buffer);
 
-    glBindTexture(GL_TEXTURE_2D, texhandle);
+    glBindTexture(GL_TEXTURE_2D, tex.GetTexHandle());
 
     glTexImage2D(GL_TEXTURE_2D, 0, TextureMode, width, height, 0, TextureMode, GL_UNSIGNED_BYTE, Buffer);
 
@@ -110,7 +81,7 @@ void TextRenderer::CopyToTexture( const GLuint texhandle, const int width, const
 
 }
 
-void TextRenderer::Text2Texture3(const GLuint texhandle, const string &text, float& texw, float& texh, float& aspect)
+void TextRenderer::Text2Texture( Texture& tex, const string &text )
 {
     //_watch.Start();
 
@@ -132,19 +103,17 @@ void TextRenderer::Text2Texture3(const GLuint texhandle, const string &text, flo
     const size_t width = MagickGetImageWidth(mw);
     const size_t height = MagickGetImageHeight(mw);
 
-    CopyToTexture( texhandle, width, height, GL_LUMINANCE );
+    CopyToTexture( tex, width, height, GL_LUMINANCE );
 
-    //_watch.Stop();
 
-  //  cout << "Text generation took: " << _watch.TimeElapsed() << " s" << endl;
+    float texw = ((float)_w) / width;
+    float texh = ((float)_h) / height;
 
-    texw = ((float)_w) / width;
-    texh = ((float)_h) / height;
-    aspect = (float) _w / (float) _h;
-
+    tex.SetMaxUV( texw, texh );
+    tex.SetAspect((float) _w / (float) _h);
 }
 
-void TextRenderer::LoadImage(const GLuint texhandle, const string url, float &texw, float &texh, float &aspect)
+void TextRenderer::LoadImage( Texture& tex, const string url )
 {
     bool ok = MagickReadImage(mw, url.c_str() );
 
@@ -155,19 +124,15 @@ void TextRenderer::LoadImage(const GLuint texhandle, const string url, float &te
            const size_t nw = RoundPow2( width );
            const size_t nh = RoundPow2( height );
 
-           CopyToTexture( texhandle, nw, nh, GL_RGBA);
+           CopyToTexture( tex, nw, nh, GL_RGBA);
 
-           //_watch.Stop();
+           tex.SetMaxUV( (float) width / nw, (float) height / nh);
+           tex.SetAspect( (float) width / (float) height );
 
-         //  cout << "Text generation took: " << _watch.TimeElapsed() << " s" << endl;
-
-           texw = ((float)width) / nw;
-           texh = ((float)height) / nh;
-           aspect = (float) width / (float) height;
-  //         MagickWriteImage(mw, "loaded.png");
     } else {
         cout << "ERROR loading from " << url << endl;
-        texw = texh = aspect =0;
+        tex.SetAspect(0.0);
+        tex.SetMaxUV(0,0);
     }
 }
 
