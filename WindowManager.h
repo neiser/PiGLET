@@ -19,8 +19,9 @@ private:
     std::vector<Window*> _window_list;
     std::vector<int> _rows;
 
-    int callback_remove_window( std::string arg );
-    int callback_remove_all_windows(std::string arg );
+    int callback_remove_window( const std::string &arg );
+    int callback_remove_all_windows(const std::string& arg );
+    int callback_add_plotwindow( const std::string& arg );
 
 
 

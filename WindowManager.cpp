@@ -12,16 +12,22 @@ std::ostream& operator<<( std::ostream& stream, const WindowManager& wman ) {
     return stream;
 }
 
-int WindowManager::callback_remove_window(string arg){
+int WindowManager::callback_remove_window(const string& arg){
     return RemoveWindow(atoi(arg.c_str()));
 }
 
-int WindowManager::callback_remove_all_windows(string arg){
+int WindowManager::callback_remove_all_windows(const string &arg){
 int i;
 for ( i = NumWindows() ; i > 0 ; --i){
     RemoveWindow(0);
 }
 return i;
+}
+
+int WindowManager::callback_add_plotwindow(const string &arg)
+{
+    AddWindow( new PlotWindow(arg));
+    return 0;
 }
 
 void WindowManager::align_windws(){
@@ -76,6 +82,7 @@ WindowManager::WindowManager(const int dx, const int dy): _size_x(dx), _size_y(d
 {
     ConfigManager::I().setCmd("RemoveWindow",BIND_MEM_CB(&WindowManager::callback_remove_window,this));
     ConfigManager::I().setCmd("RemoveWindows",BIND_MEM_CB(&WindowManager::callback_remove_all_windows,this));
+    ConfigManager::I().setCmd("AddPlotWindow",BIND_MEM_CB(&WindowManager::callback_add_plotwindow,this));
 }
 
 int WindowManager::RemoveWindow(const int n){
