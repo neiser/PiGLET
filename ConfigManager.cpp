@@ -20,7 +20,6 @@ ConfigManager::ConfigManager() :
 
 ConfigManager::~ConfigManager()
 {
-    cout << "dtor" << endl;
     pthread_mutex_destroy(&m_mutex);
     close(_socket);
 }
@@ -48,7 +47,7 @@ void ConfigManager::do_work() {
         struct sockaddr_in client_addr; /* Client address */
         socklen_t client_addr_size = sizeof(client_addr);
         if ((client = accept(_socket, (struct sockaddr*)&client_addr, &client_addr_size)) < 0) {
-            perror("accept()");
+            perror("client accept()");
             close(_socket);
             exit(EXIT_FAILURE);
         }
@@ -60,6 +59,11 @@ void ConfigManager::do_work() {
             close(client);
             continue;
         }
+        
+        // close the listening socket 
+        close(_socket);
+        
+        // start 
         bool client_connected = true;
         while(client_connected) {
             char buf[BUFFER_SIZE];
@@ -136,6 +140,8 @@ void ConfigManager::do_work() {
         
         // properly close the socket after exiting the client's while loop
         close(client);        
+        // but open the server socket again
+        InitSocket();
     }
 }
 
@@ -148,8 +154,6 @@ bool ConfigManager::SendToClient(int client, string msg)
 
 void ConfigManager::InitSocket()
 {
-    cout << "Init Socket binding to " << _address << ":" << _port << endl;
-
     _socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     if (_socket==-1) {
         perror("socket()");
@@ -174,12 +178,10 @@ void ConfigManager::InitSocket()
         perror("bind()");
         close(_socket);
         exit(EXIT_FAILURE);
-    }
-
-    // allow maximum one connection at a time
-    listen(_socket, 1);
-
+    }    
     
+    // start listening
+    listen(_socket,0);
 }
 
 int ConfigManager::Kill(string arg)
