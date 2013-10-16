@@ -8,11 +8,11 @@ class Window;
 class Widget{
 
 protected:
-    Window* _owner;
+    const Window* _owner;
     float GetWindowAspect() const;
 
 public:
-    Widget( Window* owner): _owner(owner){}
+    Widget( const Window* owner ): _owner(owner){}
     void Draw();
 
 };

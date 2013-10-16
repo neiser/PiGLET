@@ -9,7 +9,7 @@
 
 using namespace std;
 
-NumberLabel::NumberLabel( Window* owner ):
+NumberLabel::NumberLabel(const Window *owner ):
     Widget(owner),
     _color(dTextColor),
     _prec(2),

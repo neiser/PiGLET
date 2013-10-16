@@ -130,7 +130,7 @@ TextLabel::~TextLabel()
     glDeleteTextures(1, &_texture);
 }
 
-TextLabel::TextLabel( Window* owner, const float x1, const float y1, const float x2, const float y2):
+TextLabel::TextLabel( const Window* owner, const float x1, const float y1, const float x2, const float y2):
     Widget(owner), _rext(x1, y1, x2, y2), _color( dTextColor ),_box(_rext)
 {
     glGenTextures(1,&_texture);
