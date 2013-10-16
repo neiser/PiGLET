@@ -43,7 +43,7 @@ public:
     void Draw();
 
     void SetNow( const float now ) { _blocklist.SetNow(now); }
-    void SetBackLength( const float len ) { _blocklist.SetBackLength( len ); }
+    void SetBackLength( const float len ) { _blocklist.SetBackLength( len ); UpdateTicks(); }
 
 };
 #endif

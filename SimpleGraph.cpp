@@ -87,7 +87,7 @@ void SimpleGraph::UpdateTicks(){
     t.x = 0;
     int i = 0;
     while( true ){
-        t.x = xlen - ( i) * dx;
+        t.x = - ( i) * dx;
         if ( t.x < -xlen ) break;
         t.y = -ylen/2;
         _xticks.push_back(t);
