@@ -5,11 +5,12 @@
 #include <string>
 
 #include "Structs.h"
-#include "TextRenderer.h"
 #include "BlockBuffer.h"
 #include "Widget.h"
 #include "NumberLabel.h"
+#include "TextLabel.h"
 #include "SimpleGraph.h"
+
 class Window {
 private:
     float _x_pixles;
