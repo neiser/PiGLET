@@ -71,7 +71,7 @@ uint32_t RoundPow2( uint32_t val ) {
 
 void TextRenderer::CopyToTexture( const GLuint texhandle, const int width, const int height, GLenum TextureMode ) {
 
-    char* exportMode = "I";
+    string exportMode = "I";
     unsigned char bytes = 1;
 
     switch (TextureMode) {
@@ -97,7 +97,7 @@ void TextRenderer::CopyToTexture( const GLuint texhandle, const int width, const
     Buffer = new unsigned char[width * height * bytes];
 
     // Export the whole image
-    MagickExportImagePixels(mw, 0, 0, width, height, exportMode, CharPixel, Buffer);
+    MagickExportImagePixels(mw, 0, 0, width, height, exportMode.c_str(), CharPixel, Buffer);
 
     glBindTexture(GL_TEXTURE_2D, texhandle);
 
