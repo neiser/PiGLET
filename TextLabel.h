@@ -11,11 +11,10 @@ class TextLabel: public Widget {
 private:
 
     std::string _text;      // the text to draw
-    GLuint      _texture;   // texture handle
+    Texture      _texture;   // texture handle
     Color       _color;     // color for the text
     Rectangle   _rext;      // Maximum size of the text
     Rectangle   _box;       // the actual drawing box, always smaller than the user defined text rectangle
-    vec2_t _texcoords[4];      // texture coordinates
 
 public:
 
