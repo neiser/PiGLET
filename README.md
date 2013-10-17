@@ -15,3 +15,15 @@ Dependencies
  * GLUT (for PC)
  * /opt/vc headers (for the PI)
  * EPICS (tested with 3.14.12.3 and 3.15.0.1)
+
+EPICS 3.15 Quirks
+=================
+
+ * The PERL library is not correctly named (extraneous . in filename).
+   See
+   [Known Problems](http://www.aps.anl.gov/epics/base/R3-15/0-docs/KnownProblems.html).
+   Thus in order to correctly run the PERL scripts below `scripts/`
+   you must apply this
+   [Patch](http://www.aps.anl.gov/epics/base/R3-15/0-docs/CONFIG-Unix.patch)
+   **before** building.
+
