@@ -2,7 +2,6 @@
 #include <iomanip>
 #include "Epics.h"
 #include "ConfigManager.h"
-#include <epicsTime.h>
 
 using namespace std;
 
@@ -42,8 +41,13 @@ void Epics::eventCallback( event_handler_args args ) {
   I().MutexUnlock();
 }
 
-void Epics::addPV(const string &pvname, Epics::EpicsCallback cb)
+int Epics::addPV(const string &pvname, Epics::EpicsCallback cb)
 {
+    // check if we already know that PV
+    if(pvs.count(pvname)>0) {
+        return 1;
+    }
+    
     PV* puser = new PV;
     puser->cb = cb;
     int ca_rtn = ca_create_channel( pvname.c_str(),      // PV name
@@ -69,17 +73,17 @@ void Epics::addPV(const string &pvname, Epics::EpicsCallback cb)
     // dont know if this is really meaningful here (also done in ctor)
     ca_poll();        
     cout << "PV registered" << endl;
+    return 0;
 }
 
 void Epics::removePV(const string &name)
 {
-    return;
     PV* pv = pvs[name];
     ca_clear_subscription ( pv->myevid );
     ca_clear_channel( pv->mychid );
     pvs.erase(name);
     delete pv;    
-    cout << "PV unregisterd" << endl;
+    cout << "PV unregistered" << endl;
 }
 
 double Epics::GetCurrentTime()

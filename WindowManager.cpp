@@ -17,17 +17,16 @@ int WindowManager::callback_remove_window(const string& arg){
 }
 
 int WindowManager::callback_remove_all_windows(const string &arg){
-int i;
-for ( i = NumWindows() ; i > 0 ; --i){
-    RemoveWindow(0);
-}
-return i;
+    int i;
+    for ( i = NumWindows() ; i > 0 ; --i){
+        RemoveWindow(0);
+    }
+    return i;
 }
 
 int WindowManager::callback_add_plotwindow(const string &arg)
 {
-    AddWindow( new PlotWindow(arg));
-    return 0;
+    return AddWindow(new PlotWindow(arg));
 }
 
 void WindowManager::align_windws(){
@@ -59,14 +58,14 @@ void WindowManager::align_windws(){
     }
     //cout << endl << "New tiling:" << endl;
     //for ( int r = 0 ; r < _rows.size() ; ++r ){
-     //   cout << "  " <<_rows.at(r) << endl;
+    //   cout << "  " <<_rows.at(r) << endl;
     //}
     //cout << endl;
-
+    
     float wscaley = 1. / _rows.size();
     float wscalex = 1.;
     int i_window = 0;
-
+    
     for ( int row = 0; row < _rows.size() ; ++row){
         for ( int in_row = 0 ; in_row < _rows.at(row) ; ++in_row ){
             wscalex = 1. / _rows.at(row);
@@ -86,6 +85,18 @@ WindowManager::WindowManager(const int dx, const int dy): _size_x(dx), _size_y(d
     ConfigManager::I().setCmd("AddPlotWindow",BIND_MEM_CB(&WindowManager::callback_add_plotwindow,this));
 }
 
+int WindowManager::AddWindow(Window *win)
+{
+    int ret = win->Init();
+    if(ret==0) {
+        _window_list.push_back(win);
+        align_windws();
+    }
+    else {
+        delete win;
+    }
+}
+
 int WindowManager::RemoveWindow(const int n){
     if ( n >= NumWindows() ) return 1;
     delete _window_list.at(n);
@@ -95,13 +106,13 @@ int WindowManager::RemoveWindow(const int n){
 }
 
 void WindowManager::Draw(){
-
+    
     float dy = 2. / _rows.size();
     float dx = 0;
-
+    
     float wscaley = 1. / _rows.size();
     float wscalex = 1.;
-
+    
     int i_window = 0;
     for ( int row = 0; row < _rows.size() ; ++row){
         dx = 2. / _rows.at(row);
@@ -115,6 +126,6 @@ void WindowManager::Draw(){
             glPopMatrix();
         }
     }
-
-
+    
+    
 }

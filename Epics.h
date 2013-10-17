@@ -22,7 +22,7 @@ public:
     };
     
     typedef Callback<void (const CallbackMode&, const double&, const double&)> EpicsCallback;
-    void addPV(const std::string& pvname, EpicsCallback cb);
+    int addPV(const std::string& pvname, EpicsCallback cb);
     void removePV(const std::string& name);
     
     // Implement a singleton

@@ -16,11 +16,14 @@ class Window {
 private:
     float _x_pixels;
     float _y_pixels;
-    std::string _title;
+    std::string _name; // unique window name
 
 public:
 
-    Window( const std::string& title, const float xscale = 1, const float yscale = 1): _title(title) , _x_pixels(xscale), _y_pixels(yscale) {}
+    Window( const std::string& name, 
+            const float xscale = 1, 
+            const float yscale = 1) : 
+        _name(name) , _x_pixels(xscale), _y_pixels(yscale) {}
 
     virtual ~Window(){}
 
@@ -29,18 +32,21 @@ public:
     float& XPixels()  { return _x_pixels; }
     float& YPixels()  { return _y_pixels; }  
     
-    const std::string& Title() const { return _title; }
+    const std::string& Name() const { return _name; }
     
     virtual void Update() = 0;
-
     virtual void Draw() = 0;
+    virtual int Init() = 0;
 
 };
 
 class PlotWindow: public Window {
 private:
+    std::string _pvname; // the EPICS PV name
     std::string _xlabel;
     std::string _ylabel;
+    
+    bool _initialized;
 
     UnitBorderBox WindowArea;
 
@@ -58,7 +64,7 @@ public:
     std::string& Xlabel() { return _xlabel; }
     std::string& Ylabel() { return _ylabel; }
 
-    PlotWindow( const std::string& title,
+    PlotWindow( const std::string& pvname, 
                 const std::string& xlabel = "Always label your axes",
                 const std::string& ylabel = "Alawys label your axes",
                 const float xscale = 1,
@@ -67,8 +73,9 @@ public:
     virtual ~PlotWindow();
 
 
-    virtual void Update() { graph.UpdateTicks(); }
+    virtual void Update();
     virtual void Draw();
+    virtual int Init();
 };
 
 std::ostream& operator<<( std::ostream& stream, const Window& win );

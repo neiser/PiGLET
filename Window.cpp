@@ -30,50 +30,56 @@ void PlotWindow::callback_epics(const Epics::CallbackMode &m, const double &t, c
     }
 }
 
-PlotWindow::PlotWindow( const std::string& title,
-                        const std::string &xlabel,
-                        const std::string &ylabel,
+PlotWindow::PlotWindow( const std::string& pvname,
+                        const std::string& xlabel,
+                        const std::string& ylabel,
                         const float xscale,
                         const float yscale):
-    Window(title,xscale,yscale),
+    Window(pvname,xscale,yscale),
     _xlabel(xlabel),
     _ylabel(ylabel),
+    _pvname(pvname),
     WindowArea( dBackColor, dWindowBorderColor),
     graph(this, 10),
     text(this, -.95,0.82,.95,.98),
     frame(0)
 {
-    text.SetText(title);
-    Epics::I().addPV(title, BIND_MEM_CB(&PlotWindow::callback_epics, this));
+    text.SetText(pvname);
+    // don't forget to call Init()
+    // which also checks if the pvname is actually valid
 }
 
 PlotWindow::~PlotWindow() {
     cout << "Plotwindow dtor" << endl;
-    Epics::I().removePV(Title());
+    if(_initialized) {
+        Epics::I().removePV(_pvname);
+    }
 } 
 
 void PlotWindow::Draw(){
-    
+        
     // Window border
     WindowArea.Draw();
     
     graph.Draw();
     
     text.Draw();
-    
-    
-    // feed some data - only for testing
-    //    if( frame %10 == 0 ) {
-    //        vec2_t n;
-    //        n.x = frame/100.0;
-    //        n.y = sin(3.14157*frame/1000.0);
-    //    	graph.AddToBlockList(n);
-    
-    //    } else {
-    //graph.SetNow(frame/100.0);
-    //    }
+        
     graph.SetNow(Epics::I().GetCurrentTime());
+    
     ++frame;
+}
+
+int PlotWindow::Init()
+{
+    int ret = Epics::I().addPV(_pvname, BIND_MEM_CB(&PlotWindow::callback_epics, this));
+    _initialized = ret == 0;
+    return ret;
+}
+
+void PlotWindow::Update() 
+{ 
+    graph.UpdateTicks(); 
 }
 
 std::ostream& operator<<( std::ostream& stream, const Window& win ) {

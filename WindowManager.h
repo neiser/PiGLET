@@ -37,12 +37,9 @@ public:
     int& SizeY() { return _size_y; }
     const int NumWindows() { return _window_list.size();}
 
-    void AddWindow( Window *win){
-        _window_list.push_back(win);
-        align_windws();
-    }
+    int AddWindow( Window *win);
 
-    // remove window number n; returns false if it doesn't exist
+    // remove window number n; returns >0 if it fails
     int RemoveWindow( const int n );
 
     void Draw();
