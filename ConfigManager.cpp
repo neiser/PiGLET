@@ -12,41 +12,43 @@ using namespace std;
 ConfigManager::ConfigManager() :
     _address("0.0.0.0"), _port(1337), _callbacks()
 {
-    pthread_mutex_init(&m_mutex, NULL);
+    pthread_mutex_init(&_mutex, NULL);
+    pthread_cond_init (&_callback_done, NULL);
     InitSocket();
     
     setCmd("Kill", BIND_MEM_CB(&ConfigManager::Kill, this));
     
-    pthread_create(&m_thread, 0, &ConfigManager::start_thread, this);
+    pthread_create(&_thread, 0, &ConfigManager::start_thread, this);
 }
 
 ConfigManager::~ConfigManager()
 {
-    pthread_mutex_destroy(&m_mutex);
+    pthread_mutex_destroy(&_mutex);
+    pthread_cond_destroy(&_callback_done);
     close(_socket);
 }
 
 void ConfigManager::setCmd(string cmd, ConfigManager::ConfigCallback cb)
 {
-    pthread_mutex_lock(&m_mutex);
     // check if there is already a callback for that command
     if(_callbacks.count(cmd)!=0) {
         cerr << "Cmd " << cmd << " was already added. This should never happen." << endl;
         exit(EXIT_FAILURE);        
     }
     _callbacks[cmd] = cb;
-    pthread_mutex_unlock(&m_mutex);
 }
 
 void ConfigManager::MutexLock()
 {
-    pthread_mutex_lock(&m_mutex);
+    pthread_mutex_lock(&_mutex);
 }
 
 void ConfigManager::MutexUnlock()
 {
-    pthread_mutex_unlock(&m_mutex);
+    pthread_mutex_unlock(&_mutex);
 }
+
+
 
 
 void ConfigManager::do_work() {
@@ -126,24 +128,28 @@ void ConfigManager::do_work() {
             
             
             // be careful about unlocking the mutex properly
-            pthread_mutex_lock(&m_mutex);
+            pthread_mutex_lock(&_mutex);
 
             if(_callbacks.count(cmd)==0) {
                 client_connected = SendToClient(client, "Command not found. Try 'List:'.");
-                pthread_mutex_unlock(&m_mutex);
+                pthread_mutex_unlock(&_mutex);
                 continue;
             }            
             
-            int ret = _callbacks[cmd](arg);
-            pthread_mutex_unlock(&m_mutex);
+            _callback_arg = arg;
+            _callback_cmd = cmd;           
             
-            if(ret>0) {         
+            // wait until ExecutePendingCallback signals it has executed it
+            pthread_cond_wait(&_callback_done, &_mutex);
+   
+            if(_callback_return>0) {         
                 stringstream ss;
-                ss << "Command returned non-zero value: " << ret;
+                ss << "Command returned non-zero value: " << _callback_return;
                 client_connected = SendToClient(client,  ss.str());        
             }
+            _callback_cmd.clear();
             
-            
+            pthread_mutex_unlock(&_mutex);
         }
         
         // properly close the socket after exiting the client's while loop
@@ -151,6 +157,14 @@ void ConfigManager::do_work() {
         // but open the server socket again
         InitSocket();
     }
+}
+
+void ConfigManager::ExecutePendingCallback()
+{
+    if(_callback_cmd.empty())
+        return;
+    _callback_return = _callbacks[_callback_cmd](_callback_arg);
+    pthread_cond_signal(&_callback_done);
 }
 
 bool ConfigManager::SendToClient(int client, string msg)
@@ -194,5 +208,7 @@ void ConfigManager::InitSocket()
 
 int ConfigManager::Kill(const string& arg)
 {
+    // exit is a bit special, since it never returns...
+    pthread_cond_signal(&_callback_done);
     exit(EXIT_SUCCESS);
 }

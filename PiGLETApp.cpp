@@ -4,10 +4,16 @@
 
 #include "PiGLETApp.h"
 #include "system.h"
+#include "ConfigManager.h"
 
 using namespace std;
 
 void PiGLETApp::Draw(){
+    
+    // check if there are callbacks from the telnet
+    // to be executed
+    ConfigManager::I().ExecutePendingCallback();
+    
     // Start with a clear screen
 
     glClearColor(.1,.1,.1,0);

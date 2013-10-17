@@ -7,6 +7,7 @@
 
 #include "system.h"
 #include "../ConfigManager.h"
+#include "../Epics.h"
 
 using namespace std;
 
@@ -31,11 +32,13 @@ int GetWindowHeight() {
 
 static void drawCallback() {
     ConfigManager::I().MutexLock();
+    Epics::I().MutexLock();
     currentInstance->Draw();
     glFlush();
     glFinish();
     glutSwapBuffers();
     ConfigManager::I().MutexUnlock();
+    Epics::I().MutexUnlock();
     usleep(1000); // give other threads (especially EPICS callbacks) some time
 }
 

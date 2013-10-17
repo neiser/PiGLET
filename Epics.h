@@ -37,7 +37,10 @@ public:
     // the reference timepoint for 
     // timestamps given to the
     // epics callbacks
-    double GetCurrent();
+    double GetCurrentTime();
+    
+    void MutexLock();
+    void MutexUnlock();
     
 private:
     
@@ -59,6 +62,8 @@ private:
     std::map<std::string, PV*> pvs;
     
     epicsTime t0;
+    
+    pthread_mutex_t _mutex;
     
     static void connectionCallback( connection_handler_args args );
     static void eventCallback( event_handler_args args );

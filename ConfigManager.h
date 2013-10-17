@@ -27,7 +27,7 @@ public:
     void MutexLock();
     void MutexUnlock();
     
-    
+    void ExecutePendingCallback();
     
     // access to the singleton instance
     static ConfigManager& I() {
@@ -41,8 +41,9 @@ private:
     ConfigManager(ConfigManager const& copy);            // Not Implemented
     ConfigManager& operator=(ConfigManager const& copy); // Not Implemented
 
-    pthread_mutex_t m_mutex;
-    pthread_t m_thread;
+    pthread_mutex_t _mutex;
+    pthread_t _thread;
+    pthread_cond_t _callback_done;
 
     int _socket;
     const unsigned int _port;
@@ -50,6 +51,10 @@ private:
 
     std::map<std::string, ConfigCallback> _callbacks;
 
+    std::string _callback_cmd;
+    int _callback_return;
+    std::string _callback_arg;
+    
     // This is the static class function that serves as a C style function pointer
     // for the pthread_create call
     static void* start_thread(void *obj)

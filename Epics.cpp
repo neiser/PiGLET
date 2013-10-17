@@ -14,7 +14,7 @@ void Epics::exceptionCallback( exception_handler_args args ) {
 }
 
 void Epics::connectionCallback( connection_handler_args args ) { 
-  ConfigManager::I().MutexLock();  
+  I().MutexLock();  
   if ( args.op == CA_OP_CONN_UP ) {
     // channel has connected
     PV* puser = (PV*)ca_puser( args.chid );
@@ -24,11 +24,11 @@ void Epics::connectionCallback( connection_handler_args args ) {
     PV* puser = (PV*)ca_puser( args.chid );
     puser->cb(Disconnected, 0, 0);
   }
-  ConfigManager::I().MutexUnlock();
+  I().MutexUnlock();
 }
 
 void Epics::eventCallback( event_handler_args args ) {
-  ConfigManager::I().MutexLock();
+  I().MutexLock();
   if ( args.status != ECA_NORMAL ) {
       cerr << "Error in EPICS event callback" << endl;
   } else {
@@ -39,7 +39,7 @@ void Epics::eventCallback( event_handler_args args ) {
     double t = time - Epics::I().t0;
     (puser->cb)(NewValue, t, dbr->value);
   }
-  ConfigManager::I().MutexUnlock();
+  I().MutexUnlock();
 }
 
 void Epics::addPV(const string &pvname, Epics::EpicsCallback cb)
@@ -73,6 +73,7 @@ void Epics::addPV(const string &pvname, Epics::EpicsCallback cb)
 
 void Epics::removePV(const string &name)
 {
+    return;
     PV* pv = pvs[name];
     ca_clear_subscription ( pv->myevid );
     ca_clear_channel( pv->mychid );
@@ -81,12 +82,23 @@ void Epics::removePV(const string &name)
     cout << "PV unregisterd" << endl;
 }
 
-double Epics::GetCurrent()
+double Epics::GetCurrentTime()
 {
     return epicsTime::getCurrent()-t0;
 }
 
+void Epics::MutexLock()
+{
+    pthread_mutex_lock(&_mutex);
+}
+
+void Epics::MutexUnlock()
+{
+    pthread_mutex_unlock(&_mutex);
+}
+
 Epics::Epics (){
+    pthread_mutex_init(&_mutex, NULL);
     ca_context_create( ca_enable_preemptive_callback );
     ca_add_exception_event( exceptionCallback, NULL );
     ca_poll();
@@ -99,5 +111,6 @@ Epics::~Epics () {
     }
     pvs.clear();
     ca_context_destroy();
+    pthread_mutex_destroy(&_mutex);
     cout << "EPICS dtor" << endl;
 }

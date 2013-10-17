@@ -72,7 +72,7 @@ void PlotWindow::Draw(){
     //    } else {
     //graph.SetNow(frame/100.0);
     //    }
-    graph.SetNow(Epics::I().GetCurrent());
+    graph.SetNow(Epics::I().GetCurrentTime());
     ++frame;
 }
 
