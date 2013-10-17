@@ -3,14 +3,11 @@
 #include "system.h"
 
 #include "PiGLPlotApp.h"
-#include "ConfigManager.h"
-#include "Epics.h"
 
 using namespace PiGLPlot;
 
 int main()
 {
-    
     // system-specific InitGL
     InitGL();
     // ..now some system-wide GL stuff

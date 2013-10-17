@@ -2,13 +2,12 @@
 
 #include <system.h>
 #include <iostream>
-#include "stdlib.h"
+#include <stdlib.h>
+#include <unistd.h>
 
 #include "../ConfigManager.h"
 
 using namespace std;
-
-
 
 static GLApp* currentInstance;
 static bool fullscreen = false;
@@ -36,6 +35,7 @@ static void drawCallback() {
     glFinish();
     glutSwapBuffers();
     ConfigManager::I().MutexUnlock();
+    usleep(1000); // give other threads (especially EPICS callbacks) some time
 }
 
 void toggleFullscreen() {

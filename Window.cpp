@@ -20,7 +20,7 @@ void PlotWindow::callback_epics(const Epics::CallbackMode &m, const double &t, c
         cout << "Disconnected from EPICS!" << endl;
         break;
     case Epics::NewValue:
-        cout << "New Value: x="<< std::setprecision(12) <<t<<" y="<<y << endl;
+        //cout << "New Value: x="<< std::setprecision(12) <<t<<" y="<<y << endl;
         //graph.SetNow(t);
         vec2_t n;
         n.x = t;

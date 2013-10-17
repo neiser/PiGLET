@@ -1,5 +1,6 @@
 #include "SystemGLES.h"
 #include <iostream>
+#include <unistd.h>
 
 #include "../ConfigManager.h"
 
@@ -27,6 +28,7 @@ void RunGL(GLApp& app) {
         ConfigManager::I().MutexLock();
         win->paintGL();
         ConfigManager::I().MutexUnlock();
+        usleep(1000); // give other threads (especially EPICS callbacks) some time
     }
     bcm_host_deinit();
 }
