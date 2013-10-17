@@ -73,6 +73,7 @@ public:
     Color color;
 
     BlockList( const float backlen );
+    virtual ~BlockList();
 
     const Interval& XRange() const { return _xrange; }
 

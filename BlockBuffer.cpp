@@ -47,7 +47,12 @@ void PiGLPlot::BlockList::NewBlock()
 }
 
 PiGLPlot::BlockList::BlockList(const float backlen): _backlen(backlen), color(dPlotColor)
+
+PiGLPlot::BlockList::~BlockList()
 {
+    blist::iterator i;
+    for( i= _blocks.begin(); i != _blocks.end(); ++i )
+        delete *i;
 }
 
 void PiGLPlot::BlockList::Add(const vec2_t &vertex)
