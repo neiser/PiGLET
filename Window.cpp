@@ -77,6 +77,11 @@ int PlotWindow::Init()
     return ret;
 }
 
+void PlotWindow::SetYRange(const float min, const float max)
+{
+    graph.SetYRange( Interval(min, max );
+}
+
 void PlotWindow::Update() 
 { 
     graph.UpdateTicks(); 
