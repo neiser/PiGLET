@@ -30,11 +30,11 @@ void PiGLETApp::Draw(){
 }
 void PiGLETApp::Init(){
     cout << "Starting a test app!" << endl;
-//    for (int i = 0 ; i < 1; i++){
-//        stringstream ss;
-//        ss << "MyTestRecord" << i;
-//        windowman.AddWindow( new PlotWindow(ss.str()));
-//    }
+    for (int i = 0 ; i < 3; i++){
+        stringstream ss;
+        ss << "MyTestRecord" << i;
+        windowman.AddWindow( new PlotWindow(ss.str()));
+    }
 
 //    //Add one extra Image Window
 //    ImageWindow* w = new ImageWindow("Image");
