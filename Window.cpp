@@ -21,7 +21,7 @@ void PlotWindow::callback_epics(const Epics::CallbackMode &m, const double &t, c
         break;
     case Epics::NewValue:
         cout << "New Value: x="<< std::setprecision(12) <<t<<" y="<<y << endl;
-        graph.SetNow(t);
+        //graph.SetNow(t);
         vec2_t n;
         n.x = t;
         n.y = y;
@@ -67,9 +67,7 @@ void PlotWindow::Draw(){
     //    } else {
     //graph.SetNow(frame/100.0);
     //    }
-    timespec now;
-    clock_gettime(CLOCK_REALTIME, &now);
-    graph.SetNow(now.tv_sec + now.tv_nsec/1.0e9-Epics::I().t0);
+    graph.SetNow(Epics::I().GetCurrent());
     ++frame;
 }
 
