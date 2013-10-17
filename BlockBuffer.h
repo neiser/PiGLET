@@ -23,7 +23,7 @@ public:
 
     const Interval& XRange() const { return _xrange; }
 
-    virtual void Draw() =0;
+    virtual void Draw() const =0;
 
     virtual bool isFull() const { return true; }
 
@@ -42,7 +42,7 @@ public:
     DataBlock( const unsigned int size=DATA_BLOCK_SIZE ): _size(size) { _data.reserve(size);}
     virtual ~DataBlock() {}
 
-    virtual void Draw();
+    virtual void Draw() const;
 
     virtual void Add( const vec2_t& vertex );
 
@@ -80,7 +80,7 @@ public:
 
     void Add( const vec2_t& vertex );
 
-    void Draw();
+    void Draw() const;
 
     void SetNow( const float now );
     void SetBackLength( const float len ) { _backlen = len; }

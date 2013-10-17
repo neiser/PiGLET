@@ -97,7 +97,7 @@ void BlockList::Draw()
 
         color.Activate();
 
-        blist::iterator i;
+        blist::const_iterator i;
         for( i= _blocks.begin(); i != _blocks.end(); ++i )
             (*i)->Draw();
 
