@@ -27,9 +27,11 @@ void PiGLPlot::DataBlock::Add(const vec2_t &vertex)
 
 void PiGLPlot::BlockList::PopBack()
 {
-    Block* last = _blocks.back();
-    delete last;
-    _blocks.pop_back();
+    if( !_blocks.empty() ) {
+        Block* last = _blocks.back();
+        delete last;
+        _blocks.pop_back();
+    }
 }
 
 void PiGLPlot::BlockList::NewBlock()
@@ -46,7 +48,13 @@ void PiGLPlot::BlockList::NewBlock()
 
 }
 
-PiGLPlot::BlockList::BlockList(const float backlen): _backlen(backlen), color(dPlotColor)
+PiGLPlot::BlockList::BlockList( const float backlen ):
+    _backlen(backlen),
+    _xrange(-_backlen, 0.0f),
+    _yrange(-1.0f, 1.0f),
+    color(dPlotColor)
+{
+}
 
 PiGLPlot::BlockList::~BlockList()
 {
@@ -69,8 +77,6 @@ void PiGLPlot::BlockList::Add(const vec2_t &vertex)
 
     h->Add( vertex );
 
-  //  _xrange = Interval(vertex.x - _backlen, vertex.x );
-
     Block* last = _blocks.back();
 
     if( last->XRange().Disjoint(_xrange) ) {
@@ -84,16 +90,15 @@ void PiGLPlot::BlockList::Draw()
 
     glPushMatrix();
 
-    glScalef( 2.0 / _xrange.Length(), 1 ,1);
+        glScalef( 2.0f / _xrange.Length(), 2.0f / _yrange.Length(), 1.0f );
 
-    glTranslatef(-_xrange.Center(), 0, 0);
+        glTranslatef(-_xrange.Center(), -_yrange.Center(), 0.0f );
 
-    blist::iterator i;
+        color.Activate();
 
-    color.Activate();
-
-    for( i= _blocks.begin(); i != _blocks.end(); ++i )
-        (*i)->Draw();
+        blist::iterator i;
+        for( i= _blocks.begin(); i != _blocks.end(); ++i )
+            (*i)->Draw();
 
     glPopMatrix();
 

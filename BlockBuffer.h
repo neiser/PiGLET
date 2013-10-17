@@ -64,7 +64,7 @@ protected:
     blist _blocks;
     float _backlen;
     Interval _xrange;
-
+    Interval _yrange;
 
     void PopBack();
     void NewBlock();
@@ -72,10 +72,11 @@ protected:
 public:
     Color color;
 
-    BlockList( const float backlen );
+    BlockList( const float backlen=1.0f );
     virtual ~BlockList();
 
     const Interval& XRange() const { return _xrange; }
+    const Interval& YRange() const { return _yrange; }
 
     void Add( const vec2_t& vertex );
 
@@ -84,7 +85,6 @@ public:
     void SetNow( const float now );
     void SetBackLength( const float len ) { _backlen = len; }
     const float& GetBackLenght () { return _backlen; }
-//    void DoFixedTicks(const float xscale, const float yscale);
 
 };
 }
