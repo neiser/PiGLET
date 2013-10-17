@@ -18,7 +18,7 @@ private:
     std::vector<NumberLabel*> _xlabels;
     std::vector<NumberLabel*> _ylabels;
 
-    PiGLPlot::BlockList _blocklist;
+    BlockList _blocklist;
     NumberLabel ValueDisplay;
     UnitBorderBox PlotArea;
 

@@ -25,7 +25,7 @@ private:
 
 
 
-    void align_windws();
+    void align_windows();
 
 public:
 

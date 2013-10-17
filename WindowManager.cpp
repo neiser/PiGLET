@@ -29,7 +29,7 @@ int WindowManager::callback_add_plotwindow(const string &arg)
     return AddWindow(new PlotWindow(arg));
 }
 
-void WindowManager::align_windws(){
+void WindowManager::align_windows(){
     _rows.clear();
     int row = -1;
     int i = 0;
@@ -90,7 +90,7 @@ int WindowManager::AddWindow(Window *win)
     int ret = win->Init();
     if(ret==0) {
         _window_list.push_back(win);
-        align_windws();
+        align_windows();
     }
     else {
         delete win;
@@ -102,7 +102,7 @@ int WindowManager::RemoveWindow(const int n){
     if ( n >= NumWindows() ) return 1;
     delete _window_list.at(n);
     _window_list.erase(_window_list.begin() + n);
-    align_windws();
+    align_windows();
     return 0;
 }
 

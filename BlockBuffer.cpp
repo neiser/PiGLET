@@ -7,13 +7,13 @@
 
 using namespace std;
 
-void PiGLPlot::DataBlock::Draw()
+void DataBlock::Draw()
 {
     glVertexPointer(2, GL_FLOAT, 0, _data.data());
     glDrawArrays(GL_LINE_STRIP, 0, _data.size());
 }
 
-void PiGLPlot::DataBlock::Add(const vec2_t &vertex)
+void DataBlock::Add(const vec2_t &vertex)
 {
     if( _data.empty() )
         _xrange.Min() = vertex.x;
@@ -25,7 +25,7 @@ void PiGLPlot::DataBlock::Add(const vec2_t &vertex)
 }
 
 
-void PiGLPlot::BlockList::PopBack()
+void BlockList::PopBack()
 {
     if( !_blocks.empty() ) {
         Block* last = _blocks.back();
@@ -34,7 +34,7 @@ void PiGLPlot::BlockList::PopBack()
     }
 }
 
-void PiGLPlot::BlockList::NewBlock()
+void BlockList::NewBlock()
 {
 
     Block* b = new DataBlock();
@@ -48,7 +48,7 @@ void PiGLPlot::BlockList::NewBlock()
 
 }
 
-PiGLPlot::BlockList::BlockList( const float backlen ):
+BlockList::BlockList( const float backlen ):
     _backlen(backlen),
     _xrange(-_backlen, 0.0f),
     _yrange(-1.0f, 1.0f),
@@ -56,14 +56,14 @@ PiGLPlot::BlockList::BlockList( const float backlen ):
 {
 }
 
-PiGLPlot::BlockList::~BlockList()
+BlockList::~BlockList()
 {
     blist::iterator i;
     for( i= _blocks.begin(); i != _blocks.end(); ++i )
         delete *i;
 }
 
-void PiGLPlot::BlockList::Add(const vec2_t &vertex)
+void BlockList::Add(const vec2_t &vertex)
 {
     if( _blocks.empty() )
         NewBlock();
@@ -85,7 +85,7 @@ void PiGLPlot::BlockList::Add(const vec2_t &vertex)
 
 }
 
-void PiGLPlot::BlockList::Draw()
+void BlockList::Draw()
 {
 
     glPushMatrix();
@@ -104,7 +104,7 @@ void PiGLPlot::BlockList::Draw()
 
 }
 
-void PiGLPlot::BlockList::SetNow(const float now)
+void BlockList::SetNow(const float now)
 {
     _xrange.Max() = now;
     _xrange.Min() = now - _backlen;

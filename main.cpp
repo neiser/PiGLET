@@ -1,8 +1,6 @@
 #include "system.h"
 #include "PiGLETApp.h"
 
-using namespace PiGLPlot;
-
 int main()
 {
     // system-specific InitGL

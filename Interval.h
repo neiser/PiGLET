@@ -3,7 +3,6 @@
 
 #include <ostream>
 
-namespace PiGLPlot {
 
 
 class Interval {
@@ -28,7 +27,7 @@ public:
 
 std::ostream& operator<<( std::ostream& stream, const Interval& i );
 
-}
+
 
 
 #endif // INTERVAL_H

@@ -10,7 +10,7 @@
 
 #define DATA_BLOCK_SIZE 256
 
-namespace PiGLPlot {
+
 
 class Block {
 protected:
@@ -87,6 +87,6 @@ public:
     const float& GetBackLenght () { return _backlen; }
 
 };
-}
+
 
 #endif // BLOCKBUFFER_H
