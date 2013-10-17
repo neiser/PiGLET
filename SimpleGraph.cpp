@@ -75,7 +75,7 @@ void SimpleGraph::Draw() const
 
 }
 
-void SimpleGraph::SetYRange(const PiGLPlot::Interval &yrange)
+void SimpleGraph::SetYRange(const Interval &yrange)
 {
     _blocklist.SetYRange( yrange );
 }

@@ -39,7 +39,7 @@ private:
 
     // -------------------------
 
-    PiGLPlot::BlockList _blocklist;
+    BlockList _blocklist;
     NumberLabel ValueDisplay;
     UnitBorderBox PlotArea;
 
@@ -64,7 +64,7 @@ public:
 
     void SetNow( const float now ) { _blocklist.SetNow(now); }
     void SetBackLength( const float len ) { _blocklist.SetBackLength( len ); UpdateTicks(); }
-    void SetYRange( const PiGLPlot::Interval& yrange );
+    void SetYRange( const Interval& yrange );
 
 };
 #endif

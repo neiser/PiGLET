@@ -7,7 +7,7 @@
 
 using namespace std;
 
-void DataBlock::Draw()
+void DataBlock::Draw() const
 {
     glVertexPointer(2, GL_FLOAT, 0, _data.data());
     glDrawArrays(GL_LINE_STRIP, 0, _data.size());
@@ -86,7 +86,7 @@ void BlockList::Add(const vec2_t &vertex)
 
 }
 
-void BlockList::Draw()
+void BlockList::Draw() const
 {
 
     glPushMatrix();
