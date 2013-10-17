@@ -8,14 +8,14 @@
 #include "Window.h"
 
 
-class PiGLPlotApp: public GLApp{
+class PiGLETApp: public GLApp{
 //private:
 
 public:
 
     WindowManager windowman;
 
-    PiGLPlotApp():windowman(){}
+    PiGLETApp():windowman(){}
 
     virtual void Init();
     virtual void Draw();

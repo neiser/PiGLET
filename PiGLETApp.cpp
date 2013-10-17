@@ -1,13 +1,13 @@
-#include "PiGLPlotApp.h"
-#include "system.h"
-
 #include <cmath>
 #include <iostream>
 #include <sstream>
 
+#include "PiGLETApp.h"
+#include "system.h"
+
 using namespace std;
 
-void PiGLPlotApp::Draw(){
+void PiGLETApp::Draw(){
     // Start with a clear screen
 
     glClearColor(.1,.1,.1,0);
@@ -22,7 +22,7 @@ void PiGLPlotApp::Draw(){
     
     ReportGLError();
 }
-void PiGLPlotApp::Init(){
+void PiGLETApp::Init(){
     cout << "Starting a test app!" << endl;
     for (int i = 0 ; i < 3; i++){
         stringstream ss;
