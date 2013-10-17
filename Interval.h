@@ -23,6 +23,8 @@ public:
 
     bool Disjoint( const Interval& i) const;
 
+    bool Contains( const float x ) const { return (_min <= x) && (_max >= x); }
+
 };
 
 std::ostream& operator<<( std::ostream& stream, const Interval& i );
