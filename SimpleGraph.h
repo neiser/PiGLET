@@ -5,6 +5,8 @@
 #include "GLTools.h"
 #include "BlockBuffer.h"
 #include "NumberLabel.h"
+#include "Interval.h"
+#include <list>
 
 #define NTICKSFULLX  6
 #define NTICKSFULLY  5
@@ -13,30 +15,42 @@ class SimpleGraph: public Widget {
 
 private:
 
-    std::vector<vec2_t> _xticks;
-    std::vector<vec2_t> _yticks;
-    std::vector<NumberLabel*> _xlabels;
-    std::vector<NumberLabel*> _ylabels;
+    // ------ Tick System -------
 
-    BlockList _blocklist;
-    NumberLabel ValueDisplay;
-    UnitBorderBox PlotArea;
+    class TickLabel: public NumberLabel {
+    public:
+        vec2_t position;
 
-    float dticks( const float& len, const int& target_nt );
+        TickLabel(const Window* owner, const vec2_t& pos, const float v , const Color &color = dPlotTicks);
+        virtual ~TickLabel() {}
+        void Draw() const;
+    };
 
-    void set_labels();
+    typedef std::list<TickLabel*> labellist;
+    labellist _labels;
 
+    std::vector<vec2_t> _ticks;
+
+    void DeleteTicks();
     float GetXGlobal( const float x);
     float GetYGlobal( const float y);
-
     void AddXTick( const float x);
     void AddYTick( const float y);
 
+    // -------------------------
+
+    PiGLPlot::BlockList _blocklist;
+    NumberLabel ValueDisplay;
+    UnitBorderBox PlotArea;
+
+    static float roundX( float x);
+
 public:
     Color TickColor;
-    Color TickLabelColor;
+    Color TickLabelColor;   //note: does not change color on screen when changed!
 
     SimpleGraph( Window* owner, const float backlength );
+    virtual ~SimpleGraph();
 
     void AddToBlockList( const vec2_t& p) {
         _blocklist.Add(p);
@@ -45,8 +59,8 @@ public:
 
     void UpdateTicks();
 
-    void DrawTicks();
-    void Draw();
+    void DrawTicks() const;
+    void Draw() const;
 
     void SetNow( const float now ) { _blocklist.SetNow(now); }
     void SetBackLength( const float len ) { _blocklist.SetBackLength( len ); UpdateTicks(); }
