@@ -30,7 +30,7 @@ int GetWindowHeight() {
     return _height;
 }
 
-static void drawCallback() {
+static void drawCallback(int val) {
     ConfigManager::I().MutexLock();
     Epics::I().MutexLock();
     currentInstance->Draw();
@@ -39,7 +39,7 @@ static void drawCallback() {
     glutSwapBuffers();
     ConfigManager::I().MutexUnlock();
     Epics::I().MutexUnlock();
-    usleep(1000); // give other threads (especially EPICS callbacks) some time
+    glutTimerFunc(20, drawCallback, 0);
 }
 
 void toggleFullscreen() {
@@ -78,7 +78,7 @@ void InitGL(){
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glOrtho(-1.0, 1.0, -1.0, 1.0, -1.0, 1.0);
-    glutIdleFunc(drawCallback);
+    glutTimerFunc(0, drawCallback, 0);
     glutKeyboardFunc(keyPressed);
 //    glutReshapeFunc(Reshape);
 }
