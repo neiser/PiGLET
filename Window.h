@@ -76,6 +76,8 @@ public:
     virtual void Update();
     virtual void Draw();
     virtual int Init();
+
+    void SetYRange( const float min, const float max );
 };
 
 std::ostream& operator<<( std::ostream& stream, const Window& win );

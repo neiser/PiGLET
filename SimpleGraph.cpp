@@ -78,6 +78,7 @@ void SimpleGraph::Draw() const
 void SimpleGraph::SetYRange(const Interval &yrange)
 {
     _blocklist.SetYRange( yrange );
+    UpdateTicks();
 }
 
 // --------- Ticks ----------
