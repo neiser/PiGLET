@@ -50,6 +50,7 @@ public:
 
     void SetNow( const float now ) { _blocklist.SetNow(now); }
     void SetBackLength( const float len ) { _blocklist.SetBackLength( len ); UpdateTicks(); }
+    void SetYRange( const PiGLPlot::Interval& yrange );
 
 };
 #endif

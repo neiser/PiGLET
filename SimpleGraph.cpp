@@ -226,3 +226,9 @@ void SimpleGraph::Draw()
     glPopMatrix();
 
 }
+
+void SimpleGraph::SetYRange(const PiGLPlot::Interval &yrange)
+{
+    _blocklist.SetYRange( yrange );
+}
+
