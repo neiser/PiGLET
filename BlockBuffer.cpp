@@ -94,33 +94,6 @@ void PiGLPlot::BlockList::Draw()
 
 }
 
-void PiGLPlot::BlockList::DoTicks()
-{
-    glColor4f(.4,.4,.4,0);
-    float tickd = 5;
-    float tick = floor((_xrange.Max() / tickd))*tickd;
-
-
-
-    int nt = _xrange.Length() / tickd;
-    vector<vec2_t> ticks;
-    ticks.reserve( nt * 2 );
-  //  cout << "xmax: " << _xrange.Max() << " 1:" << tick << " " << nt << endl;
-
-    for( int i=0;i<nt;++i){
-        vec2_t t;
-        t.x = tick - tickd * i;
-        t.y = -1;
-        ticks.push_back(t);
-        t.y = 1;
-        ticks.push_back(t);
-    }
-
-    glVertexPointer(2, GL_FLOAT, 0, ticks.data());
-    glDrawArrays(GL_LINES, 0, ticks.size());
-
-}
-
 void PiGLPlot::BlockList::SetNow(const float now)
 {
     _xrange.Max() = now;

@@ -80,8 +80,6 @@ public:
 
     void Draw();
 
-    void DoTicks();
-
     void SetNow( const float now );
     void SetBackLength( const float len ) { _backlen = len; }
     const float& GetBackLenght () { return _backlen; }
