@@ -85,6 +85,7 @@ public:
     void SetNow( const float now );
     void SetBackLength( const float len ) { _backlen = len; }
     const float& GetBackLenght () { return _backlen; }
+    void SetYRange( const Interval& yrange ) { _yrange = yrange; }
 
 };
 
