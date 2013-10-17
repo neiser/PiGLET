@@ -3,7 +3,6 @@
 #include <unistd.h>
 
 #include "../ConfigManager.h"
-#include "../Epics.h"
 
 static MyGLWindow* win;
 
@@ -27,10 +26,8 @@ void RunGL(GLApp& app) {
     win->app = &app;
     while(1) {
         ConfigManager::I().MutexLock();
-        Epics::I().MutexLock();
         win->paintGL();
         ConfigManager::I().MutexUnlock();
-        Epics::I().MutexUnlock();
         usleep(1000); // give other threads (especially EPICS callbacks) some time
     }
     bcm_host_deinit();

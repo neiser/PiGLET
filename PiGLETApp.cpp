@@ -10,9 +10,7 @@ using namespace std;
 
 void PiGLETApp::Draw(){
     
-    // check if there are callbacks from the telnet
-    // to be executed
-    ConfigManager::I().ExecutePendingCallback();
+    
     
     // Start with a clear screen
 
@@ -27,7 +25,14 @@ void PiGLETApp::Draw(){
     windowman.Draw();
     
     ReportGLError();
+    
+    
+    // check if there are callbacks from the telnet
+    // to be executed
+    ConfigManager::I().ExecutePendingCallback();
 }
+
+
 void PiGLETApp::Init(){
     cout << "Starting a test app!" << endl;
     for (int i = 0 ; i < 1; i++){

@@ -9,27 +9,6 @@
 
 using namespace std;
 
-void PlotWindow::callback_epics(const Epics::CallbackMode &m, const double &t, const double &y)
-{
-    
-    switch(m) {
-    case Epics::Connected:
-        cout << "Connected to EPICS!" << endl;
-        break;
-    case Epics::Disconnected:
-        cout << "Disconnected from EPICS!" << endl;
-        break;
-    case Epics::NewValue:
-        //cout << "New Value: x="<< std::setprecision(12) <<t<<" y="<<y << endl;
-        //graph.SetNow(t);
-        vec2_t n;
-        n.x = t;
-        n.y = y;
-        graph.AddToBlockList(n);
-        break;
-    }
-}
-
 PlotWindow::PlotWindow( const std::string& pvname,
                         const std::string& xlabel,
                         const std::string& ylabel,
@@ -39,6 +18,9 @@ PlotWindow::PlotWindow( const std::string& pvname,
     _pvname(pvname),
     _xlabel(xlabel),
     _ylabel(ylabel),    
+    _initialized(false),
+    _head_ptr(NULL),
+    _head_last(NULL),
     WindowArea( dBackColor, dWindowBorderColor),
     graph(this, 10),
     text(this, -.95,0.82,.95,.98),
@@ -57,22 +39,107 @@ PlotWindow::~PlotWindow() {
 } 
 
 void PlotWindow::Draw(){
-        
+    
     // Window border
     WindowArea.Draw();
     
     graph.Draw();
     
     text.Draw();
-        
+    
     graph.SetNow(Epics::I().GetCurrentTime());
+    
+    ProcessEpicsData();
     
     ++frame;
 }
 
+void PlotWindow::ProcessEpicsData() {
+    // not initialized via addPV yet
+    if(_head_ptr == NULL)
+        return;
+    
+    // get the pointer to the most recent item 
+    // in the list (snapshot of current state)
+    Epics::DataList* head = *_head_ptr;
+    
+    // is there something new in
+    // the linked list since the last 
+    // call?
+    if(_head_last != NULL && _head_last == head) 
+        return;   
+    
+    // scan the linked list
+    typedef vector<Epics::DataList*> list_t;
+    list_t list;
+    list.reserve(100);
+    Epics::DataList* d = head; // start from the head
+    while(d->prev != NULL) {
+        list.push_back(d);
+        d = d->prev;
+    }
+    
+    // go thru the vector in positive time direction (ie reverse direction)
+    // note that the linked list (scanned above) starts from the head (most recent item!)
+    bool newData = false;
+    for(list_t::reverse_iterator it=list.rbegin(); // reverse begin
+        it!=list.rend(); // reverse end
+        ++it) {
+        
+        Epics::DataList* i = (*it);
+        if(i->prev == _head_last) {
+            newData = true;
+        }      
+        
+        if(!newData)
+            continue;
+        
+        // if new, process it!
+        switch (i->type) {
+        case Epics::Connected:
+            //cout << "PV " << _pvname << " connected" << endl;
+            break;
+            
+        case Epics::Disconnected:
+            //cout << "PV " << _pvname << " disconnected" << endl;
+            break;
+            
+        case Epics::NewValue:
+            vec2_t* d = (vec2_t*)i->data;
+            //cout << "New Value " << d->x << " " << d->y << endl;                
+            graph.AddToBlockList(*d);
+            break;               
+        }        
+    }
+    // remember the last head for the next call
+    _head_last = head;
+    
+    // do not delete the last two elements, 
+    // which are still needed to build the list atomically
+    for(list_t::reverse_iterator it=list.rbegin(); // reverse begin
+        it<list.rend()-2; // reverse end, but not the last two!
+        ++it) {
+        // delete the current one properly
+        Epics::DataList* cur = *it;
+        Epics::deleteDataListItem(cur);   
+        // and tell the next, that it's not pointing backwards to
+        // us anymore
+        Epics::DataList* next = *(it+1);
+        next->prev = NULL;
+    }
+}
+
 int PlotWindow::Init()
 {
-    int ret = Epics::I().addPV(_pvname, BIND_MEM_CB(&PlotWindow::callback_epics, this));
+    int ret = 0;
+    _head_ptr = Epics::I().addPV(_pvname);
+    if(_head_ptr==NULL) {
+        ret = 1;
+    }    
+    // put other init code here, set ret!=0 on fail
+    // but don't change it on success
+    
+    // return & save status
     _initialized = ret == 0;
     return ret;
 }
@@ -123,9 +190,9 @@ void ImageWindow::Draw()
     glEnable(GL_TEXTURE_2D);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     _image.Activate();
-
+    
     Rectangle::unit.Draw( GL_TRIANGLE_FAN );
-
+    
     glDisable(GL_TEXTURE_2D);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     glPopMatrix();

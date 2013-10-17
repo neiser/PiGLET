@@ -6,24 +6,31 @@
 #include <string>
 #include <cadef.h>
 
-#include "Callback.h"
-using util::Callback; // Callback lives in the util namespace
+
 
 
 // define max length for EPICS PV names
 const size_t MAX_PV_NAME_LEN = 40;
 
 class Epics  {
+    
 public:   
-    enum CallbackMode {
+    
+    typedef enum {
         Connected,
         Disconnected,
         NewValue
-    };
+    } DataType;
     
-    typedef Callback<void (const CallbackMode&, const double&, const double&)> EpicsCallback;
-    int addPV(const std::string& pvname, EpicsCallback cb);
-    void removePV(const std::string& name);
+       
+    typedef struct DataList {
+        DataType type;
+        void* data;
+        struct DataList* prev;
+    } DataList;
+        
+    DataList** addPV(const std::string& pvname); // returns the tail of the datalist
+    void removePV(const std::string& pvname);
     
     // Implement a singleton
     static Epics& I() {
@@ -33,14 +40,13 @@ public:
         static Epics instance;
         return instance;
     }
-     
+    
     // the reference timepoint for 
     // timestamps given to the
     // epics callbacks
     double GetCurrentTime();
     
-    void MutexLock();
-    void MutexUnlock();
+    static void deleteDataListItem(DataList* i);
     
 private:
     
@@ -52,22 +58,23 @@ private:
     Epics(Epics const& copy);            // Not Implemented
     Epics& operator=(Epics const& copy); // Not Implemented
     
-    struct PV {
-        chid            mychid;
-        evid            myevid;
-        EpicsCallback   cb;
-    };
-        
-    // Storage for values
+    typedef struct PV {
+        chid       mychid;
+        evid       myevid;
+        DataList*  head; // accessed by EPICS callbacks
+    } PV;
+    
+    
+    // Storage for channels/subscriptions
     std::map<std::string, PV*> pvs;
     
     epicsTime t0;
     
-    pthread_mutex_t _mutex;
     
     static void connectionCallback( connection_handler_args args );
-    static void eventCallback( event_handler_args args );
+    static void eventCallback_double( event_handler_args args );
     static void exceptionCallback( exception_handler_args args );
+    static void appendToList(PV* pv, DataList* pNew);
 };
 
 

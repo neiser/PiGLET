@@ -47,6 +47,9 @@ private:
     std::string _ylabel;
     
     bool _initialized;
+    Epics::DataList** _head_ptr;
+    Epics::DataList* _head_last;
+    
 
     UnitBorderBox WindowArea;
 
@@ -56,7 +59,7 @@ private:
 
     int frame;          //for debug
     
-    void callback_epics(const Epics::CallbackMode& m,  const double& t, const double& y);
+    void ProcessEpicsData();
 
 public:
     const std::string& Xlabel() const { return _xlabel; }
