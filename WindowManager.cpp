@@ -39,17 +39,17 @@ void WindowManager::align_windws(){
             i++;
         } else{
             row++;
-            if ( row >= _rows.size() && i < NumWindows() ){
+            if ( row >= (int)_rows.size() && i < NumWindows() ){
                 _rows.push_back(1);
                 i++;
-                while( _rows.at(row) < _rows.size() - 1 && ( i < NumWindows() ) ){
+                while( _rows.at(row) < (int)(_rows.size() - 1) && ( i < NumWindows() ) ){
                     _rows.at(row)++;
                     i++;
                     row = -1;
                     break;
                 }
             } else{
-                while ( (_rows.at(row) < _rows.size()) && (i < NumWindows()) ){
+                while ( (_rows.at(row) < (int)_rows.size()) && (i < NumWindows()) ){
                     _rows.at(row)++;
                     i++;
                 }
@@ -66,7 +66,7 @@ void WindowManager::align_windws(){
     float wscalex = 1.;
     int i_window = 0;
     
-    for ( int row = 0; row < _rows.size() ; ++row){
+    for ( size_t row = 0; row < _rows.size() ; ++row){
         for ( int in_row = 0 ; in_row < _rows.at(row) ; ++in_row ){
             wscalex = 1. / _rows.at(row);
             _window_list.at(i_window)->XPixels() = wscalex * GetWindowWidth();
@@ -95,6 +95,7 @@ int WindowManager::AddWindow(Window *win)
     else {
         delete win;
     }
+    return ret;
 }
 
 int WindowManager::RemoveWindow(const int n){
@@ -114,7 +115,7 @@ void WindowManager::Draw(){
     float wscalex = 1.;
     
     int i_window = 0;
-    for ( int row = 0; row < _rows.size() ; ++row){
+    for ( size_t row = 0; row < _rows.size() ; ++row){
         dx = 2. / _rows.at(row);
         for ( int in_row = 0 ; in_row < _rows.at(row) ; ++in_row ){
             wscalex = 1. / _rows.at(row);

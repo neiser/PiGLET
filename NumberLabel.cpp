@@ -61,7 +61,7 @@ void NumberLabel::Draw() const
 
         _color.Activate();
 
-        for( int p=0; p<_digtex.size(); ++p ) {
+        for(size_t p=0; p<_digtex.size(); ++p ) {
 
             //glBindTexture(GL_TEXTURE_2D, _digtex[p]);
             _textures[ _digtex[p] ].Activate();
@@ -89,7 +89,7 @@ void NumberLabel::Set(const float v)
 
     _digtex.resize(s.size());
 
-    for( int p=0; p< s.size(); ++p) {
+    for(size_t p=0; p< s.size(); ++p) {
 
         const char& c = s[p];
         unsigned char texnum;

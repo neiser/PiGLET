@@ -46,8 +46,9 @@ private:
     pthread_cond_t _callback_done;
 
     int _socket;
-    const unsigned int _port;
     const std::string _address;
+    const unsigned int _port;
+    
 
     std::map<std::string, ConfigCallback> _callbacks;
 
@@ -61,6 +62,7 @@ private:
     {
         //All we do here is call the do_work() function
         reinterpret_cast<ConfigManager*>(obj)->do_work();
+        return NULL;
     }
 
     // Compute and save fibonacci numbers as fast as possible

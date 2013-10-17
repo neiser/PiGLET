@@ -14,9 +14,9 @@
 
 class Window {
 private:
-    float _x_pixels;
-    float _y_pixels;
     std::string _name; // unique window name
+    float _x_pixels;
+    float _y_pixels;   
 
 public:
 

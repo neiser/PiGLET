@@ -80,7 +80,7 @@ void ConfigManager::do_work() {
             string line;
             int n = 0;
             bzero(buf, BUFFER_SIZE);
-            while(n = read(client, buf, BUFFER_SIZE-1))
+            while((n = read(client, buf, BUFFER_SIZE-1)))
             {
                 line += buf;
                 buf[n+1] = '\0';
@@ -170,7 +170,7 @@ void ConfigManager::ExecutePendingCallback()
 bool ConfigManager::SendToClient(int client, string msg)
 {
     msg += "\n";
-    int n = write(client, msg.c_str(), msg.length()+1);
+    size_t n = write(client, msg.c_str(), msg.length()+1);
     return n == msg.length()+1;
 }
 

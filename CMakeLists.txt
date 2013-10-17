@@ -39,6 +39,8 @@ include_directories(${ImageMagick_INCLUDE_DIRS})
 aux_source_directory(. SRC_LIST)
 include_directories(.)
 
+set(CMAKE_CXX_FLAGS "-Wall")
+
 # build the exe
 add_executable(${PROJECT_NAME} ${SRC_LIST} ${SYSTEM_SRC_LIST})
 target_link_libraries(${PROJECT_NAME}

@@ -5,7 +5,7 @@ using namespace std;
 
 
 TextLabel::TextLabel( const Window* owner, const float x1, const float y1, const float x2, const float y2):
-    Widget(owner), _rext(x1, y1, x2, y2), _color( dTextColor ),_box(_rext)
+    Widget(owner), _color( dTextColor ), _rext(x1, y1, x2, y2),  _box(_rext)
 {
 }
 

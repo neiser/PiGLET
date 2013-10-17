@@ -6,14 +6,14 @@ using namespace std;
 
 void SimpleGraph::set_labels(){
 
-    for (int i = 0 ; i < _xlabels.size() ; ++i) delete _xlabels.at(i);
-    for (int i = 0 ; i < _ylabels.size() ; ++i) delete _ylabels.at(i);
+    for (size_t i = 0 ; i < _xlabels.size() ; ++i) delete _xlabels.at(i);
+    for (size_t i = 0 ; i < _ylabels.size() ; ++i) delete _ylabels.at(i);
     _xlabels.clear();
     _ylabels.clear();
     _xlabels.reserve(_xticks.size());
     _ylabels.reserve(_yticks.size());
 \
-    for (int i = 0 ; i < _xticks.size() ; ++i ){
+    for (size_t i = 0 ; i < _xticks.size() ; ++i ){
         _xlabels.push_back(new NumberLabel(this->_owner));
         _xlabels.at(i)->SetColor(TickLabelColor);
         _xlabels.at(i)->SetDrawBox(false);
@@ -23,7 +23,7 @@ void SimpleGraph::set_labels(){
         _xlabels.at(i)->Set(_xticks.at(i).x);
     }
 
-    for ( int i = 0 ; i < _yticks.size() ; ++i ){
+    for ( size_t i = 0 ; i < _yticks.size() ; ++i ){
         _ylabels.push_back(new NumberLabel(this->_owner));
         _ylabels.at(i)->SetColor(TickLabelColor);
         _ylabels.at(i)->SetDrawBox(false);
@@ -38,10 +38,10 @@ void SimpleGraph::set_labels(){
 SimpleGraph::SimpleGraph( Window* owner, const float backlength ):
     Widget(owner),
     _blocklist(backlength),
-    TickColor(dPlotTicks),
-    TickLabelColor(dPlotTickLabels),
     ValueDisplay(this->_owner),
-    PlotArea( dPlotBackground, dPlotBorderColor)
+    PlotArea( dPlotBackground, dPlotBorderColor),
+    TickColor(dPlotTicks),
+    TickLabelColor(dPlotTickLabels)
 {
     UpdateTicks();
 }
@@ -127,7 +127,7 @@ void SimpleGraph::DrawTicks()
     glVertexPointer(2,GL_FLOAT, 0,_yticks.data());
     glDrawArrays(GL_LINES,0,_yticks.size());
 
-    for ( int i = 0 ; i < _xlabels.size() ; ++i){
+    for ( size_t i = 0 ; i < _xlabels.size() ; ++i){
         glPushMatrix();
         glTranslatef(_xticks.at(i).x,-1.1,0);
         glScalef(0.15 * _blocklist.GetBackLenght() / 2,0.15,0.15);
@@ -135,7 +135,7 @@ void SimpleGraph::DrawTicks()
         glPopMatrix();
     }
 
-    for ( int i = 0 ; i < _ylabels.size() ; ++i ){
+    for ( size_t i = 0 ; i < _ylabels.size() ; ++i ){
         glPushMatrix();
         glTranslatef( 0.05 * _blocklist.GetBackLenght() ,_yticks.at(i).y, 1.);
         glScalef(0.15 * _blocklist.GetBackLenght() / 2 , 0.15 , 0.15);

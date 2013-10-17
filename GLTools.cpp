@@ -27,7 +27,10 @@ Rectangle::Rectangle(const float x1, const float y1, const float x2, const float
     _update_vertices();
 }
 
-Rectangle::Rectangle( const Vector2& center, const float width, const float height): _center(center), _width(width), _height(height)
+Rectangle::Rectangle( const Vector2& center, 
+                      const float width, 
+                      const float height): 
+    _width(width), _height(height), _center(center)
 {
     _update_vertices();
 }
