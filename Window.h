@@ -14,21 +14,21 @@
 
 class Window {
 private:
-    float _x_pixles;
+    float _x_pixels;
     float _y_pixels;
     std::string _title;
 
 public:
 
-    Window( const std::string& title, const float xscale = 1, const float yscale = 1): _title(title) , _x_pixles(xscale), _y_pixels(yscale) {}
+    Window( const std::string& title, const float xscale = 1, const float yscale = 1): _title(title) , _x_pixels(xscale), _y_pixels(yscale) {}
 
     virtual ~Window(){}
 
-    const float& XPixels() const { return _x_pixles; }
-    const float& YPixels() const { return _y_pixels; }
-    float& XPixels() { return _x_pixles; }
-    float& YPixels() { return _y_pixels; }
-
+    const float& XPixels() const { return _x_pixels; }
+    const float& YPixels() const { return _y_pixels; }  
+    
+    const std::string& Title() const { return _title; }
+    
     virtual void Update() = 0;
 
     virtual void Draw() = 0;
@@ -62,7 +62,7 @@ public:
                 const float xscale = 1,
                 const float yscale = 1);
 
-    virtual ~PlotWindow(){}
+    virtual ~PlotWindow();
 
 
     virtual void Update() { graph.UpdateTicks(); }

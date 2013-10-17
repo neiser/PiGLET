@@ -47,6 +47,11 @@ PlotWindow::PlotWindow( const std::string& title,
     Epics::I().addPV(title, BIND_MEM_CB(&PlotWindow::callback_epics, this));
 }
 
+PlotWindow::~PlotWindow() {
+    cout << "Plotwindow dtor" << endl;
+    Epics::I().removePV(Title());
+} 
+
 void PlotWindow::Draw(){
     
     // Window border
