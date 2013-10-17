@@ -83,8 +83,6 @@ void TextRenderer::CopyToTexture(Texture &tex, const int width, const int height
 
 void TextRenderer::Text2Texture( Texture& tex, const string &text )
 {
-    //_watch.Start();
-
     MagickSetSize(mw,0,0);
 
     std::stringstream rendercmd;

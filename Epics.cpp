@@ -44,7 +44,6 @@ void Epics::eventCallback( event_handler_args args ) {
 
 void Epics::addPV(const string &pvname, Epics::EpicsCallback cb)
 {
-    ConfigManager::I().MutexLock();
     PV* puser = new PV;
     puser->cb = cb;
     int ca_rtn = ca_create_channel( pvname.c_str(),      // PV name
@@ -69,21 +68,17 @@ void Epics::addPV(const string &pvname, Epics::EpicsCallback cb)
     
     // dont know if this is really meaningful here (also done in ctor)
     ca_poll();        
-    ConfigManager::I().MutexUnlock();
     cout << "PV registered" << endl;
 }
 
 void Epics::removePV(const string &name)
 {
-    ConfigManager::I().MutexLock();
     PV* pv = pvs[name];
     ca_clear_subscription ( pv->myevid );
     ca_clear_channel( pv->mychid );
     pvs.erase(name);
     delete pv;    
-    ConfigManager::I().MutexUnlock();
     cout << "PV unregisterd" << endl;
-    
 }
 
 double Epics::GetCurrent()

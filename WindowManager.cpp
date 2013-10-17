@@ -80,6 +80,7 @@ void WindowManager::align_windws(){
 
 WindowManager::WindowManager(const int dx, const int dy): _size_x(dx), _size_y(dy)
 {
+    // register the callbacks in the ConfigManager
     ConfigManager::I().setCmd("RemoveWindow",BIND_MEM_CB(&WindowManager::callback_remove_window,this));
     ConfigManager::I().setCmd("RemoveWindows",BIND_MEM_CB(&WindowManager::callback_remove_all_windows,this));
     ConfigManager::I().setCmd("AddPlotWindow",BIND_MEM_CB(&WindowManager::callback_add_plotwindow,this));

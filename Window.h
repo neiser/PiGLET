@@ -26,6 +26,8 @@ public:
 
     const float& XPixels() const { return _x_pixels; }
     const float& YPixels() const { return _y_pixels; }  
+    float& XPixels()  { return _x_pixels; }
+    float& YPixels()  { return _y_pixels; }  
     
     const std::string& Title() const { return _title; }
     
