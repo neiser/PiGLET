@@ -26,6 +26,12 @@ private:
 
     void set_labels();
 
+    float GetXGlobal( const float x);
+    float GetYGlobal( const float y);
+
+    void AddXTick( const float x);
+    void AddYTick( const float y);
+
 public:
     Color TickColor;
     Color TickLabelColor;

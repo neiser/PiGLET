@@ -1,6 +1,7 @@
 #include "SimpleGraph.h"
 #include "Window.h"
 #include <cmath>
+#include <iostream>
 
 using namespace std;
 
@@ -33,6 +34,16 @@ void SimpleGraph::set_labels(){
         _ylabels.at(i)->Set(_yticks.at(i).y);
     }
 
+}
+
+float SimpleGraph::GetXGlobal(const float x)
+{
+    return 1.0f + 2.0f * x  / _blocklist.XRange().Length();
+}
+
+float SimpleGraph::GetYGlobal(const float y)
+{
+    return 2.0f * (y  - _blocklist.YRange().Center()) / _blocklist.YRange().Length();
 }
 
 SimpleGraph::SimpleGraph( Window* owner, const float backlength ):
@@ -68,82 +79,106 @@ float SimpleGraph::dticks( const float& len, const int& nt ){
     return len / nt;
 }
 
+float roundX( float x ) {
+    if( x==0 )
+        return 0;
+    float m=1;
+    if (x >= 1 ) {
+        while( x > 10 ) {
+            x /= 10.0;
+            m *= 10.0;
+        }
+    } else {
+        while( x < 1 ) {
+            x *= 10.0;
+            m /= 10.0;
+        }
+    }
+    x = round(x) * m;
+
+    return x;
+}
+
+void SimpleGraph::AddXTick(const float x) {
+    vec2_t t;
+    t.x = GetXGlobal(x);
+    t.y =   1.0f;
+    _xticks.push_back(t);
+    t.y = - 1.0f;
+    _xticks.push_back(t);
+
+    NumberLabel* label = new NumberLabel( _owner );
+    label->Set( x );
+    label->SetColor(TickLabelColor);
+    label->SetDrawBox(false);
+    label->SetAlignRight(true);
+    label->SetDigits(5);
+    label->SetPrec(1);
+    _xlabels.push_back(label);
+    cout << "  add at x=" << x << "n=" << _xticks.size() << endl;
+}
+
+void SimpleGraph::AddYTick(const float y) {
+    vec2_t t;
+    t.y = GetYGlobal(y);
+    t.x =   1.0f;
+    _yticks.push_back(t);
+    t.x = - 1.0f;
+    _yticks.push_back(t);
+    NumberLabel* label = new NumberLabel( _owner );
+    label->Set( y );
+    label->SetColor(TickLabelColor);
+    label->SetDrawBox(false);
+    label->SetAlignRight(true);
+    label->SetDigits(5);
+    label->SetPrec(1);
+    _ylabels.push_back(label);
+    cout << "  add at y=" << y << "n=" << _yticks.size() << endl;
+}
 
 void SimpleGraph::UpdateTicks(){
-    const float xlen = _blocklist.GetBackLenght();
+
     //calulate rough estimate how many ticks:
-    const int ntx = ceil ( NTICKSFULLX *  _owner->XPixels() / GetWindowWidth()) ;
-    // replace with epics values:
-    const float ylen = 2; // (maximum values of sin - function
-    const int nty = ceil( NTICKSFULLY *  _owner->YPixels() / GetWindowWidth());
+    int ntx = ceil ( NTICKSFULLX *  _owner->XPixels() / GetWindowWidth()) ;
+    float dx = _blocklist.XRange().Length() / ntx;
+    dx = roundX(dx);
+    ntx = floor( _blocklist.XRange().Length() / dx ) +1;
 
     _xticks.clear();
-    _xticks.reserve( ntx * 2);
 
-    //get optimized distance close to calculated:
-    float dx = dticks(xlen,ntx);
+    for (size_t i = 0 ; i < _xlabels.size() ; ++i) delete _xlabels.at(i);
+    _xlabels.clear();
 
-    vec2_t t;
-    t.x = 0;
-    int i = 0;
-    while( true ){
-        t.x = - ( i) * dx;
-        if ( t.x < -xlen ) break;
-        t.y = -ylen/2;
-        _xticks.push_back(t);
-        t.y = ylen/2;
-        _xticks.push_back(t);
-        i++;
+    _xticks.reserve( ntx *2 );
+    _xlabels.reserve( ntx );
+
+    cout << "X: n=" << ntx << " dx=" << dx << endl;
+
+    for( int i=0; i<ntx; ++i ) {
+        float x = 0 - i * dx;
+        AddXTick( x );
     }
 
-    _yticks.clear();
-    _yticks.reserve( nty * 2 );
-    float dy = dticks(ylen,nty);
-    t.y = ylen / 2;
-    i = 0;
-    while(true){
-        t.x = -xlen;
-        t.y = ylen / 2 - ( i ) * dy;   // TODO: optimize startpoint!!
-        if ( t.y < -ylen / 2) break;
-        _yticks.push_back(t);
-        t.x = 0;
-        _yticks.push_back(t);
-        i++;
-    }
-    set_labels();
 }
 
 void SimpleGraph::DrawTicks()
 {
-    glPushMatrix();
-
-    glScalef( 2./ _blocklist.GetBackLenght(), 1 ,1);
-    glTranslatef( _blocklist.GetBackLenght() / 2. , 0. , 0. );
-
     TickColor.Activate();
 
     glVertexPointer(2, GL_FLOAT, 0, _xticks.data());
     glDrawArrays(GL_LINES, 0, _xticks.size());
-    glVertexPointer(2,GL_FLOAT, 0,_yticks.data());
-    glDrawArrays(GL_LINES,0,_yticks.size());
 
-    for ( size_t i = 0 ; i < _xlabels.size() ; ++i){
+    glVertexPointer(2, GL_FLOAT, 0, _yticks.data());
+    glDrawArrays(GL_LINES, 0, _yticks.size());
+
+    for( size_t i=0; i < _xlabels.size(); ++i ) {
         glPushMatrix();
-        glTranslatef(_xticks.at(i).x,-1.1,0);
-        glScalef(0.15 * _blocklist.GetBackLenght() / 2,0.15,0.15);
-        _xlabels.at(i)->Draw();
+        glTranslatef( _xticks[2*i].x, -1.1,0.0);
+        glScalef(.2,.2,.2);
+        _xlabels[i]->Draw();
         glPopMatrix();
     }
 
-    for ( size_t i = 0 ; i < _ylabels.size() ; ++i ){
-        glPushMatrix();
-        glTranslatef( 0.05 * _blocklist.GetBackLenght() ,_yticks.at(i).y, 1.);
-        glScalef(0.15 * _blocklist.GetBackLenght() / 2 , 0.15 , 0.15);
-        _ylabels.at(i)->Draw();
-        glPopMatrix();
-    }
-
-    glPopMatrix();
 
 }
 
