@@ -14,10 +14,24 @@ record (ai, "MyTestRecord0")
     field (LOPR, -4)
     field (EGU, "Hz")
 }
+
 record (ai, "MyTestRecord1")
 {
     field (DESC, "A simple record")
+    field (LOW, -0.2)
+    field (LOLO, -0.4)
+    field (HIGH, 1)
+    field (HIHI, 2)
+    
+    field (LLSV, MAJOR)
+    field (HHSV, MAJOR)    
+    field (HSV, MINOR)
+    field (LSV, MINOR)    
+    field (HOPR, 4)
+    field (LOPR, -4)
+    field (EGU, "Hz")
 }
+
 record (ai, "MyTestRecord2")
 {
     field (DESC, "A simple record")
