@@ -57,6 +57,7 @@ private:
     class AlarmLevels {
     private:
         Interval _levels;
+        Interval _draw_levels;
         std::vector<vec2_t> _lines;
 
     public:
@@ -64,7 +65,7 @@ private:
 
         AlarmLevels( const Color& color=dMinorAlarm);
         void Draw() const;
-        void SetLevels( const Interval& levels );
+        void SetLevels( const Interval& levels, const Interval& draw );
         void Clear();
         void Update();
         const Interval& Levels() const { return _levels; }

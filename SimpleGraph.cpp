@@ -62,9 +62,6 @@ void SimpleGraph::Draw() const
 
         _blocklist.Draw();
 
-        _minorAlarm.Draw();
-        _majorAlarm.Draw();
-
         // stop limiting draw area
         glDisable(GL_STENCIL_TEST);
 
@@ -76,6 +73,8 @@ void SimpleGraph::Draw() const
             ValueDisplay.Draw();
         glPopMatrix();
 
+        _minorAlarm.Draw();
+        _majorAlarm.Draw();
 
     glPopMatrix();
 
@@ -87,14 +86,14 @@ void SimpleGraph::SetYRange(const Interval &yrange)
 
     UpdateTicks();
 
-    _minorAlarm.SetLevels(
+    _minorAlarm.SetLevels( _minorAlarm.Levels(),
                 Interval(
                     GetYGlobal(_minorAlarm.Levels().Min()),
                     GetYGlobal(_minorAlarm.Levels().Max())
                     )
                 );
 
-    _majorAlarm.SetLevels(
+    _majorAlarm.SetLevels( _majorAlarm.Levels(),
                 Interval(
                     GetYGlobal(_majorAlarm.Levels().Min()),
                     GetYGlobal(_majorAlarm.Levels().Max())
@@ -105,7 +104,7 @@ void SimpleGraph::SetYRange(const Interval &yrange)
 
 void SimpleGraph::SetMinorAlarms(const Interval &minoralarm )
 {
-    _minorAlarm.SetLevels(
+    _minorAlarm.SetLevels( minoralarm,
                 Interval(
                     GetYGlobal(minoralarm.Min()),
                     GetYGlobal(minoralarm.Max())
@@ -115,7 +114,7 @@ void SimpleGraph::SetMinorAlarms(const Interval &minoralarm )
 
 void SimpleGraph::SetMajorAlarms(const Interval &majoralarm)
 {
-    _majorAlarm.SetLevels(
+    _majorAlarm.SetLevels( majoralarm,
                 Interval(
                     GetYGlobal(majoralarm.Min()),
                     GetYGlobal(majoralarm.Max())
@@ -289,9 +288,10 @@ void SimpleGraph::AlarmLevels::Draw() const
     glDrawArrays(GL_LINES, 0, _lines.size());
 }
 
-void SimpleGraph::AlarmLevels::SetLevels( const Interval& levels )
+void SimpleGraph::AlarmLevels::SetLevels(const Interval& levels , const Interval &draw)
 {
     _levels = levels;
+    _draw_levels = draw;
     Update();
 }
 
@@ -304,16 +304,17 @@ void SimpleGraph::AlarmLevels::Clear()
 
 void SimpleGraph::AlarmLevels::Update()
 {
+
     Clear();
     vec2_t t;
     t.x = -1.0f;
-    t.y = _levels.Min();
+    t.y = _draw_levels.Min();
     _lines.push_back(t);
     t.x=1.0f;
     _lines.push_back(t);
 
     t.x = -1.0f;
-    t.y = _levels.Max();
+    t.y = _draw_levels.Max();
     _lines.push_back(t);
     t.x=1.0f;
     _lines.push_back(t);
