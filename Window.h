@@ -60,6 +60,7 @@ private:
     int frame;          //for debug
     
     void ProcessEpicsData();
+    void ProcessEpicsProperties(dbr_ctrl_double* d);
     int callback_SetBackLength(const std::string& arg);
     
 public:

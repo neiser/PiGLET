@@ -110,8 +110,8 @@ void PlotWindow::ProcessEpicsData() {
             break;               
         }
         case Epics::NewProperties: {
-            dbr_ctrl_double* d = (dbr_ctrl_double*)i->data;
-            graph.SetAlarm((epicsAlarmSeverity)d->severity);
+            ProcessEpicsProperties((dbr_ctrl_double*)i->data);
+            break;
         }
         default:
             break;
@@ -135,6 +135,19 @@ void PlotWindow::ProcessEpicsData() {
     }
 }
 
+void PlotWindow::ProcessEpicsProperties(dbr_ctrl_double* d) {
+    graph.SetAlarm((epicsAlarmSeverity)d->severity);
+    Interval y(d->lower_disp_limit,d->upper_disp_limit);
+    // if the provided interval is empty,
+    // try guessing some better one
+    if(y.Length()==0) {
+        y = d->value==0 ? Interval(-1,1) :
+                          Interval(d->value/2.0, d->value*2.0);
+    }
+    graph.SetYRange(y);
+}
+
+    
 int PlotWindow::Init()
 {
     int ret = 0;

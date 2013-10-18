@@ -10,6 +10,8 @@ record (ai, "MyTestRecord0")
     field (HHSV, MAJOR)    
     field (HSV, MINOR)
     field (LSV, MINOR)    
+    field (HOPR, 2)
+    field (LOPR, -1.5)
 }
 record (ai, "MyTestRecord1")
 {
