@@ -80,11 +80,13 @@ void PlotWindow::ProcessEpicsData() {
     // scan the linked list
     typedef vector<Epics::DataItem*> list_t;
     list_t list;
-    Epics::fillList(head, list);
+    Epics::fillList(head, list);    
+    
+    // the very first call, _head_last is NULL, thus everything is new!
+    bool newData = _head_last == NULL;
     
     // go thru the vector in positive time direction (ie reverse direction)
-    // note that the linked list (scanned above) starts from the head (most recent item!)
-    bool newData = false;
+    // note that the linked list (scanned above) starts from the head (most recent item!)    
     for(list_t::reverse_iterator it=list.rbegin(); // reverse begin
         it!=list.rend(); // reverse end
         ++it) {
