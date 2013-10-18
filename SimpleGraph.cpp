@@ -291,8 +291,16 @@ void SimpleGraph::AlarmLevels::Draw() const
 void SimpleGraph::AlarmLevels::SetLevels(const Interval& levels , const Interval &draw)
 {
     _levels = levels;
+
+    if( !isfinite(_levels.Min()) )
+        _levels.Min() = 0;
+
+    if( !isfinite(_levels.Max()) )
+        _levels.Max() = 0;
+
     _draw_levels = draw;
     Update();
+
 }
 
 
