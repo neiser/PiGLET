@@ -22,7 +22,7 @@ private:
     public:
         vec2_t position;
 
-        TickLabel(const Window* owner, const vec2_t& pos, const float v , const Color &color = dPlotTicks);
+        TickLabel(const Window* owner, const vec2_t& pos, const float v , const Color &color = dPlotTickLabels);
         virtual ~TickLabel() {}
         void Draw() const;
     };
