@@ -103,6 +103,26 @@ void SimpleGraph::SetYRange(const Interval &yrange)
 
 }
 
+void SimpleGraph::SetMinorAlarms(const Interval &minoralarm )
+{
+    _minorAlarm.SetLevels(
+                Interval(
+                    GetYGlobal(minoralarm.Min()),
+                    GetYGlobal(minoralarm.Max())
+                    )
+                );
+}
+
+void SimpleGraph::SetMajorAlarms(const Interval &majoralarm)
+{
+    _majorAlarm.SetLevels(
+                Interval(
+                    GetYGlobal(majoralarm.Min()),
+                    GetYGlobal(majoralarm.Max())
+                    )
+                );
+}
+
 void SimpleGraph::SetAlarm(const epicsAlarmSeverity serv )
 {
     switch (serv ) {

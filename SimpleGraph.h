@@ -94,8 +94,8 @@ public:
     void SetNow( const float now ) { _blocklist.SetNow(now); }
     void SetBackLength( const float len ) { _blocklist.SetBackLength( len ); UpdateTicks(); }
     void SetYRange( const Interval& yrange );
-    void SetMinorAlarms( const Interval& mintor );
-    void SetMajorAlarms( const Interval& major );
+    void SetMinorAlarms( const Interval& minoralarm );
+    void SetMajorAlarms( const Interval& majoralarm );
 
     /**
      * @brief Set the alarm state
