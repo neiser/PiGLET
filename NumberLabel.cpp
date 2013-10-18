@@ -35,8 +35,6 @@ static std::ostream& SIPrefix( std::ostream& stream, const float& v ) {
 
         int exp = (int) (log10(abs(v)) / 3 );
 
-
-
         if( exp < -NUM_PREFIX/2 )
             exp = -NUM_PREFIX/2;
         else if( exp > NUM_PREFIX/2 )
@@ -45,7 +43,7 @@ static std::ostream& SIPrefix( std::ostream& stream, const float& v ) {
         stream << v / pow10(exp*3) << prefixes[ exp + (NUM_PREFIX/2) ];
 
    } else {
-       stream << v;
+       stream << v << " ";
    }
 
     return stream;
@@ -106,7 +104,6 @@ void NumberLabel::Draw() const
 
         for(size_t p=0; p<_digtex.size(); ++p ) {
 
-            //glBindTexture(GL_TEXTURE_2D, _digtex[p]);
             _textures[ _digtex[p] ].Activate();
             Rectangle::unit.Draw( GL_TRIANGLE_FAN );
             glTranslatef( -2.0f, 0.0f, 0.0f );
