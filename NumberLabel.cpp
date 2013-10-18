@@ -4,10 +4,53 @@
 #include <iomanip>
 #include "TextRenderer.h"
 #include <algorithm>
+#include <cmath>
 
 #include <iostream>
 
 using namespace std;
+
+static float pow10( const int exp ) {
+    float v=1;
+    if( exp >= 0 ) {
+        for( int i=0; i < exp; ++i) {
+            v *= 10.0;
+        }
+    }
+    else {
+        for( int i=0; i < -exp; ++i) {
+            v /= 10.0;
+        }
+    }
+
+    return v;
+}
+
+#define NUM_PREFIX 9
+static char prefixes[NUM_PREFIX+1] = "pnum kMGT";
+
+static std::ostream& SIPrefix( std::ostream& stream, const float& v ) {
+
+   if( v != 0.0f ) {
+
+        int exp = (int) (log10(abs(v)) / 3 );
+
+
+
+        if( exp < -NUM_PREFIX/2 )
+            exp = -NUM_PREFIX/2;
+        else if( exp > NUM_PREFIX/2 )
+            exp = NUM_PREFIX/2;
+
+        stream << v / pow10(exp*3) << prefixes[ exp + (NUM_PREFIX/2) ];
+
+   } else {
+       stream << v;
+   }
+
+    return stream;
+}
+
 
 NumberLabel::NumberLabel(const Window *owner ):
     Widget(owner),
@@ -84,7 +127,9 @@ void NumberLabel::Set(const float v)
 {
     // generate text string from number
     stringstream stream;
-    stream << fixed << setprecision(_prec) << v;
+    stream << fixed << setprecision(_prec);
+    SIPrefix(stream,v);
+
     string s = stream.str();
 
     _digtex.resize(s.size());
