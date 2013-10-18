@@ -157,7 +157,7 @@ void SimpleGraph::UpdateTicks() {
     int nty = ceil ( NTICKSFULLY *  _owner->YPixels() / GetWindowHeight());
     float dy = _blocklist.YRange().Length() / nty;
     dy = roundX(dy);
-    nty = floor( _blocklist.YRange().Length() / dy ) +1;
+    nty = floor( _blocklist.YRange().Length() / dy ) ;
 
     const float ystart = roundX( _blocklist.YRange().Center() ) - (nty/2)*dy;
     for( int i=0; i<nty; ++i ) {
