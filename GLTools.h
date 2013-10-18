@@ -77,6 +77,10 @@ public:
 #define dWindowBorderColor  kGray
 #define dWindowBackground  dBackColor
 
+#define dMinorAlarm kOrange
+#define dMajorAlarm kRed
+#define dInvalidAlarm kPink
+
 
 class Rectangle {
 private:
