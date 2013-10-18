@@ -88,7 +88,7 @@ void Epics::eventCallback( event_handler_args args ) {
         // make a hardcopy
         dbr_ctrl_double* data = new dbr_ctrl_double(*dbr);
         
-        cout << "ctrl received " << data->upper_warning_limit << " " << data->upper_alarm_limit << endl;
+        //cout << "ctrl received " << data->upper_warning_limit << " " << data->upper_alarm_limit << endl;
         
         // pack it together
         pNew->type = NewProperties;

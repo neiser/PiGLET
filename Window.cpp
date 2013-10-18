@@ -42,15 +42,10 @@ void PlotWindow::Draw(){
     
     // Window border
     WindowArea.Draw();
-    
     graph.Draw();
-    
     text.Draw();
-    
     graph.SetNow(Epics::I().GetCurrentTime());
-    
-    ProcessEpicsData();
-    
+    ProcessEpicsData();    
     ++frame;
 }
 
@@ -104,6 +99,10 @@ void PlotWindow::ProcessEpicsData() {
             //cout << "New Value " << d->x << " " << d->y << endl;                
             graph.AddToBlockList(*d);
             break;               
+        }
+        case Epics::NewProperties: {
+            dbr_ctrl_double* d = (dbr_ctrl_double*)i->data;
+            graph.SetAlarm((epicsAlarmSeverity)d->severity);
         }
         default:
             break;
