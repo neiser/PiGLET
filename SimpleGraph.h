@@ -56,8 +56,7 @@ private:
      */
     class AlarmLevels {
     private:
-        float _high;
-        float _low;
+        Interval _levels;
         std::vector<vec2_t> _lines;
 
     public:
@@ -65,11 +64,11 @@ private:
 
         AlarmLevels( const Color& color=dMinorAlarm);
         void Draw() const;
-        void SetLevels( const float min, const float max );
+        void SetLevels( const Interval& levels );
         void Clear();
         void Update();
-        float GetHigh() const { return _high; }
-        float GetLow() const  { return _low; }
+        const Interval& Levels() const { return _levels; }
+
     };
 
     AlarmLevels _minorAlarm;
@@ -95,6 +94,8 @@ public:
     void SetNow( const float now ) { _blocklist.SetNow(now); }
     void SetBackLength( const float len ) { _blocklist.SetBackLength( len ); UpdateTicks(); }
     void SetYRange( const Interval& yrange );
+    void SetMinorAlarms( const Interval& mintor );
+    void SetMajorAlarms( const Interval& major );
 
     /**
      * @brief Set the alarm state

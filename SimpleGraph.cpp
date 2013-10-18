@@ -84,9 +84,23 @@ void SimpleGraph::Draw() const
 void SimpleGraph::SetYRange(const Interval &yrange)
 {
     _blocklist.SetYRange( yrange );
+
     UpdateTicks();
-    _minorAlarm.SetLevels( GetYGlobal(_minorAlarm.GetLow()), GetYGlobal(_minorAlarm.GetHigh()));
-    _majorAlarm.SetLevels( GetYGlobal(_majorAlarm.GetLow()), GetYGlobal(_majorAlarm.GetHigh()));
+
+    _minorAlarm.SetLevels(
+                Interval(
+                    GetYGlobal(_minorAlarm.Levels().Min()),
+                    GetYGlobal(_minorAlarm.Levels().Max())
+                    )
+                );
+
+    _majorAlarm.SetLevels(
+                Interval(
+                    GetYGlobal(_majorAlarm.Levels().Min()),
+                    GetYGlobal(_majorAlarm.Levels().Max())
+                    )
+                );
+
 }
 
 void SimpleGraph::SetAlarm(const epicsAlarmSeverity serv )
@@ -244,8 +258,6 @@ void SimpleGraph::AddYTick(const float y) {
 
 
 SimpleGraph::AlarmLevels::AlarmLevels(const Color &color):
-    _high(0.0f),
-    _low(0.0f),
     AlarmColor(color)
 {
 }
@@ -257,10 +269,9 @@ void SimpleGraph::AlarmLevels::Draw() const
     glDrawArrays(GL_LINES, 0, _lines.size());
 }
 
-void SimpleGraph::AlarmLevels::SetLevels(const float min, const float max)
+void SimpleGraph::AlarmLevels::SetLevels( const Interval& levels )
 {
-    _low = min;
-    _high = max;
+    _levels = levels;
     Update();
 }
 
@@ -276,13 +287,13 @@ void SimpleGraph::AlarmLevels::Update()
     Clear();
     vec2_t t;
     t.x = -1.0f;
-    t.y = _low;
+    t.y = _levels.Min();
     _lines.push_back(t);
     t.x=1.0f;
     _lines.push_back(t);
 
     t.x = -1.0f;
-    t.y = _high;
+    t.y = _levels.Max();
     _lines.push_back(t);
     t.x=1.0f;
     _lines.push_back(t);
