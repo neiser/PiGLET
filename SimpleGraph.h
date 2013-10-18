@@ -46,6 +46,35 @@ private:
 
     static float roundX( float x);
 
+    /**
+     * @brief The AlarmLevels class
+     * @todo This whole solution is crappy... These lines should be drawn
+     *       while in the coord sys of the blocklist. But then, the lines
+     *       have to be moved in x every frame.
+     *       Like this we have to update the y position every time we change the
+     *       y range.
+     */
+    class AlarmLevels {
+    private:
+        float _high;
+        float _low;
+        std::vector<vec2_t> _lines;
+
+    public:
+        Color AlarmColor;
+
+        AlarmLevels( const Color& color=dMinorAlarm);
+        void Draw() const;
+        void SetLevels( const float min, const float max );
+        void Clear();
+        void Update();
+        float GetHigh() const { return _high; }
+        float GetLow() const  { return _low; }
+    };
+
+    AlarmLevels _minorAlarm;
+    AlarmLevels _majorAlarm;
+
 public:
     Color TickColor;
     Color TickLabelColor;   //note: does not change color on screen when changed!

@@ -20,6 +20,8 @@ SimpleGraph::SimpleGraph( Window* owner, const float backlength ):
     _blocklist(backlength),
     ValueDisplay(this->_owner),
     PlotArea( dPlotBackground, dPlotBorderColor),
+    _minorAlarm(dMinorAlarm),
+    _majorAlarm(dMajorAlarm),
     TickColor(dPlotTicks),
     TickLabelColor(dPlotTickLabels)
 {
@@ -60,6 +62,9 @@ void SimpleGraph::Draw() const
 
         _blocklist.Draw();
 
+        _minorAlarm.Draw();
+        _majorAlarm.Draw();
+
         // stop limiting draw area
         glDisable(GL_STENCIL_TEST);
 
@@ -80,6 +85,8 @@ void SimpleGraph::SetYRange(const Interval &yrange)
 {
     _blocklist.SetYRange( yrange );
     UpdateTicks();
+    _minorAlarm.SetLevels( GetYGlobal(_minorAlarm.GetLow()), GetYGlobal(_minorAlarm.GetHigh()));
+    _majorAlarm.SetLevels( GetYGlobal(_majorAlarm.GetLow()), GetYGlobal(_majorAlarm.GetHigh()));
 }
 
 void SimpleGraph::SetAlarm(const epicsAlarmSeverity serv )
@@ -231,4 +238,50 @@ void SimpleGraph::AddYTick(const float y) {
     TickLabel* label = new TickLabel( _owner, t, y );
 
     _labels.push_back(label);
+}
+
+
+SimpleGraph::AlarmLevels::AlarmLevels(const Color &color):
+    _high(0.0f),
+    _low(0.0f),
+    AlarmColor(color)
+{
+}
+
+void SimpleGraph::AlarmLevels::Draw() const
+{
+    AlarmColor.Activate();
+    glVertexPointer(2, GL_FLOAT, 0, _lines.data());
+    glDrawArrays(GL_LINES, 0, _lines.size());
+}
+
+void SimpleGraph::AlarmLevels::SetLevels(const float min, const float max)
+{
+    _low = min;
+    _high = max;
+    Update();
+}
+
+
+void SimpleGraph::AlarmLevels::Clear()
+{
+    _lines.clear();
+}
+
+
+void SimpleGraph::AlarmLevels::Update()
+{
+    Clear();
+    vec2_t t;
+    t.x = -1.0f;
+    t.y = _low;
+    _lines.push_back(t);
+    t.x=1.0f;
+    _lines.push_back(t);
+
+    t.x = -1.0f;
+    t.y = _high;
+    _lines.push_back(t);
+    t.x=1.0f;
+    _lines.push_back(t);
 }
