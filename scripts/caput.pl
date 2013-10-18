@@ -8,6 +8,7 @@ use Time::HiRes qw(usleep nanosleep);
 
 my $pv = $ARGV[0] || '';
 my $max_n = $ARGV[1] || 0;
+my $usleep = $ARGV[2] || 10000;
 
 my $chan = CA->new($pv);
 CA->pend_io(1);
@@ -27,5 +28,5 @@ while(1) {
   if($max_n!=0 && $n>=$max_n) {
     last;
   }
-  #usleep(10000);
+  usleep($usleep) if $usleep>1;
 }
