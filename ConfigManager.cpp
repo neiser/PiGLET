@@ -16,7 +16,7 @@ ConfigManager::ConfigManager() :
     pthread_cond_init (&_callback_done, NULL);
     InitSocket();
     
-    setCmd("Kill", BIND_MEM_CB(&ConfigManager::Kill, this));
+    addCmd("Kill", BIND_MEM_CB(&ConfigManager::Kill, this));
     
     pthread_create(&_thread, 0, &ConfigManager::start_thread, this);
 }
@@ -28,7 +28,7 @@ ConfigManager::~ConfigManager()
     close(_socket);
 }
 
-void ConfigManager::setCmd(string cmd, ConfigManager::ConfigCallback cb)
+void ConfigManager::addCmd(string cmd, ConfigManager::ConfigCallback cb)
 {
     // check if there is already a callback for that command
     if(_callbacks.count(cmd)!=0) {
@@ -36,6 +36,11 @@ void ConfigManager::setCmd(string cmd, ConfigManager::ConfigCallback cb)
         exit(EXIT_FAILURE);        
     }
     _callbacks[cmd] = cb;
+}
+
+void ConfigManager::removeCmd(string cmd)
+{
+    _callbacks.erase(cmd);;
 }
 
 void ConfigManager::MutexLock()
@@ -100,15 +105,15 @@ void ConfigManager::do_work() {
 
             
             
-            size_t pos = line.find_first_of(':');
-            if(pos == string::npos) {
-                client_connected = SendToClient(client, "Invalid command. No colon ':' found in string.");
-                continue;
+            size_t pos = line.find_first_of(' ');
+            // split the line at the first space
+            string cmd = line.substr(0,pos); 
+            string arg;
+            if(pos < string::npos) {
+                // there is an argument
+                arg = line.substr(pos+1,line.length()-pos);                
             }                
             
-            // split the line at the colon
-            string cmd = line.substr(0,pos);
-            string arg = line.substr(pos+1,line.length()-pos);
             
             // some meta-commands
             if(cmd=="Exit") {
@@ -131,7 +136,7 @@ void ConfigManager::do_work() {
             pthread_mutex_lock(&_mutex);
 
             if(_callbacks.count(cmd)==0) {
-                client_connected = SendToClient(client, "Command not found. Try 'List:'.");
+                client_connected = SendToClient(client, "Command not found. Try 'List'.");
                 pthread_mutex_unlock(&_mutex);
                 continue;
             }            

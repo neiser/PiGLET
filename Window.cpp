@@ -6,6 +6,7 @@
 #include <iostream>
 #include <iomanip>
 #include "TextRenderer.h"
+#include "ConfigManager.h"
 
 using namespace std;
 
@@ -26,17 +27,25 @@ PlotWindow::PlotWindow( const std::string& pvname,
     text(this, -.95,0.82,.95,.98),
     frame(0)
 {
+    cout << "Plotwindow ctor" << endl;
     text.SetText(pvname);
+    ConfigManager::I().addCmd(pvname+"_BackLength", BIND_MEM_CB(&PlotWindow::callback_SetBackLength, this));
     // don't forget to call Init()
     // which also checks if the pvname is actually valid
 }
 
 PlotWindow::~PlotWindow() {
-    cout << "Plotwindow dtor" << endl;
     if(_initialized) {
-        Epics::I().removePV(_pvname);
+        Epics::I().removePV(_pvname);      
     }
+    ConfigManager::I().removeCmd(_pvname+"_BackLength");
+    cout << "Plotwindow dtor" << endl;
 } 
+
+int PlotWindow::callback_SetBackLength(const string& arg){
+    graph.SetBackLength(atoi(arg.c_str()));
+    return 0;
+}
 
 void PlotWindow::Draw(){
     
@@ -133,10 +142,7 @@ int PlotWindow::Init()
     if(_head_ptr==NULL) {
         ret = 1;
     }    
-    // put other init code here, set ret!=0 on fail
-    // but don't change it on success
-    
-    // return & save status
+    // return & save status for dtor
     _initialized = ret == 0;
     return ret;
 }

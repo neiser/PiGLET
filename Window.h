@@ -60,7 +60,8 @@ private:
     int frame;          //for debug
     
     void ProcessEpicsData();
-
+    int callback_SetBackLength(const std::string& arg);
+    
 public:
     const std::string& Xlabel() const { return _xlabel; }
     const std::string& Ylabel() const { return _ylabel; }

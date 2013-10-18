@@ -22,8 +22,10 @@ class ConfigManager
 public:
 
     typedef Callback<int (const std::string&)> ConfigCallback;
-    void setCmd(std::string cmd, ConfigCallback cb);
-
+    void addCmd(std::string cmd, ConfigCallback cb);
+    void removeCmd(std::string cmd);
+    
+    
     void MutexLock();
     void MutexUnlock();
     
