@@ -81,6 +81,24 @@ void SimpleGraph::SetYRange(const Interval &yrange)
     UpdateTicks();
 }
 
+void SimpleGraph::SetAlarm(const epicsAlarmSeverity serv )
+{
+    switch (serv ) {
+    case epicsSevNone:
+        ValueDisplay.SetColor(dTextColor);
+        break;
+    case epicsSevMinor:
+        ValueDisplay.SetColor(dMinorAlarm);
+        break;
+    case epicsSevMajor:
+        ValueDisplay.SetColor(dMajorAlarm);
+        break;
+    default:
+        ValueDisplay.SetColor(dInvalidAlarm);
+        break;
+    }
+}
+
 // --------- Ticks ----------
 
 SimpleGraph::TickLabel::TickLabel(const Window *owner, const vec2_t &pos, const float v, const Color& color ):

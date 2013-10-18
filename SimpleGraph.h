@@ -6,6 +6,7 @@
 #include "BlockBuffer.h"
 #include "NumberLabel.h"
 #include "Interval.h"
+#include "alarm.h"
 #include <list>
 
 #define NTICKSFULLX  6
@@ -65,6 +66,12 @@ public:
     void SetNow( const float now ) { _blocklist.SetNow(now); }
     void SetBackLength( const float len ) { _blocklist.SetBackLength( len ); UpdateTicks(); }
     void SetYRange( const Interval& yrange );
+
+    /**
+     * @brief Set the alarm state
+     * @param serv Severity of the alarm
+     */
+    void SetAlarm(const epicsAlarmSeverity serv );
 
 };
 #endif
