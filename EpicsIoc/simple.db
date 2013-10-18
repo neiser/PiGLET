@@ -12,6 +12,7 @@ record (ai, "MyTestRecord0")
     field (LSV, MINOR)    
     field (HOPR, 2)
     field (LOPR, -1.5)
+    field (EGU, "Hz")
 }
 record (ai, "MyTestRecord1")
 {

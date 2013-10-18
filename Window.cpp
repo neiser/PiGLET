@@ -24,7 +24,7 @@ PlotWindow::PlotWindow( const std::string& pvname,
     _head_last(NULL),
     WindowArea( dBackColor, dWindowBorderColor),
     graph(this, 10),
-    text(this, -.95,0.82,.95,.98),
+    text(this, -.95, .82, .95, .98),
     frame(0)
 {
     cout << "Plotwindow ctor" << endl;
@@ -136,7 +136,10 @@ void PlotWindow::ProcessEpicsData() {
 }
 
 void PlotWindow::ProcessEpicsProperties(dbr_ctrl_double* d) {
+    
+    // set alarm state
     graph.SetAlarm((epicsAlarmSeverity)d->severity);
+    
     Interval y(d->lower_disp_limit,d->upper_disp_limit);
     // if the provided interval is empty,
     // try guessing some better one
@@ -145,6 +148,15 @@ void PlotWindow::ProcessEpicsProperties(dbr_ctrl_double* d) {
                           Interval(d->value/2.0, d->value*2.0);
     }
     graph.SetYRange(y);
+
+    // update title with unit
+    stringstream title;
+    string u(d->units);
+    title << _pvname;
+    if(!u.empty()) {
+        title << " / " << u;
+    }
+    text.SetText(title.str());
 }
 
     
