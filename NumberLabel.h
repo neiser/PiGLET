@@ -4,6 +4,7 @@
 #include "system.h"
 #include "GLTools.h"
 #include "Widget.h"
+#include <string>
 
 class NumberLabel: public Widget {
 private:
@@ -39,7 +40,8 @@ public:
     virtual ~NumberLabel();
 
     void Draw() const;
-    void Set( const float v );
+    void SetNumber( const float v );
+    void SetString( const std::string& str );
 
     void SetColor( const Color& c ) { _color = c; }
     Color GetColor() const { return _color; }

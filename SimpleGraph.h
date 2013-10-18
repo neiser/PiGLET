@@ -55,7 +55,7 @@ public:
 
     void AddToBlockList( const vec2_t& p) {
         _blocklist.Add(p);
-        ValueDisplay.Set(p.y);
+        ValueDisplay.SetNumber(p.y);
     }
 
     void UpdateTicks();

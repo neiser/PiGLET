@@ -110,7 +110,7 @@ SimpleGraph::TickLabel::TickLabel(const Window *owner, const vec2_t &pos, const 
     SetAlignRight(true);
     SetDigits(5);
     SetPrec(1);
-    Set(v);
+    SetNumber(v);
 }
 
 

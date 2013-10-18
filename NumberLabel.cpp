@@ -123,7 +123,23 @@ void NumberLabel::Draw() const
 
 }
 
-void NumberLabel::Set(const float v)
+void NumberLabel::SetString(const std::string &str)
+{
+    _digtex.resize(str.size());
+
+    for(size_t p=0; p< str.size(); ++p) {
+
+        const char& c = str[p];
+        unsigned char texnum;
+
+        texnum = c - 32;
+
+        _digtex[str.size() - p-1] = texnum;
+
+    }
+}
+
+void NumberLabel::SetNumber(const float v)
 {
     // generate text string from number
     stringstream stream;
@@ -131,20 +147,11 @@ void NumberLabel::Set(const float v)
     SIPrefix(stream,v);
 
     string s = stream.str();
+    SetString(s);
 
-    _digtex.resize(s.size());
-
-    for(size_t p=0; p< s.size(); ++p) {
-
-        const char& c = s[p];
-        unsigned char texnum;
-
-        texnum = c - 32;
-
-        _digtex[s.size() - p-1] = texnum;
-
-    }
 }
+
+
 
 unsigned int NumberLabel::_num_objetcs = 0;
 Texture* NumberLabel::_textures(NULL);
