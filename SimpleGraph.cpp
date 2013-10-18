@@ -23,6 +23,7 @@ SimpleGraph::SimpleGraph( Window* owner, const float backlength ):
     TickColor(dPlotTicks),
     TickLabelColor(dPlotTickLabels)
 {
+    ValueDisplay.SetDigits(10);
     UpdateTicks();
 }
 
