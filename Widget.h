@@ -5,7 +5,7 @@
 
 class Window;
 
-class Widget{
+class Widget {
 
 protected:
     const Window* _owner;

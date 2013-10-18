@@ -12,10 +12,6 @@ std::ostream& operator<<( std::ostream& stream, const WindowManager& wman ) {
     return stream;
 }
 
-int WindowManager::callback_remove_window(const string& arg){
-    return RemoveWindow(atoi(arg.c_str()));
-}
-
 int WindowManager::callback_remove_all_windows(const string &arg){
     int i;
     for ( i = NumWindows() ; i > 0 ; --i){
@@ -26,13 +22,13 @@ int WindowManager::callback_remove_all_windows(const string &arg){
 
 int WindowManager::callback_add_plotwindow(const string &arg)
 {
-    return AddWindow(new PlotWindow(arg));
+    return AddWindow(new PlotWindow(this, arg));
 }
 
 void WindowManager::align_windows(){
     _rows.clear();
     int row = -1;
-    int i = 0;
+    size_t i = 0;
     while ( i < NumWindows() ){
         if ( i < 2 ){
             _rows.push_back(1);
@@ -80,8 +76,7 @@ void WindowManager::align_windows(){
 WindowManager::WindowManager(const int dx, const int dy): _size_x(dx), _size_y(dy)
 {
     // register the callbacks in the ConfigManager
-    ConfigManager::I().addCmd("RemoveWindow",BIND_MEM_CB(&WindowManager::callback_remove_window,this));
-    ConfigManager::I().addCmd("RemoveWindows",BIND_MEM_CB(&WindowManager::callback_remove_all_windows,this));
+    ConfigManager::I().addCmd("RemoveAllWindows",BIND_MEM_CB(&WindowManager::callback_remove_all_windows,this));
     ConfigManager::I().addCmd("AddPlotWindow",BIND_MEM_CB(&WindowManager::callback_add_plotwindow,this));
 }
 
@@ -93,18 +88,34 @@ int WindowManager::AddWindow(Window *win)
         align_windows();
     }
     else {
+        // delete the window again if 
+        // init was unsuccessful
         delete win;
     }
     return ret;
 }
 
-int WindowManager::RemoveWindow(const int n){
+int WindowManager::RemoveWindow(const size_t n){
     if ( n >= NumWindows() ) return 1;
     delete _window_list.at(n);
     _window_list.erase(_window_list.begin() + n);
     align_windows();
     return 0;
 }
+
+int WindowManager::RemoveWindow(const string &name)
+{
+    typedef std::vector<Window*> wins_t;
+    for(size_t i=0; i<NumWindows(); i++) {
+        if(_window_list[i]->Name() == name) {
+            RemoveWindow(i);
+            return 0;
+        }        
+    }
+    return 1;
+}
+
+
 
 void WindowManager::Draw(){
     

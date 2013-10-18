@@ -13,13 +13,13 @@
 
 
 class WindowManager {
+    
 private:
     int _size_x;
     int _size_y;
     std::vector<Window*> _window_list;
     std::vector<int> _rows;
 
-    int callback_remove_window( const std::string &arg );
     int callback_remove_all_windows(const std::string& arg );
     int callback_add_plotwindow( const std::string& arg );
 
@@ -35,13 +35,14 @@ public:
     const int& SizeY() const { return _size_y; }
     int& SizeX() { return _size_x; }
     int& SizeY() { return _size_y; }
-    const int NumWindows() { return _window_list.size();}
+    const size_t NumWindows() { return _window_list.size();}
 
     int AddWindow( Window *win);
 
     // remove window number n; returns >0 if it fails
-    int RemoveWindow( const int n );
-
+    int RemoveWindow( const size_t n );
+    int RemoveWindow( const std::string& name );
+    
     void Draw();
 
 

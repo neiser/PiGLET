@@ -12,21 +12,27 @@
 #include "SimpleGraph.h"
 #include "Epics.h"
 
+class WindowManager;
+
 class Window {
+    
 private:
+    WindowManager* _owner;
     std::string _name; // unique window name
     float _x_pixels;
     float _y_pixels;   
-
+    
+    int callback_remove_window(const std::string& arg);
 public:
 
-    Window( const std::string& name, 
+    Window( WindowManager* owner,
+            const std::string& name, 
             const float xscale = 1, 
-            const float yscale = 1) : 
-        _name(name) , _x_pixels(xscale), _y_pixels(yscale) {}
+            const float yscale = 1);
 
-    virtual ~Window(){}
-
+    virtual ~Window();
+      
+    
     const float& XPixels() const { return _x_pixels; }
     const float& YPixels() const { return _y_pixels; }  
     float& XPixels()  { return _x_pixels; }
@@ -69,11 +75,13 @@ public:
     std::string& Xlabel() { return _xlabel; }
     std::string& Ylabel() { return _ylabel; }
 
-    PlotWindow( const std::string& pvname, 
-                const std::string& xlabel = "Always label your axes",
-                const std::string& ylabel = "Alawys label your axes",
-                const float xscale = 1,
-                const float yscale = 1);
+    PlotWindow( 
+            WindowManager* owner,
+            const std::string& pvname, 
+            const std::string& xlabel = "Always label your axes",
+            const std::string& ylabel = "Alawys label your axes",
+            const float xscale = 1,
+            const float yscale = 1);
 
     virtual ~PlotWindow();
 
@@ -95,7 +103,10 @@ private:
     std::string _url;
 
 public:
-    ImageWindow( const std::string& title, const float xscale = 1, const float yscale = 1);
+    ImageWindow( 
+            WindowManager* owner,
+            const std::string& title, 
+            const float xscale = 1, const float yscale = 1);
     virtual ~ImageWindow() {}
 
     void SetURL( const std::string& url);

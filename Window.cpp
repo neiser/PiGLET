@@ -7,15 +7,18 @@
 #include <iomanip>
 #include "TextRenderer.h"
 #include "ConfigManager.h"
+#include "WindowManager.h"
 
 using namespace std;
 
-PlotWindow::PlotWindow( const std::string& pvname,
-                        const std::string& xlabel,
-                        const std::string& ylabel,
-                        const float xscale,
-                        const float yscale):
-    Window(pvname,xscale,yscale),
+PlotWindow::PlotWindow( 
+        WindowManager* owner, 
+        const std::string& pvname,
+        const std::string& xlabel,
+        const std::string& ylabel,
+        const float xscale,
+        const float yscale ) :
+    Window(owner, pvname,xscale,yscale),
     _pvname(pvname),
     _xlabel(xlabel),
     _ylabel(ylabel),    
@@ -30,6 +33,7 @@ PlotWindow::PlotWindow( const std::string& pvname,
     cout << "Plotwindow ctor" << endl;
     text.SetText(pvname);
     ConfigManager::I().addCmd(pvname+"_BackLength", BIND_MEM_CB(&PlotWindow::callback_SetBackLength, this));
+    
     // don't forget to call Init()
     // which also checks if the pvname is actually valid
 }
@@ -197,8 +201,8 @@ std::ostream& operator<<( std::ostream& stream, const PlotWindow& win ) {
 }
 
 
-ImageWindow::ImageWindow( const std::string& title, const float xscale, const float yscale ):
-    Window(title, xscale, yscale),
+ImageWindow::ImageWindow( WindowManager* owner, const std::string& title, const float xscale, const float yscale ):
+    Window(owner, title, xscale, yscale),
     _url("")
 {
 }
@@ -227,4 +231,23 @@ void ImageWindow::Draw()
     glDisable(GL_TEXTURE_2D);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     glPopMatrix();
+}
+
+
+int Window::callback_remove_window(const string &arg)
+{
+    return _owner->RemoveWindow(_name);    
+}
+
+Window::Window(WindowManager *owner, const string &name, const float xscale, const float yscale) : 
+    _owner(owner),
+    _name(name), 
+    _x_pixels(xscale), 
+    _y_pixels(yscale) {
+    ConfigManager::I().addCmd(name+"_Remove",BIND_MEM_CB(&Window::callback_remove_window,this));
+}
+
+Window::~Window()
+{
+    ConfigManager::I().removeCmd(_name+"_Remove");
 }

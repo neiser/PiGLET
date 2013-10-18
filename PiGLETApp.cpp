@@ -38,7 +38,7 @@ void PiGLETApp::Init(){
     for (int i = 0 ; i < 3; i++){
         stringstream ss;
         ss << "MyTestRecord" << i;
-        windowman.AddWindow(new PlotWindow(ss.str()));
+        windowman.AddWindow(new PlotWindow(&windowman, ss.str()));
     }
 
     //windowman.RemoveWindow(0);
