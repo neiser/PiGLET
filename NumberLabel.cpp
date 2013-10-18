@@ -139,19 +139,9 @@ void NumberLabel::Set(const float v)
         const char& c = s[p];
         unsigned char texnum;
 
-        if ( c>='0' && c<= '9') {
-            texnum = c - '0';
-        } else {
-            if( c == '.' )
-                texnum = 10;
-            else if( c == '-')
-                texnum = 11;
-            else if( c == 'E' || c == 'e' )
-                texnum = 12;
-            else
-                texnum = 13;
-        }
-         _digtex[s.size() - p-1] = texnum;
+        texnum = c - 32;
+
+        _digtex[s.size() - p-1] = texnum;
 
     }
 }

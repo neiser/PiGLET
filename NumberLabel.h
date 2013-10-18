@@ -8,8 +8,8 @@
 class NumberLabel: public Widget {
 private:
 
-#define NUMBERLABEL_NUM_TEX 14
-#define NUMBERLABEL_CHARS "0123456789.-E?"
+#define NUMBERLABEL_NUM_TEX 128-32
+#define NUMBERLABEL_CHARS " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~"
 
     // array of texture handles
     static Texture* _textures;
