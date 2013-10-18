@@ -20,8 +20,12 @@ void Epics::deleteDataItem(DataItem* i) {
     case Epics::NewValue:
         delete static_cast<vec2_t*>(i->data);
         break;
+    case Epics::NewProperties:
+        delete static_cast<dbr_ctrl_double*>(i->data);
+        break;
     default:
-        // all other types currently don't fill something
+        // all other types currently 
+        // don't fill something
         // in the i->data
         break;
     }            
@@ -50,7 +54,7 @@ void Epics::connectionCallback( connection_handler_args args ) {
     else { // args.op == CA_OP_CONN_DOWN
         pNew->type = Disconnected;
     }
-      
+    
     appendToList((PV*)ca_puser(args.chid), pNew);
 }
 
@@ -59,23 +63,39 @@ void Epics::eventCallback( event_handler_args args ) {
         cerr << "Error in EPICS event callback" << endl;
         return;
     } 
-        
+    
     // since the content of dbr is only valid within
     // this callback, we create some new memory space here
     // and hardcopy it
     
-    vec2_t* data = new vec2_t;
-    dbr_time_double* dbr = (dbr_time_double*)args.dbr; // Convert void* to correct data type
-    epicsTime time(dbr->stamp);
-    data->x= time - Epics::I().t0;
-    data->y = dbr->value;
+    PV* pv = (PV*)ca_puser(args.chid);   
+    DataItem* pNew = new DataItem;        
     
-    // pack it together
-    DataItem* pNew = new DataItem;    
-    pNew->type = NewValue;
-    pNew->data = data;   
+    if(args.type == DBR_TIME_DOUBLE) {
+        vec2_t* data = new vec2_t;
+        dbr_time_double* dbr = (dbr_time_double*)args.dbr; // Convert void* to correct data type
+        epicsTime time(dbr->stamp);
+        data->x= time - Epics::I().t0;
+        data->y = dbr->value;
+        
+        // pack it together
+        pNew->type = NewValue;
+        pNew->data = data;   
+    }
+    else if(args.type == DBR_CTRL_DOUBLE) {
+        
+        dbr_ctrl_double* dbr = (dbr_ctrl_double*)args.dbr; // Convert void* to correct data type
+        // make a hardcopy
+        dbr_ctrl_double* data = new dbr_ctrl_double(*dbr);
+        
+        cout << "ctrl received " << data->upper_warning_limit << " " << data->upper_alarm_limit << endl;
+        
+        // pack it together
+        pNew->type = NewProperties;
+        pNew->data = data;
+    }
     
-    appendToList((PV*)ca_puser(args.chid), pNew);    
+    appendToList(pv, pNew);    
 }
 
 void Epics::appendToList(Epics::PV* pv, Epics::DataItem *pNew)
@@ -96,15 +116,10 @@ Epics::DataItem** Epics::addPV(const string &pvname)
         return NULL;
     }
     
-    // create the one and only data structure,
-    // initialize the linked list (atomically modified by EPICS threads)
-    PV* pv = new PV;
-    DataItem* head = new DataItem; // create the first dummy item
-    head->prev = NULL; // ensure it points to nothing before  
-    pv->head = head; // save the pointer in the pv as a starting point
-       
-    // subscribe 
-    subscribe(pvname, DBR_TIME_DOUBLE, pv);
+    PV* pv = initPV();
+    
+    // subscribe to value and control
+    subscribe(pvname, pv);
     
     // save the pv
     pvs[pvname] = pv;
@@ -113,25 +128,49 @@ Epics::DataItem** Epics::addPV(const string &pvname)
     return &pv->head; // tell where to find the head (for reading the list)
 }
 
-void Epics::subscribe(const string &pvname, chtype catype, PV* pv) {
+Epics::PV* Epics::initPV() {
+    // create the one and only data structure,
+    // initialize the linked list (atomically modified by EPICS threads)
+    PV* pv = new PV;
+    DataItem* head = new DataItem; // create the first dummy item
+    head->prev = NULL; // ensure it points to nothing before  
+    pv->head = head; // save the pointer in the pv as a starting point
+    return pv;    
+} 
+
+void Epics::subscribe(const string &pvname, PV* pv) {
     
+    // create/subscribe for value
     int ca_rtn = ca_create_channel( pvname.c_str(),      // PV name
                                     connectionCallback,  // name of connection callback function
                                     pv,               // 
                                     CA_PRIORITY_DEFAULT, // CA Priority
-                                    &pv->mychid );    // Unique channel id
-    
-    SEVCHK(ca_rtn, "ca_create_channel failed");
-    
-    ca_rtn = ca_create_subscription( catype,          // CA data type
+                                    &pv->chid_val );    // Unique channel id
+    SEVCHK(ca_rtn, "ca_create_channel for value failed");
+    ca_rtn = ca_create_subscription( DBR_TIME_DOUBLE,          // CA data type
                                      1,                        // number of elements
-                                     pv->mychid,            // unique channel id
-                                     DBE_VALUE | DBE_ALARM,    // event mask (change of value and alarm)
+                                     pv->chid_val,            // unique channel id
+                                     DBE_VALUE,    // event mask (change of value and alarm)
                                      eventCallback,            // name of event callback function
                                      pv,
-                                     &pv->myevid );         // unique event id needed to clear subscription
+                                     &pv->evid_val );         // unique event id needed to clear subscription
+    SEVCHK(ca_rtn, "ca_create_subscription for value failed");
     
-    SEVCHK(ca_rtn, "ca_create_subscription failed");
+    // create/subscribe for control (all interesting properties)
+    ca_rtn = ca_create_channel( pvname.c_str(),      // PV name
+                                NULL,  // name of connection callback function
+                                pv,               // 
+                                CA_PRIORITY_DEFAULT, // CA Priority
+                                &pv->chid_ctrl );    // Unique channel id    
+    SEVCHK(ca_rtn, "ca_create_channel for ctrl failed");
+    ca_rtn = ca_create_subscription( DBR_CTRL_DOUBLE,          // CA data type
+                                     1,                        // number of elements
+                                     pv->chid_ctrl,            // unique channel id
+                                     DBE_PROPERTY | DBE_ALARM,             // event mask (change of properties)
+                                     eventCallback,            // name of event callback function
+                                     pv,
+                                     &pv->evid_ctrl);         // unique event id needed to clear subscription
+    SEVCHK(ca_rtn, "ca_create_subscription for ctrl failed");
     
     // dont know if this is really meaningful here (also done in ctor)
     ca_poll();
@@ -143,8 +182,8 @@ void Epics::removePV(const string& pvname)
     PV* pv = pvs[pvname];
     
     // cancel the subscription
-    ca_clear_subscription (pv->myevid);
-    ca_clear_channel(pv->mychid);
+    ca_clear_subscription (pv->evid_val);
+    ca_clear_channel(pv->chid_val);
     ca_poll();
     
     // properly delete the linked list

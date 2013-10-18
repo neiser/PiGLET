@@ -20,10 +20,7 @@ public:
         Connected,
         Disconnected,
         NewValue,
-        State,
-        Low, LoLo, High, HiHi,
-        Unit,
-        Ymin, Ymax
+        NewProperties
     } DataType;
     
        
@@ -64,13 +61,14 @@ private:
     Epics& operator=(Epics const& copy); // Not Implemented
     
     typedef struct PV {
-        //std::vector<chid>  mychid;
-        //std::vector<evid>  myevid;        
-        chid mychid;
-        evid myevid;
+        chid chid_val;
+        evid evid_val;
+        chid chid_ctrl;
+        evid evid_ctrl;        
         DataItem*  head; // accessed by EPICS callbacks, one data stream for all
     } PV;
     
+    static PV* initPV();
     
     // Storage for channels/subscriptions
     std::map<std::string, PV*> pvs;
@@ -83,7 +81,8 @@ private:
     static void exceptionCallback( exception_handler_args args );
     static void appendToList(PV* pv, DataItem* pNew);
     
-    static void subscribe(const std::string &pvname, chtype catype, PV* pv);    
+    static void subscribe(const std::string &pvname, PV* pv);        
+        
 };
 
 
