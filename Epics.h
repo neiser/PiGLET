@@ -21,13 +21,9 @@ public:
         Disconnected,
         NewValue,
         State,
-        Low,
-        LoLo,
-        High,
-        HiHi,
+        Low, LoLo, High, HiHi,
         Unit,
-        Ymin,
-        Ymax
+        Ymin, Ymax
     } DataType;
     
        
@@ -83,10 +79,11 @@ private:
     
     
     static void connectionCallback( connection_handler_args args );
-    static void eventCallback_double( event_handler_args args );
+    static void eventCallback( event_handler_args args );
     static void exceptionCallback( exception_handler_args args );
     static void appendToList(PV* pv, DataItem* pNew);
     
+    static void subscribe(const std::string &pvname, chtype catype, PV* pv);    
 };
 
 

@@ -54,7 +54,7 @@ void Epics::connectionCallback( connection_handler_args args ) {
     appendToList((PV*)ca_puser(args.chid), pNew);
 }
 
-void Epics::eventCallback_double( event_handler_args args ) {
+void Epics::eventCallback( event_handler_args args ) {
     if ( args.status != ECA_NORMAL ) {
         cerr << "Error in EPICS event callback" << endl;
         return;
@@ -96,10 +96,24 @@ Epics::DataItem** Epics::addPV(const string &pvname)
         return NULL;
     }
     
+    // create the one and only data structure,
+    // initialize the linked list (atomically modified by EPICS threads)
     PV* pv = new PV;
     DataItem* head = new DataItem; // create the first dummy item
     head->prev = NULL; // ensure it points to nothing before  
     pv->head = head; // save the pointer in the pv as a starting point
+       
+    // subscribe 
+    subscribe(pvname, DBR_TIME_DOUBLE, pv);
+    
+    // save the pv
+    pvs[pvname] = pv;
+    cout << "PV " << pvname << " registered" << endl;
+    
+    return &pv->head; // tell where to find the head (for reading the list)
+}
+
+void Epics::subscribe(const string &pvname, chtype catype, PV* pv) {
     
     int ca_rtn = ca_create_channel( pvname.c_str(),      // PV name
                                     connectionCallback,  // name of connection callback function
@@ -109,26 +123,19 @@ Epics::DataItem** Epics::addPV(const string &pvname)
     
     SEVCHK(ca_rtn, "ca_create_channel failed");
     
-    ca_rtn = ca_create_subscription( DBR_TIME_DOUBLE,          // CA data type
+    ca_rtn = ca_create_subscription( catype,          // CA data type
                                      1,                        // number of elements
                                      pv->mychid,            // unique channel id
                                      DBE_VALUE | DBE_ALARM,    // event mask (change of value and alarm)
-                                     eventCallback_double,            // name of event callback function
+                                     eventCallback,            // name of event callback function
                                      pv,
                                      &pv->myevid );         // unique event id needed to clear subscription
     
     SEVCHK(ca_rtn, "ca_create_subscription failed");
     
-    pvs[pvname] = pv;
-    
     // dont know if this is really meaningful here (also done in ctor)
     ca_poll();
-    cout << "PV " << pvname << " registered" << endl;
-    
-    return &pv->head; // tell where to find the head (for reading the list)
 }
-
-
 
 void Epics::removePV(const string& pvname)
 {
