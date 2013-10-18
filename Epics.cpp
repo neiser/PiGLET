@@ -12,7 +12,7 @@ void Epics::exceptionCallback( exception_handler_args args ) {
          << "Channel: " + pvname << endl;
 }
 
-void Epics::deleteDataListItem(DataList* i) {
+void Epics::deleteDataItem(DataItem* i) {
     // well, the void* data must be deleted as well
     // but we need to know the data type 
     // (see the callbacks below where these items are generated)
@@ -29,8 +29,19 @@ void Epics::deleteDataListItem(DataList* i) {
     delete i;    
 }
 
+void Epics::fillList(Epics::DataItem *head, vector<Epics::DataItem*>& list)
+{
+    // scan the linked list
+    list.reserve(100);
+    Epics::DataItem* d = head; // start from the head
+    while(d->prev != NULL) {
+        list.push_back(d);
+        d = d->prev;
+    }
+}
+
 void Epics::connectionCallback( connection_handler_args args ) { 
-    DataList* pNew = new DataList;
+    DataItem* pNew = new DataItem;
     
     if ( args.op == CA_OP_CONN_UP ) {
         // channel has connected
@@ -60,17 +71,17 @@ void Epics::eventCallback_double( event_handler_args args ) {
     data->y = dbr->value;
     
     // pack it together
-    DataList* pNew = new DataList;    
+    DataItem* pNew = new DataItem;    
     pNew->type = NewValue;
     pNew->data = data;   
     
     appendToList((PV*)ca_puser(args.chid), pNew);    
 }
 
-void Epics::appendToList(Epics::PV* pv, Epics::DataList *pNew)
+void Epics::appendToList(Epics::PV* pv, Epics::DataItem *pNew)
 {
     while (1) { // concurrency loop
-        DataList* pOld = pv->head;  // copy the state of the world. We operate on the copy
+        DataItem* pOld = pv->head;  // copy the state of the world. We operate on the copy
         pNew->prev = pOld; // chain the new node to the current head of recycled items
         if (__sync_bool_compare_and_swap(&pv->head, pOld, pNew))  // switch head of recycled items to new node
             break; // success
@@ -78,7 +89,7 @@ void Epics::appendToList(Epics::PV* pv, Epics::DataList *pNew)
     //cout << "Something was appended. Contents:" << endl;
 }
 
-Epics::DataList** Epics::addPV(const string &pvname)
+Epics::DataItem** Epics::addPV(const string &pvname)
 {
     // check if we already know that PV
     if(pvs.count(pvname)>0) {
@@ -86,9 +97,9 @@ Epics::DataList** Epics::addPV(const string &pvname)
     }
     
     PV* pv = new PV;
-    DataList* head = new DataList; // create the first dummy item
-    head->prev = NULL; // ensure it points to nothing  
-    pv->head = head;
+    DataItem* head = new DataItem; // create the first dummy item
+    head->prev = NULL; // ensure it points to nothing before  
+    pv->head = head; // save the pointer in the pv as a starting point
     
     int ca_rtn = ca_create_channel( pvname.c_str(),      // PV name
                                     connectionCallback,  // name of connection callback function
@@ -112,20 +123,37 @@ Epics::DataList** Epics::addPV(const string &pvname)
     
     // dont know if this is really meaningful here (also done in ctor)
     ca_poll();
-    cout << "PV registered" << endl;
+    cout << "PV " << pvname << " registered" << endl;
     
-    return &pv->head; // tell where to find the head
+    return &pv->head; // tell where to find the head (for reading the list)
 }
+
+
 
 void Epics::removePV(const string& pvname)
 {
+    // hopefully, the pvname exists :)
     PV* pv = pvs[pvname];
-    ca_clear_subscription ( pv->myevid );
-    ca_clear_channel( pv->mychid );
+    
+    // cancel the subscription
+    ca_clear_subscription (pv->myevid);
+    ca_clear_channel(pv->mychid);
     ca_poll();
-    pvs.erase(pvname);
+    
+    // properly delete the linked list
+    typedef vector<DataItem*> list_t;
+    list_t list;
+    fillList(pv->head, list);
+    for(list_t::iterator it = list.begin(); it != list.end(); ++it) {
+        deleteDataItem(*it);
+    }
+    
+    // the item itself
     delete pv;    
-    cout << "PV unregistered" << endl;
+    
+    // remove it from container
+    pvs.erase(pvname);    
+    cout << "PV " << pvname << " unregistered" << endl;
 }
 
 double Epics::GetCurrentTime()

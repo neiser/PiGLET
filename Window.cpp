@@ -61,7 +61,7 @@ void PlotWindow::ProcessEpicsData() {
     
     // get the pointer to the most recent item 
     // in the list (snapshot of current state)
-    Epics::DataList* head = *_head_ptr;
+    Epics::DataItem* head = *_head_ptr;
     
     // is there something new in
     // the linked list since the last 
@@ -70,14 +70,9 @@ void PlotWindow::ProcessEpicsData() {
         return;   
     
     // scan the linked list
-    typedef vector<Epics::DataList*> list_t;
+    typedef vector<Epics::DataItem*> list_t;
     list_t list;
-    list.reserve(100);
-    Epics::DataList* d = head; // start from the head
-    while(d->prev != NULL) {
-        list.push_back(d);
-        d = d->prev;
-    }
+    Epics::fillList(head, list);
     
     // go thru the vector in positive time direction (ie reverse direction)
     // note that the linked list (scanned above) starts from the head (most recent item!)
@@ -86,7 +81,7 @@ void PlotWindow::ProcessEpicsData() {
         it!=list.rend(); // reverse end
         ++it) {
         
-        Epics::DataList* i = (*it);
+        Epics::DataItem* i = (*it);
         if(i->prev == _head_last) {
             newData = true;
         }      
@@ -104,11 +99,14 @@ void PlotWindow::ProcessEpicsData() {
             //cout << "PV " << _pvname << " disconnected" << endl;
             break;
             
-        case Epics::NewValue:
+        case Epics::NewValue: {
             vec2_t* d = (vec2_t*)i->data;
             //cout << "New Value " << d->x << " " << d->y << endl;                
             graph.AddToBlockList(*d);
             break;               
+        }
+        default:
+            break;
         }        
     }
     // remember the last head for the next call
@@ -120,11 +118,11 @@ void PlotWindow::ProcessEpicsData() {
         it<list.rend()-2; // reverse end, but not the last two!
         ++it) {
         // delete the current one properly
-        Epics::DataList* cur = *it;
-        Epics::deleteDataListItem(cur);   
+        Epics::DataItem* cur = *it;
+        Epics::deleteDataItem(cur);   
         // and tell the next, that it's not pointing backwards to
         // us anymore
-        Epics::DataList* next = *(it+1);
+        Epics::DataItem* next = *(it+1);
         next->prev = NULL;
     }
 }

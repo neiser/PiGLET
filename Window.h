@@ -47,8 +47,8 @@ private:
     std::string _ylabel;
     
     bool _initialized;
-    Epics::DataList** _head_ptr;
-    Epics::DataList* _head_last;
+    Epics::DataItem** _head_ptr;
+    Epics::DataItem* _head_last;
     
 
     UnitBorderBox WindowArea;

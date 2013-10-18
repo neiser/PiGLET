@@ -19,17 +19,25 @@ public:
     typedef enum {
         Connected,
         Disconnected,
-        NewValue
+        NewValue,
+        State,
+        Low,
+        LoLo,
+        High,
+        HiHi,
+        Unit,
+        Ymin,
+        Ymax
     } DataType;
     
        
-    typedef struct DataList {
+    typedef struct DataItem {
         DataType type;
         void* data;
-        struct DataList* prev;
-    } DataList;
+        struct DataItem* prev;
+    } DataItem;
         
-    DataList** addPV(const std::string& pvname); // returns the tail of the datalist
+    DataItem** addPV(const std::string& pvname); // returns the tail of the datalist
     void removePV(const std::string& pvname);
     
     // Implement a singleton
@@ -46,7 +54,8 @@ public:
     // epics callbacks
     double GetCurrentTime();
     
-    static void deleteDataListItem(DataList* i);
+    static void deleteDataItem(DataItem* i);
+    static void fillList(DataItem* head, std::vector<DataItem*>& list);
     
 private:
     
@@ -59,9 +68,11 @@ private:
     Epics& operator=(Epics const& copy); // Not Implemented
     
     typedef struct PV {
-        chid       mychid;
-        evid       myevid;
-        DataList*  head; // accessed by EPICS callbacks
+        //std::vector<chid>  mychid;
+        //std::vector<evid>  myevid;        
+        chid mychid;
+        evid myevid;
+        DataItem*  head; // accessed by EPICS callbacks, one data stream for all
     } PV;
     
     
@@ -74,7 +85,8 @@ private:
     static void connectionCallback( connection_handler_args args );
     static void eventCallback_double( event_handler_args args );
     static void exceptionCallback( exception_handler_args args );
-    static void appendToList(PV* pv, DataList* pNew);
+    static void appendToList(PV* pv, DataItem* pNew);
+    
 };
 
 
