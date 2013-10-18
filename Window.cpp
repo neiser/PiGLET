@@ -136,7 +136,10 @@ void PlotWindow::ProcessEpicsData() {
 }
 
 void PlotWindow::ProcessEpicsProperties(dbr_ctrl_double* d) {
-    
+    // set alarm levels
+    graph.SetMajorAlarms(Interval(d->lower_alarm_limit, d->upper_alarm_limit));
+    graph.SetMinorAlarms(Interval(d->lower_warning_limit, d->upper_warning_limit));
+        
     // set alarm state
     graph.SetAlarm((epicsAlarmSeverity)d->severity);
     
