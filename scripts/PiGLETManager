@@ -9,7 +9,7 @@ use Switch;
 use Net::Telnet;
 
 # define the display sets $dispsets here
-# as a hashref, the key is the "name" of the runset
+# as a hashref, the key is the "name" of the dispset
 # please provide a meaningful description of the displayset,
 
 my $dispsets = {};
@@ -39,6 +39,7 @@ my $help = 0;
 my $verbose = 0;
 my $warnings = 1;
 my $exact = 0;
+my $dispsetfile;
 my $t; # telnet connection
 
 Getopt::Long::Configure(qw(gnu_getopt));
@@ -47,7 +48,8 @@ GetOptions(
            'man' => \$man,
            'verbose|v+' => \$verbose,
            'warnings|w!' => \$warnings,
-           'exact|e+' => \$exact
+           'exact|e+' => \$exact,
+           'dispsetfile|d=s' => \$dispsetfile
           ) or pod2usage(2);
 pod2usage(1) if $help;
 pod2usage(-exitval => 0, -verbose => 2) if $man;
@@ -56,6 +58,10 @@ if ($verbose) {
   # always enable warnings if verbose
   $warnings = 1;
 }
+
+# this loads some additional dispsets
+&LoadDispsetfile;
+
 
 # jump to subroutine which handles the job,
 # depending on the options
@@ -97,6 +103,12 @@ sub List {
 
 
 # helper functions
+
+sub LoadDispsetfile {
+  return unless defined $dispsetfile;
+  do $dispsetfile or Logger("Can't load dispsetfile $dispsetfile: $!",-1);
+}
+
 
 sub WorkOnDisplay {
   my $disp = shift;
@@ -197,10 +209,11 @@ PiGLETManager activate <displayset>
 PiGLETManager list
 
  Options:
-   -h, --help     brief help message
-   -v, --verbose  be verbose to STDERR
-   -w, --warnings print warnings to STDERR
-   -e, --exact    set display more precisely
+   -h, --help         brief help message
+   -v, --verbose      be verbose to STDERR
+   -w, --warnings     print warnings to STDERR
+   -e, --exact        set display more precisely
+   -d, --dispsetfile  load extra display sets
 
 =head1 OPTIONS
 
@@ -229,6 +242,14 @@ removed.
 If specified three times (e.g. -eee), everything is removed and added
 from scratch. Note: This also deletes the history of the graphs and
 reloads the metadata like yrange from EPICS.
+
+=item B<--dispsetfile>
+
+Load more dispsets from the specified file. It must be valid PERL
+syntax which extends or modifies the hashref $dispsets, see the
+beginning of the source code of PiGLETManager how the default dispsets
+are defined.
+
 
 =back
 
