@@ -1,9 +1,10 @@
-#include "WindowManager.h"
-
 #include <iostream>
 #include <stdlib.h>
 
 #include "ConfigManager.h"
+#include "WindowManager.h"
+#include "PlotWindow.h"
+
 
 using namespace std;
 

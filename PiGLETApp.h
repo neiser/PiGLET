@@ -3,10 +3,7 @@
 #include "Structs.h"
 #include "BlockBuffer.h"
 #include "TextRenderer.h"
-
 #include "WindowManager.h"
-#include "Window.h"
-
 
 class PiGLETApp: public GLApp{
 //private:

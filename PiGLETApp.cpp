@@ -5,6 +5,7 @@
 #include "PiGLETApp.h"
 #include "system.h"
 #include "ConfigManager.h"
+#include "PlotWindow.h"
 
 using namespace std;
 
