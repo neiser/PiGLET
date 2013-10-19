@@ -24,7 +24,8 @@ PlotWindow::PlotWindow(
     WindowArea( dBackColor, dWindowBorderColor),
     graph(this, 10),
     text(this, -.95, .82, .95, .98),
-    frame(0)
+    frame(0),
+    _old_properties()
 {
     cout << "Plotwindow ctor" << endl;
     text.SetText(pvname);
