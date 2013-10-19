@@ -39,7 +39,7 @@ void ImageWindow::Draw()
             TextRenderer::Image2Texture(_mw, _tex);
             DestroyMagickWand(_mw);
             _mw = NewMagickWand();
-            cout << "Image loaded..." << endl;
+            //cout << "Image loaded..." << endl;
             _image_ok = false;
         }
         else {
