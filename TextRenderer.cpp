@@ -27,6 +27,7 @@ TextRenderer::~TextRenderer()
 {
     if(mw)
         DestroyMagickWand(mw);
+    MagickWandTerminus();
 }
 
 uint32_t RoundPow2( uint32_t val ) {
@@ -40,7 +41,8 @@ uint32_t RoundPow2( uint32_t val ) {
     return val;
 }
 
-void TextRenderer::CopyToTexture(Texture &tex, const int width, const int height, GLenum TextureMode ) {
+void TextRenderer::CopyToTexture(MagickWand* mw, Texture& tex, 
+                                 const int width, const int height, GLenum TextureMode ) {
 
     string exportMode = "I";
     unsigned char bytes = 1;
@@ -101,7 +103,7 @@ void TextRenderer::Text2Texture( Texture& tex, const string &text )
     const size_t width = MagickGetImageWidth(mw);
     const size_t height = MagickGetImageHeight(mw);
 
-    CopyToTexture( tex, width, height, GL_LUMINANCE );
+    CopyToTexture(mw, tex, width, height, GL_LUMINANCE );
 
 
     float texw = ((float)_w) / width;
@@ -111,27 +113,19 @@ void TextRenderer::Text2Texture( Texture& tex, const string &text )
     tex.SetAspect((float) _w / (float) _h);
 }
 
-void TextRenderer::LoadImage( Texture& tex, const string url )
+void TextRenderer::Image2Texture(MagickWand* mw, Texture& tex)
 {
-    bool ok = MagickReadImage(mw, url.c_str() );
-
-    if( ok ) {
-           const size_t width = MagickGetImageWidth(mw);
-           const size_t height = MagickGetImageHeight(mw);
-
-           const size_t nw = RoundPow2( width );
-           const size_t nh = RoundPow2( height );
-
-           CopyToTexture( tex, nw, nh, GL_RGBA);
-
-           tex.SetMaxUV( (float) width / nw, (float) height / nh);
-           tex.SetAspect( (float) width / (float) height );
-
-    } else {
-        cout << "ERROR loading from " << url << endl;
-        // TODO: Return or throw something!
-        tex.SetAspect(0.0);
-        tex.SetMaxUV(0,0);
-    }
+    
+    const size_t width = MagickGetImageWidth(mw);
+    const size_t height = MagickGetImageHeight(mw);
+    
+    const size_t nw = RoundPow2( width );
+    const size_t nh = RoundPow2( height );
+    
+    CopyToTexture(mw, tex, nw, nh, GL_RGBA);
+    
+    tex.SetMaxUV( (float) width / nw, (float) height / nh);
+    tex.SetAspect( (float) width / (float) height );
+    
 }
 

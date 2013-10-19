@@ -3,20 +3,17 @@
 
 #include "Window.h"
 #include <pthread.h>
+#include <wand/magick_wand.h>
 
 class ImageWindow: public Window {
 private:
-    typedef struct DataItem {
-        Texture* image;
-        struct DataItem* prev;
-    } DataItem;
-    
-    Texture _image;
+      
+    Texture _tex;
     std::string _url;
-    pthread_t _thread;
+    pthread_t _thread;    
     
-    static void deleteDataItem(DataItem* i);
-    static void fillList(DataItem* head, std::vector<DataItem*>& list);
+    MagickWand* _mw;
+    bool _image_ok;
     
     // This is the static class function that serves as a C style function pointer
     // for the pthread_create call
@@ -34,11 +31,10 @@ public:
             WindowManager* owner,
             const std::string& title, 
             const float xscale = 1, const float yscale = 1);
-    virtual ~ImageWindow() {}
+    virtual ~ImageWindow();
 
     void SetURL( const std::string& url);
     const std::string& GetURL() const { return _url; }
-    void UpdateImage();
     void Update() {}
     void Draw();
     

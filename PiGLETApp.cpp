@@ -48,6 +48,5 @@ void PiGLETApp::Init(){
     
 //    //Add one extra Image Window
     ImageWindow* w = new ImageWindow(&windowman, "Image");
-    w->SetURL("https://i.chzbgr.com/maxW500/7846712320/h4B84CC02/");
     windowman.AddWindow(w);
 }

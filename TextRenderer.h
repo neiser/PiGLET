@@ -16,7 +16,7 @@ private:
     TextRenderer(TextRenderer const& copy);            // Not Implemented
     TextRenderer& operator=(TextRenderer const& copy); // Not Implemented
 
-    void CopyToTexture( Texture& tex, const int width, const int height , GLenum TextureMode);
+    static void CopyToTexture(MagickWand* mw, Texture& tex, const int width, const int height , GLenum TextureMode);
 
 public:
 
@@ -26,7 +26,7 @@ public:
     }
 
     void Text2Texture( Texture& tex, const std::string &text );
-    void LoadImage(Texture &tex, const std::string url);
+    static void Image2Texture(MagickWand* mw, Texture &tex);
 
 };
 
