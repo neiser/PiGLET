@@ -74,6 +74,7 @@ private:
     void InitSocket();
     
     int Kill(const std::string& arg);
+    static void trim(std::string& str, const std::string& whitespace = " \t\r\n");
 };
 
 #endif // CONFIGMANAGER_H

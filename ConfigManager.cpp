@@ -99,21 +99,20 @@ void ConfigManager::do_work() {
                 client_connected = false;
                 continue;
             }
-            // remove newline characters
-            line.erase(std::remove(line.begin(), line.end(), '\n'), line.end());
-            line.erase(std::remove(line.begin(), line.end(), '\r'), line.end());
-
-            
+                        
+            // trim whitespace (including newlines)
+            trim(line);                        
             
             size_t pos = line.find_first_of(' ');
             // split the line at the first space
             string cmd = line.substr(0,pos); 
             string arg;
             if(pos < string::npos) {
-                // there is an argument
-                arg = line.substr(pos+1,line.length()-pos);                
-            }                
-            
+                // there is an argument, 
+                arg = line.substr(pos+1,line.length()-pos);
+                // also trim leading/trailing whitespace again
+                trim(arg);
+            }            
             
             // some meta-commands
             if(cmd=="Exit") {
@@ -193,7 +192,8 @@ void ConfigManager::InitSocket()
     my_addr.sin_port = htons(_port);
     inet_pton(my_addr.sin_family, _address.c_str(), &(my_addr.sin_addr));
 
-    // set keepalive
+    // reuseaddress might be helpful if 
+    // the socket was not properly closed
     int optval = 1;
     socklen_t optlen = sizeof(optval);
     if(setsockopt(_socket, SOL_SOCKET, SO_REUSEADDR, &optval, optlen) < 0) {
@@ -216,4 +216,18 @@ int ConfigManager::Kill(const string& arg)
     // exit is a bit special, since it never returns...
     pthread_cond_signal(&_callback_done);
     exit(EXIT_SUCCESS);
+}
+
+void ConfigManager::trim(string& str, const string& whitespace)
+{
+    const size_t strBegin = str.find_first_not_of(whitespace);
+    if (strBegin == std::string::npos) {
+        str = "";
+        return; // no content
+    }
+
+    const size_t strEnd = str.find_last_not_of(whitespace);
+    const size_t strRange = strEnd - strBegin + 1;
+
+    str = str.substr(strBegin, strRange);
 }
