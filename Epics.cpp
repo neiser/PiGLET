@@ -84,8 +84,6 @@ void Epics::eventCallback( event_handler_args args ) {
     }
     else if(args.type == DBR_CTRL_DOUBLE) {
         
-        cout << "Control received!" << endl;
-        
         dbr_ctrl_double* dbr = (dbr_ctrl_double*)args.dbr; // Convert void* to correct data type
         // make a hardcopy
         dbr_ctrl_double* data = new dbr_ctrl_double(*dbr);

@@ -21,10 +21,10 @@ $dispsets->{Test} =
    'Displays' => [
                   {
                    'Hostname' => 'localhost',
-                   'Values' => [
-                                {'PV'=>'MyTestRecord0', 'BackLength'=>600},
-                                {'PV'=>'MyTestRecord1', 'BackLength'=>100}
-                                ]
+                   'Plots' => [
+                               {'PV'=>'MyTestRecord0', 'BackLength'=>600},
+                               {'PV'=>'MyTestRecord1', 'BackLength'=>100}
+                              ]
                   }
                  ]
   };
@@ -39,6 +39,7 @@ my $help = 0;
 my $verbose = 0;
 my $warnings = 1;
 my $exact = 0;
+my $t; # telnet connection
 
 Getopt::Long::Configure(qw(gnu_getopt));
 GetOptions(
@@ -46,7 +47,7 @@ GetOptions(
            'man' => \$man,
            'verbose|v+' => \$verbose,
            'warnings|w!' => \$warnings,
-           'exact|e' => \$exact
+           'exact|e+' => \$exact
           ) or pod2usage(2);
 pod2usage(1) if $help;
 pod2usage(-exitval => 0, -verbose => 2) if $man;
@@ -73,6 +74,8 @@ sub Activate {
   Logger("Specified dispset $dispset not found")
     unless defined $dispsets->{$dispset};
 
+  Logger("Can't be that exact!")
+    if $exact>3;
   Logger("Activating display set $dispset",1);
   # define a shortcut to the actual dispset data
   my $d = $dispsets->{$dispset};
@@ -80,6 +83,8 @@ sub Activate {
   foreach my $disp (@{$d->{Displays}}) {
     WorkOnDisplay($disp);
   }
+
+  Logger("Display set $dispset activated.",1);
 }
 
 sub List {
@@ -95,11 +100,67 @@ sub List {
 
 sub WorkOnDisplay {
   my $disp = shift;
-  Logger("Working on display host $disp->{Hostname}",2);
-  #print $disp->{Hostname};
+  my $host = $disp->{Hostname};
+  Logger("$host: Opening connection",2);
 
-  $t = Net::Telnet->new(Timeout => 5);
-  
+  $t = Net::Telnet->new(Timeout => 5, Port => 1337);
+  $t->errmode("return");
+  #$t->dump_log('STDERR');
+
+  $t->open($host)
+    or Logger("$host: Cannot open telnet connection: ".$t->errmsg);
+
+  $t->waitfor(String => 'Welcome to PiGLET!')
+    or Logger("$host: Did not receive welcome message: ".$t->errmsg);
+
+  Logger("$host: Successfully connected.",2);
+
+  # get the current windows via the List command.
+  # search for words ending in _BackLength, which
+  # indicate that it's a plot the pvname before it
+  # TODO: Implement Image Windows...
+  $t->print('List');
+  $t->waitfor(String => 'Available commands:');
+  my @words = split(/\s+/,$t->lastline);
+  my %plots =
+    map { s/(.+)_BackLength/$1/ ? ($_ => 1) : () } @words;
+
+  my $n = scalar keys %plots;
+  Logger("$host: Currently $n plots active.",2);
+
+  if($exact==3) {
+    ExecCmd("RemoveAllWindows");
+  }
+
+  # let's check if it complies with the display set
+  foreach my $plot (@{$disp->{Plots}}) {
+    my $pv = $plot->{PV}; # unique identier for plot windows
+    if($exact==3 || !exists $plots{$pv}) {
+      Logger("$host: Plot $pv not found. Adding it.", 2);
+      ExecCmd("AddPlotWindow $pv");
+      ExecCmd("${pv}_BackLength $plot->{BackLength}");
+    }
+    elsif($exact>=1) { # equals $exact==1 || $exact==2
+      # ensure correct BackLength
+      ExecCmd("${pv}_BackLength $plot->{BackLength}");
+    }
+    delete $plots{$pv};
+  }
+
+  # remove "unknown" windows
+  if($exact == 2) {
+    foreach my $pv (keys %plots) {
+      Logger("$host: Removing unknown plot $pv", 2);
+      ExecCmd("${pv}_Remove");
+    }
+  }
+
+}
+
+sub ExecCmd {
+  my $cmd = shift;
+  $t->print($cmd);
+  $t->waitfor(String => 'Ok.');
 }
 
 sub Logger {
@@ -134,7 +195,7 @@ PiGLETManager list
    -h, --help     brief help message
    -v, --verbose  be verbose to STDERR
    -w, --warnings print warnings to STDERR
-   -e, --exact    also remove unknown windows
+   -e, --exact    set display more precisely
 
 =head1 OPTIONS
 
@@ -151,6 +212,18 @@ Print some information what is going on. Default off.
 =item B<--warnings>
 
 Print warnings (or "not-so-fatal" errors). Default on.
+
+=item B<--exact>
+
+If specified once, the BackLength's are reset even if the window
+exists.
+
+If specified twice (e.g. -ee), then additionally unknown windows are
+removed.
+
+If specified three times (e.g. -eee), everything is removed and added
+from scratch. Note: This also deletes the history of the graphs and
+reloads the metadata like yrange from EPICS.
 
 =back
 

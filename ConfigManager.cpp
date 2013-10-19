@@ -75,12 +75,17 @@ void ConfigManager::do_work() {
             continue;
         }
         
-        // close the listening socket 
+        // close the listening socket, 
+        // to prevent another connection
         close(_socket);
         
-        // start 
-        bool client_connected = true;
+        // print a welcome (also used by PiGLETManager to check connection)
+        bool client_connected = SendToClient(client,  "Welcome to PiGLET!");
+        
+        // start client loop
         while(client_connected) {
+            
+            // wait and read input until newline
             char buf[BUFFER_SIZE];
             string line;
             int n = 0;
@@ -146,10 +151,13 @@ void ConfigManager::do_work() {
             // wait until ExecutePendingCallback signals it has executed it
             pthread_cond_wait(&_callback_done, &_mutex);
    
-            if(_callback_return>0) {         
+            if(_callback_return != 0) {         
                 stringstream ss;
                 ss << "Command returned non-zero value: " << _callback_return;
                 client_connected = SendToClient(client,  ss.str());        
+            }
+            else {
+                client_connected = SendToClient(client,  "Ok."); 
             }
             _callback_cmd.clear();
             
