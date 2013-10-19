@@ -1,5 +1,6 @@
 #include <iostream>
 #include <sstream>
+#include <string.h> // for strcmp
 
 #include "PlotWindow.h"
 #include "ConfigManager.h"
@@ -137,30 +138,53 @@ void PlotWindow::ProcessEpicsData() {
 }
 
 void PlotWindow::ProcessEpicsProperties(dbr_ctrl_double* d) {
+   
+    // we use this macro only in this function 
+    // to prevent typos in the field names   
+    #define CHANGED(field) ((d->field) != (d_old.field))  
+    static dbr_ctrl_double d_old;
+
     // set alarm levels
-    graph.SetMajorAlarms(Interval(d->lower_alarm_limit, d->upper_alarm_limit));
-    graph.SetMinorAlarms(Interval(d->lower_warning_limit, d->upper_warning_limit));
+    if(CHANGED(lower_alarm_limit) || CHANGED(upper_alarm_limit)) 
+        graph.SetMajorAlarms(Interval(d->lower_alarm_limit, d->upper_alarm_limit));
+    
+    if(CHANGED(lower_warning_limit) || CHANGED(upper_warning_limit))
+        graph.SetMinorAlarms(Interval(d->lower_warning_limit, d->upper_warning_limit));
         
     // set alarm state
-    graph.SetAlarm((epicsAlarmSeverity)d->severity);
+    if(CHANGED(severity))
+        graph.SetAlarm((epicsAlarmSeverity)d->severity);
     
-    Interval y(d->lower_disp_limit,d->upper_disp_limit);
-    // if the provided interval is empty,
-    // try guessing some better one
-    if(y.Length()==0) {
-        y = d->value==0 ? Interval(-1,1) :
-                          Interval(d->value/2.0, d->value*2.0);
+    if(CHANGED(lower_disp_limit) || CHANGED(upper_disp_limit)) {
+        Interval y(d->lower_disp_limit,d->upper_disp_limit);
+        // if the provided interval is empty,
+        // try guessing some better one
+        if(y.Length()==0) {
+            y = d->value==0 ? Interval(-1,1) :
+                              Interval(d->value/2.0, d->value*2.0);
+        }
+        graph.SetYRange(y);
     }
-    graph.SetYRange(y);
+    
+    // d->units is a char array, 
+    // so the simple CHANGED can't be used... 
+    if(strcmp(d->units,d_old.units) != 0) {
+        // update title with unit
+        stringstream title;
+        string u(d->units);
+        title << _pvname;
+        if(!u.empty()) {
+            title << " / " << u;
+        }
+        text.SetText(title.str());
+    }
+    
+    
 
-    // update title with unit
-    stringstream title;
-    string u(d->units);
-    title << _pvname;
-    if(!u.empty()) {
-        title << " / " << u;
-    }
-    text.SetText(title.str());
+    // save a copy of the old state
+    d_old = *d;
+    
+    #undef CHANGED
 }
 
     

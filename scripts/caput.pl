@@ -16,16 +16,16 @@ unless(defined $chan && $chan->is_connected) {
   die "Cannot connect to PV $pv";
 }
 
-my $n = 0;
+my $n = 1;
 my $flag = 1;
 while(1) {
-  #$flag = !$flag if $n % 1000 == 0;
+  $flag = !$flag if $n % 10 == 0;
   my $val = 0.2*sin(2*3.14*$n/100)-0.5+$flag+0.1*rand();
-  #printf("Putting %f\n", $val);
+  printf("Putting %f\n", $val);
   $chan->put($val);
   CA->pend_io(1);
   $n++;
-  if($max_n!=0 && $n>=$max_n) {
+  if($max_n!=0 && $n>$max_n) {
     last;
   }
   usleep($usleep) if $usleep>1;
