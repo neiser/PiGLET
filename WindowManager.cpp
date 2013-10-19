@@ -11,8 +11,8 @@ using namespace std;
 WindowManager::WindowManager(const int dx, const int dy): _size_x(dx), _size_y(dy)
 {
     // register the callbacks in the ConfigManager
-    ConfigManager::I().addCmd("RemoveAllWindows",BIND_MEM_CB(&WindowManager::callback_remove_all_windows,this));
-    ConfigManager::I().addCmd("AddPlotWindow",BIND_MEM_CB(&WindowManager::callback_add_plotwindow,this));
+    ConfigManager::I().addCmd("RemoveAllWindows",BIND_MEM_CB(&WindowManager::callbackRemoveAllWindows,this));
+    ConfigManager::I().addCmd("AddPlotWindow",BIND_MEM_CB(&WindowManager::callbackAddPlotwindow,this));
 }
 
 int WindowManager::AddWindow(Window *win)
@@ -76,7 +76,7 @@ void WindowManager::Draw(){
 
 
 
-int WindowManager::callback_remove_all_windows(const string &arg){
+int WindowManager::callbackRemoveAllWindows(const string &arg){
     int i;
     for ( i = NumWindows() ; i > 0 ; --i){
         RemoveWindow(0);
@@ -84,7 +84,7 @@ int WindowManager::callback_remove_all_windows(const string &arg){
     return i;
 }
 
-int WindowManager::callback_add_plotwindow(const string &arg)
+int WindowManager::callbackAddPlotwindow(const string &arg)
 {
     return AddWindow(new PlotWindow(this, arg));
 }

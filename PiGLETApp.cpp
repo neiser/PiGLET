@@ -47,6 +47,7 @@ void PiGLETApp::Init(){
     //windowman.RemoveWindow(0);
     
 //    //Add one extra Image Window
-    ImageWindow* w = new ImageWindow(&windowman, "Image");
+    ImageWindow* w = new ImageWindow(&windowman, "Webcam");
+    //w->SetURL("http://auge.physik.uni-mainz.de/record/current.jpg");
     windowman.AddWindow(w);
 }

@@ -27,7 +27,6 @@ TextRenderer::~TextRenderer()
 {
     if(mw)
         DestroyMagickWand(mw);
-    MagickWandTerminus();
 }
 
 uint32_t RoundPow2( uint32_t val ) {

@@ -1,19 +1,26 @@
 #ifndef IMAGEWINDOW_H
 #define IMAGEWINDOW_H
 
-#include "Window.h"
+
 #include <pthread.h>
 #include <wand/magick_wand.h>
+
+#include "Window.h"
+#include "TextLabel.h"
 
 class ImageWindow: public Window {
 private:
       
-    Texture _tex;
-    std::string _url;
-    pthread_t _thread;    
+    std::string _url;    
+    int _delay;
+    TextLabel _label;
     
-    MagickWand* _mw;
+    Texture _tex;
     bool _image_ok;
+    pthread_t _thread;    
+    pthread_mutex_t _mutex;    
+    MagickWand* _mw;
+    
     
     // This is the static class function that serves as a C style function pointer
     // for the pthread_create call
@@ -25,6 +32,9 @@ private:
     }
 
     void do_work();
+    
+    int callbackSetDelay( const std::string& arg );
+    int callbackSetURL( const std::string& arg );
     
 public:
     ImageWindow( 

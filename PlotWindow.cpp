@@ -29,7 +29,7 @@ PlotWindow::PlotWindow(
 {
     cout << "Plotwindow ctor" << endl;
     text.SetText(pvname);
-    ConfigManager::I().addCmd(pvname+"_BackLength", BIND_MEM_CB(&PlotWindow::callback_SetBackLength, this));
+    ConfigManager::I().addCmd(pvname+"_BackLength", BIND_MEM_CB(&PlotWindow::callbackSetBackLength, this));
     
     // don't forget to call Init()
     // which also checks if the pvname is actually valid
@@ -43,7 +43,7 @@ PlotWindow::~PlotWindow() {
     cout << "Plotwindow dtor" << endl;
 } 
 
-int PlotWindow::callback_SetBackLength(const string& arg){
+int PlotWindow::callbackSetBackLength(const string& arg){
     graph.SetBackLength(atoi(arg.c_str()));
     return 0;
 }
