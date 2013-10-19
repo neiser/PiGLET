@@ -6,6 +6,7 @@
 #include "system.h"
 #include "ConfigManager.h"
 #include "PlotWindow.h"
+#include "ImageWindow.h"
 
 using namespace std;
 
@@ -46,7 +47,7 @@ void PiGLETApp::Init(){
     //windowman.RemoveWindow(0);
     
 //    //Add one extra Image Window
-//    ImageWindow* w = new ImageWindow("Image");
-//    w->SetURL("https://i.chzbgr.com/maxW500/7846712320/h4B84CC02/");
-//    windowman.AddWindow(w);
+    ImageWindow* w = new ImageWindow(&windowman, "Image");
+    w->SetURL("https://i.chzbgr.com/maxW500/7846712320/h4B84CC02/");
+    windowman.AddWindow(w);
 }

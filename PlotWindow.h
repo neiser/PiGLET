@@ -2,6 +2,9 @@
 #define PLOTWINDOW_H
 
 #include "Window.h"
+#include "Epics.h"
+#include "SimpleGraph.h"
+#include "TextLabel.h"
 
 class PlotWindow: public Window {
 private:

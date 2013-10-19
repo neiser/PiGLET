@@ -106,7 +106,6 @@ int WindowManager::RemoveWindow(const size_t n){
 
 int WindowManager::RemoveWindow(const string &name)
 {
-    typedef std::vector<Window*> wins_t;
     for(size_t i=0; i<NumWindows(); i++) {
         if(_window_list[i]->Name() == name) {
             RemoveWindow(i);

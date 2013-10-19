@@ -6,11 +6,6 @@
 #include <string>
 
 #include "Window.h"
-#include "Structs.h"
-
-
-
-
 
 class WindowManager {
     
