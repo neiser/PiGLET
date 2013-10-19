@@ -33,7 +33,7 @@ void ConfigManager::addCmd(string cmd, ConfigManager::ConfigCallback cb)
 {
     // check if there is already a callback for that command
     if(_callbacks.count(cmd)!=0) {
-        cerr << "Cmd " << cmd << " was already added. This should never happen." << endl;
+        cerr << "Cmd " << cmd << " was already added. This should never happen. Exit!" << endl;
         exit(EXIT_FAILURE);        
     }
     _callbacks[cmd] = cb;

@@ -17,8 +17,7 @@ Window::Window(WindowManager *owner, const string &name, const float xscale, con
     _x_pixels(xscale), 
     _y_pixels(yscale) {
     
-    // windows can remove themselves
-    ConfigManager::I().addCmd(name+"_Remove",BIND_MEM_CB(&Window::callback_remove_window,this));
+   
 }
 
 Window::~Window()
@@ -26,7 +25,14 @@ Window::~Window()
     ConfigManager::I().removeCmd(_name+"_Remove");
 }
 
-int Window::callback_remove_window(const string &arg)
+int Window::Init()
+{
+    // windows can remove themselves
+    ConfigManager::I().addCmd(Name()+"_Remove",BIND_MEM_CB(&Window::callbackRemoveWindow,this));
+    return 0;
+}
+
+int Window::callbackRemoveWindow(const string &arg)
 {
     return _owner->RemoveWindow(_name);    
 }

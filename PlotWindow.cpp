@@ -29,7 +29,6 @@ PlotWindow::PlotWindow(
 {
     cout << "Plotwindow ctor" << endl;
     text.SetText(pvname);
-    ConfigManager::I().addCmd(pvname+"_BackLength", BIND_MEM_CB(&PlotWindow::callbackSetBackLength, this));
     
     // don't forget to call Init()
     // which also checks if the pvname is actually valid
@@ -196,12 +195,14 @@ void PlotWindow::ProcessEpicsProperties(dbr_ctrl_double* d) {
     
 int PlotWindow::Init()
 {
-    int ret = 0;
+    ConfigManager::I().addCmd(Name()+"_BackLength", BIND_MEM_CB(&PlotWindow::callbackSetBackLength, this));    
+    
+    int ret = Window::Init();
     _head_ptr = Epics::I().addPV(_pvname);
     if(_head_ptr==NULL) {
         ret = 1;
     }    
-    // return & save status for dtor
+    // return & save status for dtor    
     _initialized = ret == 0;
     return ret;
 }

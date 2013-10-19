@@ -14,12 +14,12 @@ class WindowManager;
 class Window {
     
 private:
-    WindowManager* _owner;
+    WindowManager* _owner; 
     std::string _name; // unique window name
     float _x_pixels;
     float _y_pixels;   
     
-    int callback_remove_window(const std::string& arg);
+    int callbackRemoveWindow(const std::string& arg);       
 public:
 
     Window( WindowManager* owner,
@@ -39,7 +39,7 @@ public:
     
     virtual void Update() = 0;
     virtual void Draw() = 0;
-    virtual int Init() = 0;
+    virtual int Init();
 
 };
 

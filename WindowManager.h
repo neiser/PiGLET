@@ -16,12 +16,10 @@ private:
     std::vector<int> _rows;
 
     int callbackRemoveAllWindows(const std::string& arg );
-    int callbackAddPlotwindow( const std::string& arg );
+    int callbackAddPlotWindow( const std::string& arg );
+    int callbackAddImageWindow(const std::string &arg);
 
-
-
-    void align_windows();
-
+    void alignWindows();    
 public:
 
     WindowManager( const int dx = 1, const int dy = 1);

@@ -4,7 +4,7 @@
 #include "ConfigManager.h"
 #include "WindowManager.h"
 #include "PlotWindow.h"
-
+#include "ImageWindow.h"
 
 using namespace std;
 
@@ -12,15 +12,25 @@ WindowManager::WindowManager(const int dx, const int dy): _size_x(dx), _size_y(d
 {
     // register the callbacks in the ConfigManager
     ConfigManager::I().addCmd("RemoveAllWindows",BIND_MEM_CB(&WindowManager::callbackRemoveAllWindows,this));
-    ConfigManager::I().addCmd("AddPlotWindow",BIND_MEM_CB(&WindowManager::callbackAddPlotwindow,this));
+    ConfigManager::I().addCmd("AddPlotWindow",BIND_MEM_CB(&WindowManager::callbackAddPlotWindow,this));
+    ConfigManager::I().addCmd("AddImageWindow",BIND_MEM_CB(&WindowManager::callbackAddImageWindow,this));    
 }
 
 int WindowManager::AddWindow(Window *win)
-{
+{    
+    // check if name is unique
+    for(size_t i=0; i<NumWindows(); i++) {
+        if(_window_list[i]->Name() == win->Name()) {
+            delete win;
+            return 2;
+        }        
+    }
+    
+    // init and add on success
     int ret = win->Init();
     if(ret==0) {
         _window_list.push_back(win);
-        align_windows();
+        alignWindows();
     }
     else {
         // delete the window again if 
@@ -34,7 +44,7 @@ int WindowManager::RemoveWindow(const size_t n){
     if ( n >= NumWindows() ) return 1;
     delete _window_list.at(n);
     _window_list.erase(_window_list.begin() + n);
-    align_windows();
+    alignWindows();
     return 0;
 }
 
@@ -84,12 +94,17 @@ int WindowManager::callbackRemoveAllWindows(const string &arg){
     return i;
 }
 
-int WindowManager::callbackAddPlotwindow(const string &arg)
+int WindowManager::callbackAddPlotWindow(const string &arg)
 {
     return AddWindow(new PlotWindow(this, arg));
 }
 
-void WindowManager::align_windows(){
+int WindowManager::callbackAddImageWindow(const string &arg)
+{
+    return AddWindow(new ImageWindow(this, arg));
+}
+
+void WindowManager::alignWindows(){
     _rows.clear();
     int row = -1;
     size_t i = 0;

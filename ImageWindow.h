@@ -48,7 +48,7 @@ public:
     void Update() {}
     void Draw();
     
-    int Init() { return 0; }
+    int Init();
 };
 
 #endif // IMAGEWINDOW_H

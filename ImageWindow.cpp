@@ -16,11 +16,8 @@ ImageWindow::ImageWindow( WindowManager* owner, const string& title, const float
 {
     cout << "ImageWindow ctor" << endl;
     _label.SetText(title);    
-    
-    ConfigManager::I().addCmd(title+"_SetDelay", BIND_MEM_CB(&ImageWindow::callbackSetDelay, this));
-    ConfigManager::I().addCmd(title+"_SetURL", BIND_MEM_CB(&ImageWindow::callbackSetURL, this));
-    
-    
+    _label.SetColor(dInvalidAlarm);
+        
     // stuff for the image loading
     MagickWandGenesis(); // just once somewhere...also in TextRenderer
     _mw = NewMagickWand();   
@@ -29,8 +26,17 @@ ImageWindow::ImageWindow( WindowManager* owner, const string& title, const float
     pthread_create(&_thread, 0, &ImageWindow::start_thread, this);
 }
 
+int ImageWindow::Init() {
+    ConfigManager::I().addCmd(Name()+"_SetDelay", BIND_MEM_CB(&ImageWindow::callbackSetDelay, this));
+    ConfigManager::I().addCmd(Name()+"_SetURL", BIND_MEM_CB(&ImageWindow::callbackSetURL, this));
+    return Window::Init();
+}
+
 ImageWindow::~ImageWindow()
 {
+    ConfigManager::I().removeCmd(Name()+"_SetDelay");
+    ConfigManager::I().removeCmd(Name()+"_SetURL");
+    
     // wait until thread has finished loading
     pthread_join(_thread, NULL);
     pthread_mutex_destroy(&_mutex);
@@ -76,6 +82,7 @@ void ImageWindow::Draw()
             _mw = NewMagickWand();
             //cout << "Image loaded..." << endl;
             _image_ok = false;
+            _label.SetColor(dTextColor);
         }
         else {
             _label.SetColor(dMajorAlarm); // show that something is wrong
