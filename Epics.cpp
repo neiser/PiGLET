@@ -33,11 +33,11 @@ void Epics::deleteDataItem(DataItem* i) {
     delete i;    
 }
 
-void Epics::fillList(Epics::DataItem *head, vector<Epics::DataItem*>& list)
+void Epics::fillList(DataItem *head, vector<DataItem*>& list)
 {
     // scan the linked list
     list.reserve(100);
-    Epics::DataItem* d = head; // start from the head
+    DataItem* d = head; // start from the head
     while(d->prev != NULL) {
         list.push_back(d);
         d = d->prev;

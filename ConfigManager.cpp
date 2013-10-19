@@ -211,7 +211,9 @@ void ConfigManager::InitSocket()
     }
 
     if (bind(_socket, (struct sockaddr*)&my_addr, sizeof(my_addr))==-1) {
-        perror("bind()");
+        stringstream ss;
+        ss << "Failed bind() on " << _address << ":" << _port;
+        perror(ss.str().c_str());
         close(_socket);
         exit(EXIT_FAILURE);
     }    

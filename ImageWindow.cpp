@@ -7,7 +7,7 @@ ImageWindow::ImageWindow( WindowManager* owner, const string& title, const float
     Window(owner, title, xscale, yscale),
     _url("")
 {
-    
+    pthread_create(&_thread, 0, &ImageWindow::start_thread, this);
 }
 
 void ImageWindow::SetURL(const string &url)
@@ -34,4 +34,25 @@ void ImageWindow::Draw()
     glDisable(GL_TEXTURE_2D);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     glPopMatrix();
+}
+
+void ImageWindow::deleteDataItem(DataItem* i) {
+    delete i->image;            
+    delete i;
+}
+
+void ImageWindow::fillList(DataItem *head, vector<DataItem*>& list)
+{
+    // scan the linked list
+    list.reserve(10);
+    DataItem* d = head; // start from the head
+    while(d->prev != NULL) {
+        list.push_back(d);
+        d = d->prev;
+    }
+}
+
+void ImageWindow::do_work()
+{
+    
 }

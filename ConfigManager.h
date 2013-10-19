@@ -4,12 +4,10 @@
 #include <iostream>
 #include <map>
 
-extern "C" {
 #include <pthread.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
-}
 
 #include "Callback.h"
 
@@ -67,7 +65,6 @@ private:
         return NULL;
     }
 
-    // Compute and save fibonacci numbers as fast as possible
     void do_work();
     bool SendToClient(int client, std::string msg);
     
