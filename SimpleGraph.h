@@ -97,6 +97,7 @@ public:
     void SetYRange( const Interval& yrange );
     void SetMinorAlarms( const Interval& minoralarm );
     void SetMajorAlarms( const Interval& majoralarm );
+    void SetPrecision(const unsigned char prec);
 
     /**
      * @brief Set the alarm state

@@ -141,10 +141,9 @@ void PlotWindow::ProcessEpicsProperties(dbr_ctrl_double* d) {
    
     // we use this macro only in this function 
     // to prevent typos in the field names   
-    #define CHANGED(field) ((d->field) != (d_old.field))  
-    static dbr_ctrl_double d_old;
-
-    // set alarm levels
+    #define CHANGED(field) ((d->field) != (_old_properties.field))  
+    
+    // set alarm/warnings levels
     if(CHANGED(lower_alarm_limit) || CHANGED(upper_alarm_limit)) 
         graph.SetMajorAlarms(Interval(d->lower_alarm_limit, d->upper_alarm_limit));
     
@@ -155,6 +154,7 @@ void PlotWindow::ProcessEpicsProperties(dbr_ctrl_double* d) {
     if(CHANGED(severity))
         graph.SetAlarm((epicsAlarmSeverity)d->severity);
     
+    // display limits a.k.a yrange
     if(CHANGED(lower_disp_limit) || CHANGED(upper_disp_limit)) {
         Interval y(d->lower_disp_limit,d->upper_disp_limit);
         // if the provided interval is empty,
@@ -166,9 +166,16 @@ void PlotWindow::ProcessEpicsProperties(dbr_ctrl_double* d) {
         graph.SetYRange(y);
     }
     
+    // set precision
+    // only positive numbers are allowed
+    if(CHANGED(precision) && d->precision>0) {
+        graph.SetPrecision(d->precision);
+    }
+    
+    // append unit to title
     // d->units is a char array, 
     // so the simple CHANGED can't be used... 
-    if(strcmp(d->units,d_old.units) != 0) {
+    if(strcmp(d->units,_old_properties.units) != 0) {
         // update title with unit
         stringstream title;
         string u(d->units);
@@ -177,12 +184,10 @@ void PlotWindow::ProcessEpicsProperties(dbr_ctrl_double* d) {
             title << " / " << u;
         }
         text.SetText(title.str());
-    }
-    
-    
+    }    
 
     // save a copy of the old state
-    d_old = *d;
+    _old_properties = *d;
     
     #undef CHANGED
 }

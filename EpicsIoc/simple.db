@@ -13,6 +13,7 @@ record (ai, "MyTestRecord0")
     field (HOPR, 4)
     field (LOPR, -4)
     field (EGU, "Hz")
+    field (PREC, 3)
 }
 
 record (ai, "MyTestRecord1")

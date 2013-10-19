@@ -1,8 +1,8 @@
 #ifndef PLOTWINDOW_H
 #define PLOTWINDOW_H
 
-#include "Window.h"
 #include "Epics.h"
+#include "Window.h"
 #include "SimpleGraph.h"
 #include "TextLabel.h"
 
@@ -24,6 +24,8 @@ private:
     TextLabel text;
 
     int frame;          //for debug
+    
+    dbr_ctrl_double _old_properties;
     
     void ProcessEpicsData();
     void ProcessEpicsProperties(dbr_ctrl_double* d);

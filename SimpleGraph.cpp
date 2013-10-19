@@ -119,7 +119,12 @@ void SimpleGraph::SetMajorAlarms(const Interval &majoralarm)
                     GetYGlobal(majoralarm.Min()),
                     GetYGlobal(majoralarm.Max())
                     )
-                );
+                           );
+}
+
+void SimpleGraph::SetPrecision(const unsigned char prec)
+{
+    ValueDisplay.SetPrec(prec);
 }
 
 void SimpleGraph::SetAlarm(const epicsAlarmSeverity serv )
