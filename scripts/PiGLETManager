@@ -1,0 +1,159 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+
+#use Data::TreeDumper;
+use Getopt::Long;
+use Pod::Usage;
+use Switch;
+use Net::Telnet;
+
+# define the display sets $dispsets here
+# as a hashref, the key is the "name" of the runset
+# please provide a meaningful description of the displayset,
+
+my $dispsets = {};
+
+# define display sets CBTaggTAPS
+$dispsets->{Test} =
+  {
+   'Description' => 'Messing around on localhost...',
+   'Displays' => [
+                  {
+                   'Hostname' => 'localhost',
+                   'Values' => [
+                                {'PV'=>'MyTestRecord0', 'BackLength'=>600},
+                                {'PV'=>'MyTestRecord1', 'BackLength'=>100}
+                                ]
+                  }
+                 ]
+  };
+
+
+# some default config options
+# and provide nice help documentation
+# some global variables, needed everywhere
+
+my $man = 0;
+my $help = 0;
+my $verbose = 0;
+my $warnings = 1;
+my $exact = 0;
+
+Getopt::Long::Configure(qw(gnu_getopt));
+GetOptions(
+           'help|h' => \$help,
+           'man' => \$man,
+           'verbose|v+' => \$verbose,
+           'warnings|w!' => \$warnings,
+           'exact|e' => \$exact
+          ) or pod2usage(2);
+pod2usage(1) if $help;
+pod2usage(-exitval => 0, -verbose => 2) if $man;
+
+if ($verbose) {
+  # always enable warnings if verbose
+  $warnings = 1;
+}
+
+# jump to subroutine which handles the job,
+# depending on the options
+my $mode = shift @ARGV || "";
+
+switch($mode) {
+  case "activate" { &Activate; }
+  case "list" { &List; }
+  else {
+    Logger("Supplied mode not recognized, try --help or --man");
+  }
+}
+
+sub Activate {
+  my $dispset = $ARGV[0] || "";
+  Logger("Specified dispset $dispset not found")
+    unless defined $dispsets->{$dispset};
+
+  Logger("Activating display set $dispset",1);
+  # define a shortcut to the actual dispset data
+  my $d = $dispsets->{$dispset};
+
+  foreach my $disp (@{$d->{Displays}}) {
+    WorkOnDisplay($disp);
+  }
+}
+
+sub List {
+  print "The following display sets are available:\n";
+  foreach my $dispset (sort keys $dispsets) {
+    printf("* %-10s\t%s\n",$dispset,,$dispsets->{$dispset}->{Description});
+  }
+}
+
+
+
+# helper functions
+
+sub WorkOnDisplay {
+  my $disp = shift;
+  Logger("Working on display host $disp->{Hostname}",2);
+  #print $disp->{Hostname};
+
+  $t = Net::Telnet->new(Timeout => 5);
+  
+}
+
+sub Logger {
+  my $msg = shift;
+  my $lvl = shift || 0; # 0=fatal, -1=warning, >0 verbose messages
+
+  if ($lvl==0) {
+    print STDERR "Error: $msg\n";
+    exit 1;
+  }
+  elsif($lvl==-1) {
+    print STDERR "Warning: $msg\n" if $warnings;
+  }
+  else {
+    print "$msg\n" if $lvl<=$verbose;
+  }
+}
+
+__END__
+
+=head1 NAME
+
+PiGLETManager - Interface to PiGLET (Raspberry Pi OpenGL EPICS Toolkit)
+
+=head1 SYNOPSIS
+
+PiGLETManager activate <displayset>
+
+PiGLETManager list
+
+ Options:
+   -h, --help     brief help message
+   -v, --verbose  be verbose to STDERR
+   -w, --warnings print warnings to STDERR
+   -e, --exact    also remove unknown windows
+
+=head1 OPTIONS
+
+=over 8
+
+=item B<--help>
+
+Print a brief help message and exits.
+
+=item B<--verbose>
+
+Print some information what is going on. Default off.
+
+=item B<--warnings>
+
+Print warnings (or "not-so-fatal" errors). Default on.
+
+=back
+
+=head1 DESCRIPTION
+
+=cut
