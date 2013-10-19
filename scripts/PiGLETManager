@@ -119,8 +119,10 @@ sub WorkOnDisplay {
   # search for words ending in _BackLength, which
   # indicate that it's a plot the pvname before it
   # TODO: Implement Image Windows...
-  $t->print('List');
-  $t->waitfor(String => 'Available commands:');
+  $t->print('List') or
+    Logger("$host: Cannot send List command: ".$t->errmsg);
+  $t->waitfor(String => 'Available commands:') or
+    Logger("$host: Did not receive list of windows: ".$t->errmsg);
   my @words = split(/\s+/,$t->lastline);
   my %plots =
     map { s/(.+)_BackLength/$1/ ? ($_ => 1) : () } @words;
@@ -158,9 +160,12 @@ sub WorkOnDisplay {
 }
 
 sub ExecCmd {
+  my $host = $t->host;
   my $cmd = shift;
-  $t->print($cmd);
-  $t->waitfor(String => 'Ok.');
+  $t->print($cmd) or
+    Logger("$host: Cannot send Cmd '$cmd': ".$t->errmsg);
+  $t->waitfor(String => 'Ok.') or
+    Logger("$host: Did not receive 'Ok.' after '$cmd': ".$t->errmsg);
 }
 
 sub Logger {

@@ -6,6 +6,7 @@
 #include <string.h>
 #include <cstdlib>
 #include <stdio.h>
+#include <signal.h>
 
 using namespace std;
 
@@ -217,6 +218,10 @@ void ConfigManager::InitSocket()
     
     // start listening
     listen(_socket,0);
+    
+    // ignore SIGPIPES during communication with client
+    // the writes are handled properly if something fails there...
+    signal(SIGPIPE, SIG_IGN);
 }
 
 int ConfigManager::Kill(const string& arg)
