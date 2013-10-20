@@ -2,6 +2,7 @@
 #include <unistd.h>
 
 #include "GLES.h"
+#include "MyGLWindow.h"
 #include "arch_common.h"
 #include "ConfigManager.h"
 
