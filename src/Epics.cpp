@@ -168,7 +168,7 @@ void Epics::subscribe(const string &pvname, PV* pv) {
     SEVCHK(ca_rtn, "ca_create_subscription for ctrl failed");
     
     // dont know if this is really meaningful here (also done in ctor)
-    ca_poll();
+    //ca_poll();
 }
 
 void Epics::removePV(const string& pvname)
@@ -176,10 +176,20 @@ void Epics::removePV(const string& pvname)
     // hopefully, the pvname exists :)
     PV* pv = pvs[pvname];
     
-    // cancel the subscription
-    ca_clear_subscription (pv->evid_val);
-    ca_clear_channel(pv->chid_val);
-    ca_poll();
+    // cancel the subscription/channels
+    int ca_rtn = ca_clear_subscription (pv->evid_val);
+    SEVCHK(ca_rtn, "ca_clear_subscription for value failed");
+    
+    ca_rtn = ca_clear_channel(pv->chid_val);
+    SEVCHK(ca_rtn, "ca_clear_channel for value failed");
+    
+    ca_rtn = ca_clear_subscription (pv->evid_ctrl);
+    SEVCHK(ca_rtn, "ca_clear_subscription for ctrl failed");
+    
+    ca_rtn = ca_clear_channel(pv->chid_ctrl);
+    SEVCHK(ca_rtn, "ca_clear_channel for ctrl failed");
+    
+    ca_poll();    
     
     // properly delete the linked list
     typedef vector<DataItem*> list_t;

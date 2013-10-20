@@ -17,7 +17,7 @@ ImageWindow::ImageWindow( WindowManager* owner, const string& title, const float
     cout << "ImageWindow ctor" << endl;
     _label.SetText(title);    
     _label.SetColor(dInvalidAlarm);
-        
+    
     // stuff for the image loading
     MagickWandGenesis(); // just once somewhere...also in TextRenderer
     _mw = NewMagickWand();   
@@ -68,7 +68,9 @@ ImageWindow::~ImageWindow()
     pthread_mutex_destroy(&_mutex_working);    
     pthread_mutex_destroy(&_mutex_running);
     
-    DestroyMagickWand(_mw);
+    if(_mw)
+        DestroyMagickWand(_mw);
+    
     cout << "ImageWindow dtor" << endl;
 }
 
@@ -120,9 +122,7 @@ bool ImageWindow::ApplyTexture(int state)
         else {
             _label.SetColor(dMajorAlarm); // show that something is wrong
         }
-        // re-create MagickWand to prevent memory leak...is there a better way?
-        DestroyMagickWand(_mw);
-        _mw = NewMagickWand();        
+
         pthread_cond_signal(&_signal);
         return true;
     }
@@ -161,7 +161,6 @@ void ImageWindow::do_work()
     while(_running) {
         pthread_mutex_lock(&_mutex_working);
         _image_ok = MagickReadImage(_mw, _url.c_str());
-               
         // first we wait with a condition timed wait, 
         // serves as a usleep 
         // but can be cancelled via _signal_delay 

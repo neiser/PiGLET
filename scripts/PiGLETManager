@@ -24,7 +24,7 @@ $dispsets->{Test} =
                    'Windows' => [
                                  {Type=>'Plot', 'Name'=>'MyTestRecord0', 'BackLength'=>600},
                                  {Type=>'Plot', 'Name'=>'MyTestRecord1', 'BackLength'=>100},
-                                 {Type=>'Image', 'Name'=>'Webcam', 'Delay'=>100}
+                                 {Type=>'Image', 'Name'=>'Webcam', 'Delay'=>50}
                                 ]
                   }
                  ]

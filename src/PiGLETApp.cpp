@@ -26,12 +26,13 @@ void PiGLETApp::Draw(){
 
     windowman.Draw();
     
-    ReportGLError();
+    
     
     
     // check if there are callbacks from the telnet
     // to be executed
     ConfigManager::I().ExecutePendingCallback();
+    ReportGLError();
 }
 
 
