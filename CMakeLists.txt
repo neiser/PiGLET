@@ -13,10 +13,10 @@ endif()
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
 # this determines if we're on an Raspberry Pi
-# and also sets SYSTEM_LIBS including appropiate
+# and also sets ARCH_LIBS including appropiate
 # OpenGL (ES) support
-# and SYSTEM_SRC_LIST 
-include(cmake/SetupSystem.cmake)
+# and ARCH_SRC_LIST 
+include(cmake/DetectArch.cmake)
 
 # we need EPICS
 find_package(EPICS)
@@ -45,9 +45,9 @@ else()
 endif()
 
 # build the exe
-add_executable(${PROJECT_NAME} ${SRC_LIST} ${SYSTEM_SRC_LIST})
+add_executable(${PROJECT_NAME} ${SRC_LIST} ${ARCH_SRC_LIST})
 target_link_libraries(${PROJECT_NAME}
-  ${SYSTEM_LIBS}
+  ${ARCH_LIBS}
   ${M_LIB} ${RT_LIB}
   ${ImageMagick_LIBRARIES}
   ${CMAKE_THREAD_LIBS_INIT}

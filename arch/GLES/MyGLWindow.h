@@ -23,7 +23,7 @@
 #include "Structs.h"
 #include <time.h>
 
-#include "../GLApp.h"
+#include "GLApp.h"
 
 typedef struct timespec timespec;
 
