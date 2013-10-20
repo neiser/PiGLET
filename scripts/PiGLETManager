@@ -21,10 +21,11 @@ $dispsets->{Test} =
    'Displays' => [
                   {
                    'Hostname' => 'localhost',
-                   'Plots' => [
-                               {'PV'=>'MyTestRecord0', 'BackLength'=>600},
-                               {'PV'=>'MyTestRecord1', 'BackLength'=>100}
-                              ]
+                   'Windows' => [
+                                 {Type=>'Plot', 'Name'=>'MyTestRecord0', 'BackLength'=>600},
+                                 {Type=>'Plot', 'Name'=>'MyTestRecord1', 'BackLength'=>100},
+                                 {Type=>'Image', 'Name'=>'Webcam', 'Delay'=>100}
+                                ]
                   }
                  ]
   };
@@ -117,7 +118,6 @@ sub WorkOnDisplay {
 
   $t = Net::Telnet->new(Timeout => 5, Port => 1337);
   $t->errmode("return");
-  #$t->dump_log('STDERR');
 
   $t->open($host)
     or Logger("$host: Cannot open telnet connection: ".$t->errmsg);
@@ -128,56 +128,76 @@ sub WorkOnDisplay {
   Logger("$host: Successfully connected.",2);
 
   # get the current windows via the List command.
-  # search for words ending in _BackLength, which
-  # indicate that it's a plot the pvname before it
-  # TODO: Implement Image Windows...
+  # search for words ending in _Remove, which
+  # indicate the unique name of each window
   $t->print('List') or
     Logger("$host: Cannot send List command: ".$t->errmsg);
   $t->waitfor(String => 'Available commands:') or
     Logger("$host: Did not receive list of windows: ".$t->errmsg);
   my @words = split(/\s+/,$t->lastline);
-  my %plots =
-    map { s/(.+)_BackLength/$1/ ? ($_ => 1) : () } @words;
+  my %wins =
+    map { s/(.+)_Remove/$1/ ? ($_ => 1) : () } @words;
 
-  my $n = scalar keys %plots;
-  Logger("$host: Currently $n plots active.",2);
+  my $n = scalar keys %wins;
+  my $n_exp = scalar @{$disp->{Windows}};
+  Logger("$host: Currently $n windows active, $n_exp in display set.",2);
 
   if($exact==3) {
+    Logger("$host: Removing all windows.",2);
     ExecCmd("RemoveAllWindows");
   }
 
   # let's check if it complies with the display set
-  foreach my $plot (@{$disp->{Plots}}) {
-    my $pv = $plot->{PV}; # unique identier for plot windows
-    if($exact==3 || !exists $plots{$pv}) {
-      Logger("$host: Plot $pv not found. Adding it.", 2);
-      ExecCmd("AddPlotWindow $pv");
-      ExecCmd("${pv}_BackLength $plot->{BackLength}");
+  foreach my $win (@{$disp->{Windows}}) {
+    my $name = $win->{Name}; # unique identier for windows
+    if($exact==3 || !exists $wins{$name}) {
+      Logger("$host: Window $name not found. Adding it.", 2);
+      my $type = $win->{Type}; # Plot, Image, ...?
+      ExecCmd("Add${type}Window $name");
+      SetWindowProperties($win);
     }
     elsif($exact>=1) { # equals $exact==1 || $exact==2
-      # ensure correct BackLength
-      ExecCmd("${pv}_BackLength $plot->{BackLength}");
+      # ensure correct properties
+      SetWindowProperties($win);
     }
-    delete $plots{$pv};
+    delete $wins{$name};
   }
 
   # remove "unknown" windows
   if($exact == 2) {
-    foreach my $pv (keys %plots) {
-      Logger("$host: Removing unknown plot $pv", 2);
-      ExecCmd("${pv}_Remove");
+    foreach my $name (keys %wins) {
+      Logger("$host: Removing unknown window $name", 2);
+      ExecCmd("${name}_Remove");
     }
   }
+}
 
+sub SetWindowProperties {
+  my $win = shift;
+  my $host = $t->host;
+  my $name = $win->{Name};
+  foreach my $prop (keys $win) {
+    # skip "special" properties
+    next if $prop eq 'Name';
+    next if $prop eq 'Type';
+    my $val = $win->{$prop};
+    Logger("$host: Setting ${name}_$prop to $val.", 2);
+    ExecCmd("${name}_$prop $val");
+  }
 }
 
 sub ExecCmd {
   my $host = $t->host;
   my $cmd = shift;
+  #$t->dump_log('STDERR');
   $t->print($cmd) or
     Logger("$host: Cannot send Cmd '$cmd': ".$t->errmsg);
-  $t->waitfor(String => 'Ok.') or
-    Logger("$host: Did not receive 'Ok.' after '$cmd': ".$t->errmsg);
+  my $patt = '/(Ok.|Error:)/';
+  $t->waitfor($patt) or
+    Logger("$host: Did not receive 'Ok.' or 'Error:' after '$cmd': ".$t->errmsg);
+  if($t->lastline =~ /Error:/) {
+    Logger("Cmd '$cmd' was not successful: ".$t->lastline);
+  }
 }
 
 sub Logger {

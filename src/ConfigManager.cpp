@@ -135,13 +135,19 @@ void ConfigManager::do_work() {
                 continue;
             }
             
+            /* 
+             *
+             * Please note that the strings returned to the client are parsed by PiGLETManager
+             * So change them with care!
+             *
+             **/
             
             
             // be careful about unlocking the mutex properly
             pthread_mutex_lock(&_mutex);
 
             if(_callbacks.count(cmd)==0) {
-                client_connected = SendToClient(client, "Command not found. Try 'List'.");
+                client_connected = SendToClient(client, "Error: Command not found. Try 'List'.");
                 pthread_mutex_unlock(&_mutex);
                 continue;
             }            

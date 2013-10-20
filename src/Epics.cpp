@@ -110,12 +110,7 @@ void Epics::appendToList(Epics::PV* pv, Epics::DataItem *pNew)
 }
 
 Epics::DataItem** Epics::addPV(const string &pvname)
-{
-    // check if we already know that PV
-    if(pvs.count(pvname)>0) {
-        return NULL;
-    }
-    
+{    
     PV* pv = initPV();
     
     // subscribe to value and control

@@ -15,8 +15,7 @@
 
 using util::Callback; // Callback lives in the util namespace
 
-class ConfigManager
-{
+class ConfigManager {
 public:
 
     typedef Callback<std::string (const std::string&)> ConfigCallback;
