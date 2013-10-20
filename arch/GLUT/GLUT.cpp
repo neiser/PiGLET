@@ -1,11 +1,9 @@
-
-
-
 #include <iostream>
 #include <stdlib.h>
 #include <unistd.h>
 
-#include "system.h"
+#include "GLUT.h"
+#include "arch_common.h"
 #include "ConfigManager.h"
 
 using namespace std;
@@ -78,6 +76,7 @@ void InitGL(){
     glutTimerFunc(0, drawCallback, 0);
     glutKeyboardFunc(keyPressed);
 //    glutReshapeFunc(Reshape);
+    CommonInitGL();
 }
 
 void RunGL(GLApp &app) {

@@ -3,7 +3,7 @@
 
 #include <string>
 #include <wand/magick_wand.h>
-#include "system.h"
+#include "arch.h"
 #include "GLTools.h"
 
 class TextRenderer {

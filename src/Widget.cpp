@@ -1,6 +1,4 @@
 #include "Widget.h"
-
-#include "system.h"
 #include "Window.h"
 
 #include <cmath>

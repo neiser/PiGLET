@@ -1,15 +1,15 @@
-# - Find EPICS instalation
+# - Find EPICS installation
 #
 # Variables defined by this module:
 #
-#   EPICS_FOUND               System has ROOT, this means the root-config 
+#   EPICS_FOUND               System has EPICS, this means the root-config 
 #                            executable was found.
 #
-#   EPICS_INCLUDES            Same as above,
+#   EPICS_INCLUDES            Include directories.
 #
-#   EPICS_LIBRARIES           Link to these to use the ROOT libraries, not cached
+#   EPICS_LIBRARIES           Link to these to use the EPICS libraries, not cached
 #
-#   EPICS_LIBRARY_DIR         The path to where the ROOT library files are.
+#   EPICS_LIBRARY_DIR         The path to where the EPICS library files are.
 #
 
 Message(STATUS "Looking for EPICS...")
@@ -70,8 +70,9 @@ if(NOT EPICS_BASE_INCLUDE)
   message(FATAL_ERROR "No EPICS base include found. EPICS incomplete?")
 endif()
 
-find_path(EPICS_BASE_INCLUDE_OS NAMES osdTime.h 
-  PATHS "${EPICS_BASE_INCLUDE}/os/${CMAKE_SYSTEM_NAME}"
+find_path(EPICS_BASE_INCLUDE_OS NAMES osdTime.h
+  # system name is not host arch!
+  PATHS "${EPICS_BASE_INCLUDE}/os/${CMAKE_SYSTEM_NAME}" 
   NO_DEFAULT_PATH
   )
 if(NOT EPICS_BASE_INCLUDE_OS)

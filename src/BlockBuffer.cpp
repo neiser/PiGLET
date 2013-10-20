@@ -1,6 +1,6 @@
 #include "BlockBuffer.h"
 
-#include "system.h"
+#include "arch.h"
 #include <cmath>
 #include <iostream>
 #include <iomanip>

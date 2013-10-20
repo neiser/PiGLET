@@ -29,7 +29,7 @@ else()
   set(ARCH_LIBS ${OPENGL_LIBRARIES} ${GLUT_LIBRARIES})
 endif()
 
-# for both systems, we add the sources 
+# for all archs, we add the sources 
 # and set the include dir already here
-include_directories(${ARCH_DIR})
+include_directories(${ARCH_DIR} arch) # add arch dir for arch_common.h
 aux_source_directory(${ARCH_DIR} ARCH_SRC_LIST)

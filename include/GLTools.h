@@ -1,6 +1,6 @@
 ﻿#ifndef GLTOOLS_H
 #define GLTOOLS_H
-#include "system.h"
+#include "arch.h"
 #include "Structs.h"
 
 class Vector2 {

@@ -1,7 +1,8 @@
-#include "SystemGLES.h"
 #include <iostream>
 #include <unistd.h>
 
+#include "GLES.h"
+#include "arch_common.h"
 #include "ConfigManager.h"
 
 static MyGLWindow* win;
@@ -19,6 +20,8 @@ void InitGL() {
     config->setAttribute(EGL_STENCIL_SIZE,1);
     // now create a new window using the default config
     win = new MyGLWindow(config);
+    
+    CommonInitGL();
 }
 
 void RunGL(GLApp& app) {

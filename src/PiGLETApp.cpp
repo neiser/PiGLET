@@ -3,7 +3,7 @@
 #include <sstream>
 
 #include "PiGLETApp.h"
-#include "system.h"
+#include "arch.h"
 #include "ConfigManager.h"
 #include "PlotWindow.h"
 #include "ImageWindow.h"

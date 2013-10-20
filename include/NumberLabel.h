@@ -1,7 +1,7 @@
 #ifndef NUMBERLABEL_H
 #define NUMBERLABEL_H
 
-#include "system.h"
+#include "arch.h"
 #include "GLTools.h"
 #include "Widget.h"
 #include <string>
