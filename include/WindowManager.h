@@ -15,9 +15,9 @@ private:
     std::vector<Window*> _window_list;
     std::vector<int> _rows;
 
-    int callbackRemoveAllWindows(const std::string& arg );
-    int callbackAddPlotWindow( const std::string& arg );
-    int callbackAddImageWindow(const std::string &arg);
+    std::string callbackRemoveAllWindows(const std::string& arg );
+    std::string callbackAddPlotWindow( const std::string& arg );
+    std::string callbackAddImageWindow(const std::string &arg);
 
     void alignWindows();    
 public:
@@ -30,7 +30,7 @@ public:
     int& SizeY() { return _size_y; }
     const size_t NumWindows() { return _window_list.size();}
 
-    int AddWindow( Window *win);
+    std::string AddWindow( Window *win);
 
     // remove window number n; returns >0 if it fails
     int RemoveWindow( const size_t n );

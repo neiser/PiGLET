@@ -16,13 +16,13 @@ WindowManager::WindowManager(const int dx, const int dy): _size_x(dx), _size_y(d
     ConfigManager::I().addCmd("AddImageWindow",BIND_MEM_CB(&WindowManager::callbackAddImageWindow,this));    
 }
 
-int WindowManager::AddWindow(Window *win)
+string WindowManager::AddWindow(Window *win)
 {    
     // check if name is unique
     for(size_t i=0; i<NumWindows(); i++) {
         if(_window_list[i]->Name() == win->Name()) {
             delete win;
-            return 2;
+            return "Window already exists.";
         }        
     }
     
@@ -31,13 +31,14 @@ int WindowManager::AddWindow(Window *win)
     if(ret==0) {
         _window_list.push_back(win);
         alignWindows();
+        return ""; // success
     }
     else {
         // delete the window again if 
         // init was unsuccessful
         delete win;
+        return "Window could not be initialized.";
     }
-    return ret;
 }
 
 int WindowManager::RemoveWindow(const size_t n){
@@ -86,20 +87,20 @@ void WindowManager::Draw(){
 
 
 
-int WindowManager::callbackRemoveAllWindows(const string &arg){
+string WindowManager::callbackRemoveAllWindows(const string &arg){
     int i;
     for ( i = NumWindows() ; i > 0 ; --i){
         RemoveWindow(0);
     }
-    return i;
+    return ""; // removing is always successful :)
 }
 
-int WindowManager::callbackAddPlotWindow(const string &arg)
+string WindowManager::callbackAddPlotWindow(const string &arg)
 {
     return AddWindow(new PlotWindow(this, arg));
 }
 
-int WindowManager::callbackAddImageWindow(const string &arg)
+string WindowManager::callbackAddImageWindow(const string &arg)
 {
     return AddWindow(new ImageWindow(this, arg));
 }

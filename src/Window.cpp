@@ -32,9 +32,9 @@ int Window::Init()
     return 0;
 }
 
-int Window::callbackRemoveWindow(const string &arg)
+string Window::callbackRemoveWindow(const string &arg)
 {
-    return _owner->RemoveWindow(_name);    
+    return _owner->RemoveWindow(_name)==0 ? "" : "Window not found.";    
 }
 
 

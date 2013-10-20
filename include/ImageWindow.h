@@ -33,8 +33,8 @@ private:
 
     void do_work();
     
-    int callbackSetDelay( const std::string& arg );
-    int callbackSetURL( const std::string& arg );
+    std::string callbackSetDelay( const std::string& arg );
+    std::string callbackSetURL( const std::string& arg );
     
 public:
     ImageWindow( 

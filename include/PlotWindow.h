@@ -29,7 +29,7 @@ private:
     
     void ProcessEpicsData();
     void ProcessEpicsProperties(dbr_ctrl_double* d);
-    int callbackSetBackLength(const std::string& arg);
+    std::string callbackSetBackLength(const std::string& arg);
     
 public:
     const std::string& Xlabel() const { return _xlabel; }

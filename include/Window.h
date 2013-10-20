@@ -19,7 +19,7 @@ private:
     float _x_pixels;
     float _y_pixels;   
     
-    int callbackRemoveWindow(const std::string& arg);       
+    std::string callbackRemoveWindow(const std::string& arg);       
 public:
 
     Window( WindowManager* owner,

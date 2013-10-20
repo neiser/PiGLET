@@ -42,9 +42,9 @@ PlotWindow::~PlotWindow() {
     cout << "Plotwindow dtor" << endl;
 } 
 
-int PlotWindow::callbackSetBackLength(const string& arg){
+string PlotWindow::callbackSetBackLength(const string& arg){
     graph.SetBackLength(atoi(arg.c_str()));
-    return 0;
+    return ""; // success
 }
 
 void PlotWindow::Draw(){

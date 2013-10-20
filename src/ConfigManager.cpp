@@ -152,10 +152,8 @@ void ConfigManager::do_work() {
             // wait until ExecutePendingCallback signals it has executed it
             pthread_cond_wait(&_callback_done, &_mutex);
    
-            if(_callback_return != 0) {         
-                stringstream ss;
-                ss << "Command returned non-zero value: " << _callback_return;
-                client_connected = SendToClient(client,  ss.str());        
+            if(!_callback_return.empty()) {
+                client_connected = SendToClient(client,  "Error: "+_callback_return);        
             }
             else {
                 client_connected = SendToClient(client,  "Ok."); 
@@ -226,7 +224,7 @@ void ConfigManager::InitSocket()
     signal(SIGPIPE, SIG_IGN);
 }
 
-int ConfigManager::Kill(const string& arg)
+string ConfigManager::Kill(const string& arg)
 {
     // exit is a bit special, since it never returns...
     pthread_cond_signal(&_callback_done);

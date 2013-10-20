@@ -19,7 +19,7 @@ class ConfigManager
 {
 public:
 
-    typedef Callback<int (const std::string&)> ConfigCallback;
+    typedef Callback<std::string (const std::string&)> ConfigCallback;
     void addCmd(std::string cmd, ConfigCallback cb);
     void removeCmd(std::string cmd);
     
@@ -53,7 +53,7 @@ private:
     std::map<std::string, ConfigCallback> _callbacks;
 
     std::string _callback_cmd;
-    int _callback_return;
+    std::string _callback_return;
     std::string _callback_arg;
     
     // This is the static class function that serves as a C style function pointer
@@ -70,7 +70,7 @@ private:
     
     void InitSocket();
     
-    int Kill(const std::string& arg);
+    std::string Kill(const std::string& arg);
     static void trim(std::string& str, const std::string& whitespace = " \t\r\n");
 };
 

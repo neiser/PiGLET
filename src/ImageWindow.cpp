@@ -51,25 +51,25 @@ void ImageWindow::SetURL(const string &url)
     pthread_mutex_unlock(&_mutex);
 }
 
-int ImageWindow::callbackSetDelay(const string &arg)
+string ImageWindow::callbackSetDelay(const string &arg)
 {
-    // maybe delay should be mutexed (see then do_work()), 
+    // maybe delay should actually be mutexed (see then do_work()), 
     // but this can take looong
     int d = atoi(arg.c_str());
     // 20ms should be minimum
     if(d>20) {
         _delay = d;
-        return 0;
+        return "";
     }
     else {  
-        return 1;
+        return "Delay shorter than 20 ms";
     }
 }
 
-int ImageWindow::callbackSetURL(const string &arg)
+string ImageWindow::callbackSetURL(const string &arg)
 {
     SetURL(arg);
-    return 0; // always works, but nobody knows if an image gets displayed
+    return ""; // always works, but nobody knows if an image gets displayed
 }
 
 void ImageWindow::Draw()
