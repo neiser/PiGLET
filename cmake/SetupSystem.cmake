@@ -1,11 +1,13 @@
 # by default, we build for "normal" environments
 if(NOT DEFINED BUILD_FOR_PI)
-  message(STATUS "Auto-detecting system...is it a Raspberry Pi?")
+  message(STATUS "Auto-detecting system...")
   find_file(BCM_HOST_H bcm_host.h HINTS /opt/vc/include)
   if(BCM_HOST_H)
-    set(BUILD_FOR_PI "ON" CACHE INTERNAL "") 
+    set(BUILD_FOR_PI "ON" CACHE INTERNAL "")
+    message(STATUS "Found bcm_host.h! It's a Raspberry Pi! We use GLES!")
   else()
-    set(BUILD_FOR_PI "OFF" CACHE INTERNAL "") 
+    set(BUILD_FOR_PI "OFF" CACHE INTERNAL "")
+    message(STATUS "It's a standard system. We use GLUT!")
   endif()
 endif()
 

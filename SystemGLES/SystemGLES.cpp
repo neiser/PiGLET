@@ -2,7 +2,7 @@
 #include <iostream>
 #include <unistd.h>
 
-#include "../ConfigManager.h"
+#include "ConfigManager.h"
 
 static MyGLWindow* win;
 

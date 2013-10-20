@@ -6,7 +6,7 @@
 #include <unistd.h>
 
 #include "system.h"
-#include "../ConfigManager.h"
+#include "ConfigManager.h"
 
 using namespace std;
 

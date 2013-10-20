@@ -1,7 +1,7 @@
 #ifndef SYSTEMGLUT_H
 #define SYSTEMGLUT_H
 
-#include "../GLApp.h"
+#include "GLApp.h"
 
 #define DEFAULT_WINDOW_WIDTH    1024
 #define DEFAULT_WINDOW_HEIGHT   1024/1.6

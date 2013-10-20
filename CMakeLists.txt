@@ -36,10 +36,13 @@ include_directories(${ImageMagick_INCLUDE_DIRS})
 
 # the sources itself,
 # we don't have an extra src directory...
-aux_source_directory(. SRC_LIST)
-include_directories(.)
-
-set(CMAKE_CXX_FLAGS "-Wall")
+aux_source_directory(src SRC_LIST)
+include_directories(include)
+if(CMAKE_COMPILER_IS_GNUCXX)
+  set(CMAKE_CXX_FLAGS "-Wall")
+else()
+  message(FATAL_ERROR "This project can only be built with GNU g++!")
+endif()
 
 # build the exe
 add_executable(${PROJECT_NAME} ${SRC_LIST} ${SYSTEM_SRC_LIST})
