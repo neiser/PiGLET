@@ -9,7 +9,7 @@ using namespace std;
 
 unsigned TextRenderer::count = 0;
 
-TextRenderer::TextRenderer()
+TextRenderer::TextRenderer() : _buffer(NULL)
 {
     if(count == 0)
         MagickWandGenesis();    // just once at the beginning
@@ -49,14 +49,13 @@ uint32_t TextRenderer::RoundPow2( uint32_t val ) {
     return val;
 }
 
-void TextRenderer::CopyToTexture(Texture& tex, 
-                                 const int width, const int height, 
-                                 GLenum TextureMode) {
+void TextRenderer::CopyToBuffer(const int width, const int height, 
+                                 GLenum textureMode) {
 
     string exportMode = "I";
     unsigned char bytes = 1;
 
-    switch (TextureMode) {
+    switch (textureMode) {
     case GL_LUMINANCE:
         exportMode = "I";
         bytes = 1;
@@ -74,26 +73,32 @@ void TextRenderer::CopyToTexture(Texture& tex,
         break;
     }
 
-    unsigned char *Buffer = NULL;
+    
 
-    Buffer = new unsigned char[width * height * bytes];
+    _buffer = new unsigned char[width * height * bytes];
 
     // Export the whole image
-    MagickExportImagePixels(_mw, 0, 0, width, height, exportMode.c_str(), CharPixel, Buffer);
+    MagickExportImagePixels(_mw, 0, 0, width, height, exportMode.c_str(), CharPixel, _buffer);
     
-    // clearing and init prevents 
-    ClearMagickWand(_mw);
-    InitMw(_mw);
-    
+      
+}
+
+void TextRenderer::BindTexture(Texture &tex, const int width, const int height, GLenum textureMode)
+{
     glBindTexture(GL_TEXTURE_2D, tex.GetTexHandle());
 
-    glTexImage2D(GL_TEXTURE_2D, 0, TextureMode, width, height, 0, TextureMode, GL_UNSIGNED_BYTE, Buffer);
+    glTexImage2D(GL_TEXTURE_2D, 0, textureMode, width, height, 0, textureMode, GL_UNSIGNED_BYTE, _buffer);
 
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
 
-    delete [] Buffer;
+    // clearing and init prevents memory eating
+    // clear it here finally since properties of the image are still used
+    ClearMagickWand(_mw);
+    InitMw(_mw);
     
+    delete [] _buffer;
+    _buffer = NULL;
 }
 
 
@@ -118,8 +123,9 @@ void TextRenderer::Text2Texture(Texture& tex, const string &text )
     const size_t width = MagickGetImageWidth(_mw);
     const size_t height = MagickGetImageHeight(_mw);
 
-    CopyToTexture(tex, width, height, GL_LUMINANCE );
+    CopyToBuffer(width, height, GL_LUMINANCE );
     
+    BindTexture(tex, width, height, GL_LUMINANCE);
 
     float texw = ((float)_w) / width;
     float texh = ((float)_h) / height;
@@ -130,15 +136,14 @@ void TextRenderer::Text2Texture(Texture& tex, const string &text )
 
 void TextRenderer::Mw2Texture(Texture& tex)
 {
-    
     const size_t width = MagickGetImageWidth(_mw);
     const size_t height = MagickGetImageHeight(_mw);
     
     const size_t nw = RoundPow2( width );
     const size_t nh = RoundPow2( height );
     
-    CopyToTexture(tex, nw, nh, GL_RGBA);
-    
+    BindTexture(tex, width, height, GL_RGBA);
+       
     tex.SetMaxUV( (float) width / nw, (float) height / nh);
     tex.SetAspect( (float) width / (float) height );
     
@@ -146,7 +151,19 @@ void TextRenderer::Mw2Texture(Texture& tex)
 
 bool TextRenderer::Image2Mw(const string &url)
 {
-    return MagickReadImage(_mw, url.c_str());
+    
+    if(!MagickReadImage(_mw, url.c_str()))
+        return false;
+
+    const size_t width = MagickGetImageWidth(_mw);
+    const size_t height = MagickGetImageHeight(_mw);
+    
+    const size_t nw = RoundPow2( width );
+    const size_t nh = RoundPow2( height );
+    
+    CopyToBuffer(nw, nh, GL_RGBA);
+    
+    return true;
 }
 
 

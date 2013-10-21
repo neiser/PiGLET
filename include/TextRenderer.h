@@ -10,6 +10,7 @@ class TextRenderer {
   
 private:
     static unsigned count;
+    unsigned char *_buffer;
     
     MagickWand *_mw;
     
@@ -18,9 +19,12 @@ private:
     TextRenderer& operator=(TextRenderer const& copy); // Not Implemented
 
     uint32_t RoundPow2( uint32_t val );
-    void CopyToTexture(Texture& tex, 
-                       const int width, const int height, 
+    void CopyToBuffer(const int width, const int height, 
                        GLenum TextureMode);
+    void BindTexture(Texture& tex, 
+                     const int width, const int height, 
+                     GLenum TextureMode);
+    
     void InitMw(MagickWand* mw);
     
 public:

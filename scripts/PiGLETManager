@@ -14,7 +14,27 @@ use Net::Telnet;
 
 my $dispsets = {};
 
-# define display sets CBTaggTAPS
+# define display sets
+
+$dispsets->{Test} =
+  {
+   'Description' => 'Messing around on localhost...',
+   'Displays' => [
+                  {
+                   'Hostname' => 'localhost',
+                   'Windows' => [
+                                 {
+                                  Type=>'Plot', 'Name'=>'MyTestRecord0', 'BackLength'=>600},
+                                 {
+                                  Type=>'Plot', 'Name'=>'MyTestRecord1', 'BackLength'=>100},
+                                 {
+                                  Type=>'Image', 'Name'=>'Webcam', 'Delay'=>50}
+                                ]
+                  }
+                 ]
+  };
+
+
 $dispsets->{Standard} =
   {
    'Description' => 'Counting Room Standard',
