@@ -56,12 +56,16 @@ string PlotWindow::callbackSetBackLength(const string& arg){
     return ""; // success
 }
 
-void PlotWindow::Draw(){
-    ProcessEpicsData();    
+void PlotWindow::Draw() {
+    
+    // order of the next three commands is very important!
+    // first SetNow with the time of the last event plus the
+    // elapsed time since the last event
     _watch.Stop();
     graph.SetNow(_last_t+_watch.TimeElapsed());
-    
-    
+    // then process the EPICS data, which restarts the _watch...
+    ProcessEpicsData();    
+   
     // Window border
     WindowArea.Draw();
     graph.Draw();
@@ -74,9 +78,7 @@ void PlotWindow::Draw(){
             discon_lbl.Draw();
         glPopMatrix();
     }
-    
-   
-    
+     
     ++frame;
 }
 
@@ -129,10 +131,9 @@ void PlotWindow::ProcessEpicsData() {
             
         case Epics::NewValue: {
             vec2_t* d = (vec2_t*)i->data;
-            //cout << "New Value " << d->x << " " << d->y << endl;                
+            _watch.Start();
             graph.AddToBlockList(*d);
             _last_t = d->x;
-            _watch.Start();
             break;               
         }
         case Epics::NewProperties: {
