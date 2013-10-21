@@ -89,11 +89,7 @@ void BlockList::Add(const vec2_t &vertex)
 void BlockList::Draw() const
 {
 
-    glPushMatrix();
 
-        glScalef( 2.0f / _xrange.Length(), 2.0f / _yrange.Length(), 1.0f );
-
-        glTranslatef(-_xrange.Center(), -_yrange.Center(), 0.0f );
 
         color.Activate();
 
@@ -101,7 +97,7 @@ void BlockList::Draw() const
         for( i= _blocks.begin(); i != _blocks.end(); ++i )
             (*i)->Draw();
 
-    glPopMatrix();
+
 
 }
 

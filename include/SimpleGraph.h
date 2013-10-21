@@ -75,9 +75,15 @@ private:
     AlarmLevels _minorAlarm;
     AlarmLevels _majorAlarm;
 
+    mutable vec2_t _lastline[2];
+
+
 public:
     Color TickColor;
     Color TickLabelColor;   //note: does not change color on screen when changed!
+    Color StartLineColor;
+
+    bool  enable_lastline;
 
     SimpleGraph( Window* owner, const float backlength );
     virtual ~SimpleGraph();
@@ -85,6 +91,8 @@ public:
     void AddToBlockList( const vec2_t& p) {
         _blocklist.Add(p);
         ValueDisplay.SetNumber(p.y);
+        _lastline[0] = p;
+        _lastline[1] = p;
     }
 
     void UpdateTicks();
@@ -92,7 +100,7 @@ public:
     void DrawTicks() const;
     void Draw() const;
 
-    void SetNow( const float now ) { _blocklist.SetNow(now); }
+    void SetNow( const float now ) { _blocklist.SetNow(now); _lastline[1].x=now; }
     void SetBackLength( const float len ) { _blocklist.SetBackLength( len ); UpdateTicks(); }
     void SetYRange( const Interval& yrange );
     void SetMinorAlarms( const Interval& minoralarm );

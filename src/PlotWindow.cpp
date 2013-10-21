@@ -123,10 +123,12 @@ void PlotWindow::ProcessEpicsData() {
         switch (i->type) {
         case Epics::Connected:
             _epics_connected = true;
+            graph.enable_lastline = true;
             break;
             
         case Epics::Disconnected:
             _epics_connected = false;
+            graph.enable_lastline = false;
             break;
             
         case Epics::NewValue: {

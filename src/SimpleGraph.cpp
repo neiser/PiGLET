@@ -23,7 +23,9 @@ SimpleGraph::SimpleGraph( Window* owner, const float backlength ):
     _minorAlarm(dMinorAlarm),
     _majorAlarm(dMajorAlarm),
     TickColor(dPlotTicks),
-    TickLabelColor(dPlotTickLabels)
+    TickLabelColor(dPlotTickLabels),
+    StartLineColor(dStartLineColor),
+    enable_lastline(true)
 {
     ValueDisplay.SetDigits(10);
     UpdateTicks();
@@ -60,7 +62,21 @@ void SimpleGraph::Draw() const
 
         PlotArea.Draw();
 
-        _blocklist.Draw();
+        glPushMatrix();
+
+            // change to graph coordinates
+            glScalef( 2.0f / _blocklist.XRange().Length(), 2.0f / _blocklist.YRange().Length(), 1.0f );
+            glTranslatef(-_blocklist.XRange().Center(), -_blocklist.YRange().Center(), 0.0f );
+
+            _blocklist.Draw();
+
+            if(enable_lastline) {
+                StartLineColor.Activate();
+                glVertexPointer(2,GL_FLOAT,0, _lastline);
+                glDrawArrays(GL_LINES,0,2);
+            }
+
+            glPopMatrix();  // ed of graph coordinates
 
         // stop limiting draw area
         glDisable(GL_STENCIL_TEST);
