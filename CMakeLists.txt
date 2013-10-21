@@ -42,6 +42,7 @@ include_directories(${ImageMagick_INCLUDE_DIRS})
 
 # the sources and includes itself
 aux_source_directory(src SRC_LIST)
+file(GLOB HEADER_LIST include/*.h)
 include_directories(include)
 
 # don't forget a handy config.h file
@@ -49,7 +50,7 @@ configure_file(cmake/config.h.in ${CMAKE_BINARY_DIR}/include/config.h @ONLY)
 include_directories(${CMAKE_BINARY_DIR}/include)
 
 # build the exe
-add_executable(${PROJECT_NAME} ${SRC_LIST} ${ARCH_SRC_LIST})
+add_executable(${PROJECT_NAME} ${SRC_LIST} ${HEADER_LIST} ${ARCH_SRC_LIST})
 target_link_libraries(${PROJECT_NAME}
   ${ARCH_LIBS}
   ${M_LIB} ${RT_LIB}

@@ -95,7 +95,7 @@ find_path(EPICS_BASE_INCLUDE_COMPILER NAMES compilerSpecific.h
   NO_DEFAULT_PATH
   )
 if(EPICS_BASE_INCLUDE_COMPILER)
-  message(STATUS "Looking for EPICS... - Compiler-specific ${EPICS_BASE_INCLUDE_COMPILER} found.")
+  message(STATUS "Looking for EPICS... - Compiler-specific (for 3.15) found.")
   list(APPEND EPICS_INCLUDES ${EPICS_BASE_INCLUDE_COMPILER})
 endif()
 
