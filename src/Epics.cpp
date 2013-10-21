@@ -1,9 +1,39 @@
 #include <iostream>
+#include <sstream>
 #include <iomanip>
+#include <stdlib.h>
+#include <stdio.h>
+#include "config.h"
 #include "Epics.h"
 #include "Structs.h"
 
 using namespace std;
+
+Epics::Epics () {
+    // modify the PATH variable such that caRepeater can be
+    // found by EPICS. This avoids also a "defunct" thread
+    stringstream mypath;
+    mypath << getenv("PATH") << ":" << EPICS_BIN_PATH;
+    if(setenv("PATH", mypath.str().c_str(), 1) != 0) {
+        perror("Cannot set PATH variable for EPICS");
+    }
+  
+    ca_context_create( ca_enable_preemptive_callback );
+    ca_add_exception_event( exceptionCallback, NULL );
+    ca_poll();
+    t0 = epicsTime::getCurrent();        
+    cout << "EPICS ctor" << endl;
+}
+
+Epics::~Epics () {
+    for (map<string, PV*>::iterator it = pvs.begin(); it != pvs.end(); ++it ) {
+        removePV(it->first);
+    }
+    pvs.clear();
+    ca_context_destroy();
+    
+    cout << "EPICS dtor" << endl;
+}
 
 void Epics::exceptionCallback( exception_handler_args args ) {
     string pvname = ( args.chid ? ca_name( args.chid ) : "unknown" );
@@ -213,20 +243,4 @@ double Epics::GetCurrentTime()
 }
 
 
-Epics::Epics () {
-    ca_context_create( ca_enable_preemptive_callback );
-    ca_add_exception_event( exceptionCallback, NULL );
-    ca_poll();
-    t0 = epicsTime::getCurrent();        
-    cout << "EPICS ctor" << endl;
-}
 
-Epics::~Epics () {
-    for (map<string, PV*>::iterator it = pvs.begin(); it != pvs.end(); ++it ) {
-        removePV(it->first);
-    }
-    pvs.clear();
-    ca_context_destroy();
-    
-    cout << "EPICS dtor" << endl;
-}

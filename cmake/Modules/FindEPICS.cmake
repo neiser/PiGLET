@@ -2,15 +2,13 @@
 #
 # Variables defined by this module:
 #
-#   EPICS_FOUND               System has EPICS, this means the root-config 
-#                            executable was found.
+#   EPICS_FOUND               System has EPICS base installation.
 #
 #   EPICS_INCLUDES            Include directories.
 #
 #   EPICS_LIBRARIES           Link to these to use the EPICS libraries, not cached
 #
 #   EPICS_LIBRARY_DIR         The path to where the EPICS library files are.
-#
 
 Message(STATUS "Looking for EPICS...")
 
@@ -21,25 +19,20 @@ Set(EPICS_BASE_SEARCHPATH
   /opt/epics/base
 )
 
-# this search path is also appended by ${EPICS_BASE}/../extensions
-# if EPICS_BASE was found at all
-Set(EPICS_EXTENSIONS_SEARCHPATH
-  $ENV{EPICS_EXTENSIONS}
-)
-
 Set(EPICS_FOUND FALSE)
 Set(EPICS_DEFINITIONS "")
 
 find_path(EPICS_BASE NAMES EpicsHostArch 
-             PATHS ${EPICS_BASE_SEARCHPATH}
-             PATH_SUFFIXES startup
-             NO_DEFAULT_PATH
-            )
+  PATHS ${EPICS_BASE_SEARCHPATH}
+  PATH_SUFFIXES startup
+  NO_DEFAULT_PATH
+  )
+
 if(NOT EPICS_BASE)
   Message(STATUS "Looking for EPICS... - EPICS_BASE not found")
   Message(STATUS "Looking for EPICS... - Environment EPICS_BASE set?")
   if(EPICS_FIND_REQUIRED)    
-    message(FATAL_ERROR "Stopping here.")
+    message(FATAL_ERROR "EPICS is required. Stopping here.")
   endif()
   return()
 endif()
@@ -60,6 +53,22 @@ endif()
 
 message(STATUS "Looking for EPICS... - Found ${EPICS_BASE}")
 message(STATUS "Looking for EPICS... - Found host arch ${EPICS_HOST_ARCH}")
+
+# find the binary dir
+find_path(EPICS_BASE_BIN_PATH NAMES caRepeater 
+  PATHS ${EPICS_BASE_SEARCHPATH}
+  PATH_SUFFIXES bin/${EPICS_HOST_ARCH}
+  NO_DEFAULT_PATH
+  )
+
+if(NOT EPICS_BASE_BIN_PATH)
+  message(FATAL_ERROR "Cannot find caRepeater binary. "
+    "EPICS not correctly installed?")
+endif()
+
+# currently, there's only one bin path, but
+# if there are more, they must be joined with :
+set(EPICS_BIN_PATH ${EPICS_BASE_BIN_PATH})
 
 # find the includes directories
 find_path(EPICS_BASE_INCLUDE NAMES cadef.h
@@ -93,8 +102,7 @@ endif()
 # find required libraries
 # -lca -lCom -lezca
 # this is a bit verbose (the next library needed will trigger macro creation :)
-set(EPICS_LIBRARY_DIR ${EPICS_BASE}/lib/${EPICS_HOST_ARCH}
-  ${EPICS_EXTENSIONS}/lib/${EPICS_HOST_ARCH})
+set(EPICS_LIBRARY_DIR ${EPICS_BASE}/lib/${EPICS_HOST_ARCH})
 
 find_library(EPICS_LIB_CA NAMES ca
   PATHS ${EPICS_LIBRARY_DIR}
@@ -116,7 +124,5 @@ else()
   list(APPEND EPICS_LIBRARIES ${EPICS_LIB_COM})
 endif()
 
-
-
-list(APPEND EPICS_INCLUDES ${EPICS_BASE_INCLUDE} ${EPICS_BASE_INCLUDE_OS} )
+list(APPEND EPICS_INCLUDES ${EPICS_BASE_INCLUDE} ${EPICS_BASE_INCLUDE_OS})
 set(EPICS_FOUND TRUE)
