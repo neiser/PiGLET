@@ -15,17 +15,79 @@ use Net::Telnet;
 my $dispsets = {};
 
 # define display sets CBTaggTAPS
-$dispsets->{Test} =
+$dispsets->{Standard} =
   {
-   'Description' => 'Messing around on localhost...',
+   'Description' => 'Counting Room Standard',
    'Displays' => [
                   {
-                   'Hostname' => 'localhost',
+                   'Hostname' => 'a2onlinedisplay-00',
                    'Windows' => [
-                                 {Type=>'Plot', 'Name'=>'MyTestRecord0', 'BackLength'=>600},
-                                 {Type=>'Plot', 'Name'=>'MyTestRecord1', 'BackLength'=>100},
-                                 {Type=>'Image', 'Name'=>'Webcam', 'Delay'=>50}
+                                 {Type=>'Image', Name=>'Radiator', URL=>'http://a2radiator2.online.a2.kph/free.jpg'}
                                 ]
+                  },
+                  {
+                   'Hostname' => 'a2onlinedisplay-01',
+                   'Windows' => [
+                                 {Type=>'Plot',  Name=>'DAQ:CBESum', 'BackLength'=>600},
+                                 {Type=>'Plot',  Name=>'DAQ:CBESum_High', 'BackLength'=>600},
+                                 {Type=>'Plot',  Name=>'DAQ:CBESum_Low', 'BackLength'=>600},
+                                 {Type=>'Plot',  Name=>'DAQ:PbGlass', 'BackLength'=>600}
+                                ]
+                  },
+                  {
+                   'Hostname' => 'a2onlinedisplay-02',
+                   'Windows' => [
+                                 {Type=>'Plot',  Name=>'DAQ:Livetime_vme-exptrigger', 'BackLength'=>600},
+                                 {Type=>'Plot',  Name=>'DAQ:Livetime_vme-cb-adc-1a', 'BackLength'=>600},
+                                 {Type=>'Plot',  Name=>'DAQ:Livetime_vme-cb-adc-1b', 'BackLength'=>600},
+                                 {Type=>'Plot',  Name=>'DAQ:Livetime_vme-cb-adc-2a', 'BackLength'=>600},
+                                 {Type=>'Plot',  Name=>'DAQ:Livetime_vme-cb-adc-2b', 'BackLength'=>600},
+                                 {Type=>'Plot',  Name=>'DAQ:Livetime_vme-cb-tdc-a', 'BackLength'=>600},
+                                 {Type=>'Plot',  Name=>'DAQ:Livetime_vme-cb-tdc-b', 'BackLength'=>600},
+                                 {Type=>'Plot',  Name=>'DAQ:Livetime_vme-tagg-tdc-a', 'BackLength'=>600},
+                                 {Type=>'Plot',  Name=>'DAQ:Livetime_vme-tagg-tdc-b', 'BackLength'=>600}
+                                ]
+                  },
+                  {
+                   'Hostname' => 'a2onlinedisplay-03',
+                   'Windows' => [
+                                 {Type=>'Plot',  Name=>'DAQ:Livetime_TAPSDetector', 'BackLength'=>600},
+                                 {Type=>'Plot',  Name=>'DAQ:Livetime_vme-beampolmon', 'BackLength'=>600},
+                                 {Type=>'Plot',  Name=>'DAQ:Livetime_vme-mwpc-adc-a', 'BackLength'=>600},
+                                 {Type=>'Plot',  Name=>'DAQ:Livetime_vme-mwpc-adc-b', 'BackLength'=>600}
+                                ]
+                  },
+                  {
+                   'Hostname' => 'a2onlinedisplay-04',
+                   'Windows' => []
+                  },
+                  {
+                   'Hostname' => 'a2onlinedisplay-05',
+                   'Windows' => []
+                  },
+                  {
+                   'Hostname' => 'a2onlinedisplay-06',
+                   'Windows' => []
+                  },
+                  {
+                   'Hostname' => 'a2onlinedisplay-07',
+                   'Windows' => []
+                  },
+                  {
+                   'Hostname' => 'a2onlinedisplay-08',
+                   'Windows' => []
+                  },
+                  {
+                   'Hostname' => 'a2onlinedisplay-09',
+                   'Windows' => []
+                  },
+                  {
+                   'Hostname' => 'a2onlinedisplay-10',
+                   'Windows' => []
+                  },
+                  {
+                   'Hostname' => 'a2onlinedisplay-11',
+                   'Windows' => []
                   }
                  ]
   };
