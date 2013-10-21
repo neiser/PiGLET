@@ -7,6 +7,8 @@
 #include "TextLabel.h"
 #include "StopWatch.h"
 
+#define DEFAULT_BACKLEN 60.0f
+
 class PlotWindow: public Window {
 private:
     std::string _pvname; // the EPICS PV name

@@ -23,7 +23,7 @@ PlotWindow::PlotWindow(
     _head_ptr(NULL),
     _head_last(NULL),
     WindowArea( dBackColor, dWindowBorderColor),
-    graph(this, 10),
+    graph(this, DEFAULT_BACKLEN),
     text(this, -.95, .82, .95, .98),
     _last_t(0),
     frame(0),
