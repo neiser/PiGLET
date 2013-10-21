@@ -75,7 +75,7 @@ private:
     AlarmLevels _minorAlarm;
     AlarmLevels _majorAlarm;
 
-    mutable vec2_t _lastline[2];
+    vec2_t _lastline[2];
 
 
 public:
