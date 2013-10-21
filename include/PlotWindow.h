@@ -5,6 +5,7 @@
 #include "Window.h"
 #include "SimpleGraph.h"
 #include "TextLabel.h"
+#include "StopWatch.h"
 
 class PlotWindow: public Window {
 private:
@@ -18,11 +19,11 @@ private:
     
 
     UnitBorderBox WindowArea;
-
     SimpleGraph graph;
-
     TextLabel text;
 
+    StopWatch _watch;
+    double _last_t;
     int frame;          //for debug
     
     dbr_ctrl_double _old_properties;

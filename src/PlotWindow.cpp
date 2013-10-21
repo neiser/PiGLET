@@ -1,6 +1,9 @@
 #include <iostream>
 #include <sstream>
+#include <cmath>
+#include <limits>
 #include <string.h> // for strcmp
+
 
 #include "PlotWindow.h"
 #include "ConfigManager.h"
@@ -24,6 +27,7 @@ PlotWindow::PlotWindow(
     WindowArea( dBackColor, dWindowBorderColor),
     graph(this, 10),
     text(this, -.95, .82, .95, .98),
+    _last_t(0),
     frame(0),
     _old_properties(),
     _epics_connected(false),
@@ -56,6 +60,7 @@ string PlotWindow::callbackSetBackLength(const string& arg){
 
 void PlotWindow::Draw(){
     
+    
     // Window border
     WindowArea.Draw();
     graph.Draw();
@@ -68,8 +73,11 @@ void PlotWindow::Draw(){
             discon_lbl.Draw();
         glPopMatrix();
     }
-    graph.SetNow(Epics::I().GetCurrentTime());
+    
     ProcessEpicsData();    
+    _watch.Stop();
+    graph.SetNow(_last_t+_watch.TimeElapsed());
+    
     ++frame;
 }
 
@@ -124,6 +132,8 @@ void PlotWindow::ProcessEpicsData() {
             vec2_t* d = (vec2_t*)i->data;
             //cout << "New Value " << d->x << " " << d->y << endl;                
             graph.AddToBlockList(*d);
+            _last_t = d->x;
+            _watch.Start();
             break;               
         }
         case Epics::NewProperties: {

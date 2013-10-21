@@ -6,12 +6,6 @@
 #include <string>
 #include <cadef.h>
 
-
-
-
-// define max length for EPICS PV names
-const size_t MAX_PV_NAME_LEN = 40;
-
 class Epics  {
     
 public:   
