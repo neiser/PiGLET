@@ -13,9 +13,10 @@ Dependencies
 
  * cmake
  * libmagickwand-dev
+ * libpulse-dev
  * GLUT (for PC)
  * /opt/vc headers (for the PI)
- * EPICS (tested with 3.14.12.3 and 3.15.0.1)
+ * EPICS (tested with 3.14.12.3 and 3.15.0.1, for the latter see below)
 
 Troubleshooting Quirks
 ----------------------

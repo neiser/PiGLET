@@ -40,6 +40,8 @@ find_package(ImageMagick COMPONENTS MagickWand REQUIRED)
 add_definitions(-DMAGICKCORE_HDRI_ENABLE=0 -DMAGICKCORE_QUANTUM_DEPTH=8)
 include_directories(${ImageMagick_INCLUDE_DIRS})
 
+find_package(PulseAudio REQUIRED)
+
 # the sources and includes itself
 aux_source_directory(src SRC_LIST)
 file(GLOB HEADER_LIST include/*.h)
