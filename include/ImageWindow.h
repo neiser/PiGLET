@@ -15,6 +15,8 @@ private:
     std::string _url;    
     long _delay;
     TextLabel _label;
+
+    static const Color color;
     
     Texture _tex;
     TextRenderer _render;

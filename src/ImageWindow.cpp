@@ -6,6 +6,8 @@
 
 using namespace std;
 
+const Color ImageWindow::color(kWhite);
+
 ImageWindow::ImageWindow( WindowManager* owner, const string& title, const float xscale, const float yscale ):
     Window(owner, title, xscale, yscale),
     _url("http://auge.physik.uni-mainz.de/record/current.jpg"), // view on the Uni Mainz Campus!
@@ -136,15 +138,29 @@ void ImageWindow::Draw()
     glPushMatrix();
     glScalef(.95,.83,.1);
     glTranslatef(.0,-.07,.0);    
-    glEnable(GL_TEXTURE_2D);
-    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-    
+
+    color.Activate();
     _tex.Activate();
     
-    Rectangle::unit.Draw( GL_TRIANGLE_FAN );
-    
-    glDisable(GL_TEXTURE_2D);
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    glPushMatrix();
+        if( _tex.GetAspectRatio() >= 1.0f )
+            glScalef(1.0f,1.0f/_tex.GetAspectRatio(),1.0f);
+        else
+            glScalef(1.0f*_tex.GetAspectRatio(),1.0f,1.0f);
+
+        glEnable(GL_TEXTURE_2D);
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+        Rectangle::unit.Draw( GL_TRIANGLE_FAN );
+
+        glDisable(GL_TEXTURE_2D);
+        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+
+        glLineWidth(1.0f);
+        Rectangle::unit.Draw( GL_LINE_LOOP );
+
+    glPopMatrix();
+
     glPopMatrix();
     
     _label.Draw();
