@@ -51,6 +51,13 @@ void SimpleGraph::Draw() const
 
         glScalef(0.8f,0.8f,0.8f);
 
+
+        PlotArea.Draw();
+        DrawTicks();
+
+        _minorAlarm.Draw();
+        _majorAlarm.Draw();
+
         // limit draw area to plot area box
         glEnable(GL_STENCIL_TEST);
         glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
@@ -68,7 +75,7 @@ void SimpleGraph::Draw() const
         glStencilFunc(GL_EQUAL, 1, 0xFF);
         // draw area is now limited
 
-        PlotArea.Draw();
+
 
         glPushMatrix();
 
@@ -84,12 +91,12 @@ void SimpleGraph::Draw() const
                 glDrawArrays(GL_LINES,0,2);
             }
 
-            glPopMatrix();  // ed of graph coordinates
+        glPopMatrix();  // ed of graph coordinates
 
         // stop limiting draw area
         glDisable(GL_STENCIL_TEST);
 
-        DrawTicks();
+
 
         glPushMatrix();
             glTranslatef(-.7,.85,0);
@@ -97,8 +104,7 @@ void SimpleGraph::Draw() const
             ValueDisplay.Draw();
         glPopMatrix();
 
-        _minorAlarm.Draw();
-        _majorAlarm.Draw();
+
 
     glPopMatrix();
 
@@ -314,6 +320,7 @@ SimpleGraph::AlarmLevels::AlarmLevels(const Color &color):
 void SimpleGraph::AlarmLevels::Draw() const
 {
     AlarmColor.Activate();
+    glLineWidth(1.0f);
     glVertexPointer(2, GL_FLOAT, 0, _lines.data());
     glDrawArrays(GL_LINES, 0, _lines.size());
 }
