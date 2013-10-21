@@ -164,10 +164,11 @@ void NumberLabel::_maketextures()
 
         const char chars[] = NUMBERLABEL_CHARS;
 
+        TextRenderer render;
         for( int i=0; i<NUMBERLABEL_NUM_TEX; ++i ) {
             stringstream s;
             s << chars[i];
-            TextRenderer::I().Text2Texture( _textures[i], s.str());
+            render.Text2Texture( _textures[i], s.str());
         }
 
     }

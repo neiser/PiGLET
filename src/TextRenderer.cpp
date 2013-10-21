@@ -7,13 +7,15 @@
 
 using namespace std;
 
+unsigned TextRenderer::count = 0;
 
 TextRenderer::TextRenderer()
 {
-    MagickWandGenesis();    // just once somewhere
-    _mw_text = NewMagickWand();
-    InitMw(_mw_text); // set some 
-    
+    if(count == 0)
+        MagickWandGenesis();    // just once at the beginning
+    count++;
+    _mw = NewMagickWand();
+    InitMw(_mw); // set some defaults
 }
 
 void TextRenderer::InitMw(MagickWand* mw)
@@ -30,11 +32,13 @@ void TextRenderer::InitMw(MagickWand* mw)
 
 TextRenderer::~TextRenderer()
 {
-    if(_mw_text)
-        DestroyMagickWand(_mw_text);
+    DestroyMagickWand(_mw);
+    count--;
+    if(count==0)
+        MagickWandTerminus();    
 }
 
-uint32_t RoundPow2( uint32_t val ) {
+uint32_t TextRenderer::RoundPow2( uint32_t val ) {
     val--;
     val = (val >> 1) | val;
     val = (val >> 2) | val;
@@ -45,8 +49,9 @@ uint32_t RoundPow2( uint32_t val ) {
     return val;
 }
 
-void TextRenderer::CopyToTexture(MagickWand* mw, Texture& tex, 
-                                 const int width, const int height, GLenum TextureMode ) {
+void TextRenderer::CopyToTexture(Texture& tex, 
+                                 const int width, const int height, 
+                                 GLenum TextureMode) {
 
     string exportMode = "I";
     unsigned char bytes = 1;
@@ -74,9 +79,12 @@ void TextRenderer::CopyToTexture(MagickWand* mw, Texture& tex,
     Buffer = new unsigned char[width * height * bytes];
 
     // Export the whole image
-    MagickExportImagePixels(mw, 0, 0, width, height, exportMode.c_str(), CharPixel, Buffer);
-    ClearMagickWand(mw);
-    InitMw(mw);
+    MagickExportImagePixels(_mw, 0, 0, width, height, exportMode.c_str(), CharPixel, Buffer);
+    
+    // clearing and init prevents 
+    ClearMagickWand(_mw);
+    InitMw(_mw);
+    
     glBindTexture(GL_TEXTURE_2D, tex.GetTexHandle());
 
     glTexImage2D(GL_TEXTURE_2D, 0, TextureMode, width, height, 0, TextureMode, GL_UNSIGNED_BYTE, Buffer);
@@ -90,28 +98,28 @@ void TextRenderer::CopyToTexture(MagickWand* mw, Texture& tex,
 
 
 
-void TextRenderer::Text2Texture( Texture& tex, const string &text )
+void TextRenderer::Text2Texture(Texture& tex, const string &text )
 {
-    MagickSetSize(_mw_text,0,0);
+    MagickSetSize(_mw,0,0);
 
     std::stringstream rendercmd;
     rendercmd << "label:" << text;
 
-    MagickReadImage(_mw_text, rendercmd.str().c_str());
+    MagickReadImage(_mw, rendercmd.str().c_str());
 
-    const size_t _w = MagickGetImageWidth(_mw_text);
-    const size_t _h = MagickGetImageHeight(_mw_text);
+    const size_t _w = MagickGetImageWidth(_mw);
+    const size_t _h = MagickGetImageHeight(_mw);
 
     const size_t nw = RoundPow2( _w );
     const size_t nh = RoundPow2( _h );
 
-    MagickExtentImage(_mw_text,nw,nh,0,0);
+    MagickExtentImage(_mw,nw,nh,0,0);
 
-    const size_t width = MagickGetImageWidth(_mw_text);
-    const size_t height = MagickGetImageHeight(_mw_text);
+    const size_t width = MagickGetImageWidth(_mw);
+    const size_t height = MagickGetImageHeight(_mw);
 
-    CopyToTexture(_mw_text, tex, width, height, GL_LUMINANCE );
-
+    CopyToTexture(tex, width, height, GL_LUMINANCE );
+    
 
     float texw = ((float)_w) / width;
     float texh = ((float)_h) / height;
@@ -120,19 +128,26 @@ void TextRenderer::Text2Texture( Texture& tex, const string &text )
     tex.SetAspect((float) _w / (float) _h);
 }
 
-void TextRenderer::Image2Texture(MagickWand* mw, Texture& tex)
+void TextRenderer::Mw2Texture(Texture& tex)
 {
     
-    const size_t width = MagickGetImageWidth(mw);
-    const size_t height = MagickGetImageHeight(mw);
+    const size_t width = MagickGetImageWidth(_mw);
+    const size_t height = MagickGetImageHeight(_mw);
     
     const size_t nw = RoundPow2( width );
     const size_t nh = RoundPow2( height );
     
-    CopyToTexture(mw, tex, nw, nh, GL_RGBA);
+    CopyToTexture(tex, nw, nh, GL_RGBA);
     
     tex.SetMaxUV( (float) width / nw, (float) height / nh);
     tex.SetAspect( (float) width / (float) height );
     
 }
+
+bool TextRenderer::Image2Mw(const string &url)
+{
+    return MagickReadImage(_mw, url.c_str());
+}
+
+
 

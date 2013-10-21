@@ -9,25 +9,28 @@
 class TextRenderer {
   
 private:
-    MagickWand *_mw_text;
+    static unsigned count;
     
-    TextRenderer();
-    virtual ~TextRenderer();
+    MagickWand *_mw;
+    
+    // forbid copying
     TextRenderer(TextRenderer const& copy);            // Not Implemented
     TextRenderer& operator=(TextRenderer const& copy); // Not Implemented
 
-    static void CopyToTexture(MagickWand* mw, Texture& tex, const int width, const int height , GLenum TextureMode);
-    static void InitMw(MagickWand* mw);
+    uint32_t RoundPow2( uint32_t val );
+    void CopyToTexture(Texture& tex, 
+                       const int width, const int height, 
+                       GLenum TextureMode);
+    void InitMw(MagickWand* mw);
+    
 public:
 
-    static TextRenderer& I() {
-        static TextRenderer instance;
-        return instance;
-    }
-
+    TextRenderer();
+    virtual ~TextRenderer();
+        
     void Text2Texture( Texture& tex, const std::string &text );
-    static void Image2Texture(MagickWand* _mw_text, Texture &tex);
-
+    void Mw2Texture(Texture &tex);
+    bool Image2Mw(const std::string& url);
 };
 
 

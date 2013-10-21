@@ -39,7 +39,8 @@ void TextLabel::Draw() const
 
 void TextLabel::SetText( const string &text )
 {
-    TextRenderer::I().Text2Texture( _texture, text );
+    TextRenderer render;
+    render.Text2Texture( _texture, text );
 
     const float rect_ratio = _rext.Width() / _rext.Height();
 

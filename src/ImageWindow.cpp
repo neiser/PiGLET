@@ -18,9 +18,7 @@ ImageWindow::ImageWindow( WindowManager* owner, const string& title, const float
     _label.SetText(title);    
     _label.SetColor(dInvalidAlarm);
     
-    // stuff for the image loading
-    MagickWandGenesis(); // just once somewhere...also in TextRenderer
-    _mw = NewMagickWand();   
+    // thread items
     pthread_mutex_init(&_mutex_running, NULL);
     pthread_mutex_init(&_mutex_working, NULL);    
     pthread_cond_init (&_signal, NULL);
@@ -68,9 +66,6 @@ ImageWindow::~ImageWindow()
     pthread_mutex_destroy(&_mutex_working);    
     pthread_mutex_destroy(&_mutex_running);
     
-    if(_mw)
-        DestroyMagickWand(_mw);
-    
     cout << "ImageWindow dtor" << endl;
 }
 
@@ -114,7 +109,7 @@ bool ImageWindow::ApplyTexture(int state)
     if(state==0) {
         // mutex was free and now locked, so data is available
         if(_image_ok) {
-            TextRenderer::Image2Texture(_mw, _tex);
+            _render.Mw2Texture(_tex);
             //cout << "Image loaded..." << endl;
             _image_ok = false;
             _label.SetColor(dTextColor);
@@ -160,7 +155,7 @@ void ImageWindow::do_work()
     pthread_mutex_lock(&_mutex_running);
     while(_running) {
         pthread_mutex_lock(&_mutex_working);
-        _image_ok = MagickReadImage(_mw, _url.c_str());
+        _image_ok = _render.Image2Mw(_url);
         // first we wait with a condition timed wait, 
         // serves as a usleep 
         // but can be cancelled via _signal_delay 
@@ -168,14 +163,14 @@ void ImageWindow::do_work()
         struct timespec ts;
         clock_gettime(CLOCK_REALTIME, &ts); // the current time
         long sec =_delay / 1000;
-        long ms = _delay - sec*1000;
+        long ms = _delay - sec*1e3;
         
         // perform the addition
-        ts.tv_nsec+=ms*1000000;
+        ts.tv_nsec+=ms*1e6;
         
         // adjust the time
-        ts.tv_sec+=ts.tv_nsec/1000000000 + sec;
-        ts.tv_nsec=ts.tv_nsec%1000000000;    
+        ts.tv_sec+=ts.tv_nsec/1e9 + sec;
+        ts.tv_nsec=ts.tv_nsec%(long)1e9;    
         
         pthread_cond_timedwait(&_signal_delay, &_mutex_working, &ts);   
         pthread_mutex_unlock(&_mutex_working); // ETIMEDOUT EBUSY       

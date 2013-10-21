@@ -7,6 +7,7 @@
 
 #include "Window.h"
 #include "TextLabel.h"
+#include "TextRenderer.h"
 
 class ImageWindow: public Window {
 private:
@@ -16,6 +17,7 @@ private:
     TextLabel _label;
     
     Texture _tex;
+    TextRenderer _render;
     bool _image_ok;
     pthread_t _thread;
     volatile bool _running;
@@ -23,9 +25,7 @@ private:
     pthread_mutex_t _mutex_working;  // locked if do_work is either loading an image
     pthread_cond_t _signal;        // indicates that the Draw routine has used the loaded image
     pthread_cond_t _signal_delay; // sleeping _delay can be aborted
-    
-    MagickWand* _mw; // we need our own MagickWand, can't use the TextRenderer's one
-    
+   
     
     // This is the static class function that serves as a C style function pointer
     // for the pthread_create call

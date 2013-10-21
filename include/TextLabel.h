@@ -15,7 +15,7 @@ private:
     Color       _color;     // color for the text
     Rectangle   _rext;      // Maximum size of the text
     Rectangle   _box;       // the actual drawing box, always smaller than the user defined text rectangle
-
+    
 public:
 
     TextLabel( const Window* owner, const float x1, const float y1,const float x2, const float y2);
