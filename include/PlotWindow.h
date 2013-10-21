@@ -30,6 +30,10 @@ private:
     void ProcessEpicsData();
     void ProcessEpicsProperties(dbr_ctrl_double* d);
     std::string callbackSetBackLength(const std::string& arg);
+
+    bool _epics_connected;
+
+    NumberLabel discon_lbl;
     
 public:
     const std::string& Xlabel() const { return _xlabel; }

@@ -25,10 +25,17 @@ PlotWindow::PlotWindow(
     graph(this, 10),
     text(this, -.95, .82, .95, .98),
     frame(0),
-    _old_properties()
+    _old_properties(),
+    _epics_connected(false),
+    discon_lbl(this)
 {
     cout << "Plotwindow ctor" << endl;
     text.SetText(pvname);
+
+    discon_lbl.SetColor(kPink);
+    discon_lbl.SetAlignRight(true);
+    discon_lbl.SetString("Disconnected");
+    discon_lbl.SetDrawBox(false);
     
     // don't forget to call Init()
     // which also checks if the pvname is actually valid
@@ -53,6 +60,14 @@ void PlotWindow::Draw(){
     WindowArea.Draw();
     graph.Draw();
     text.Draw();
+
+    if( !_epics_connected ) {
+        glPushMatrix();
+            glTranslatef(.4f, .6f, 0.0f);
+            glScalef(.4f,.4f,.4f);
+            discon_lbl.Draw();
+        glPopMatrix();
+    }
     graph.SetNow(Epics::I().GetCurrentTime());
     ProcessEpicsData();    
     ++frame;
@@ -98,11 +113,11 @@ void PlotWindow::ProcessEpicsData() {
         // if new, process it!
         switch (i->type) {
         case Epics::Connected:
-            //cout << "PV " << _pvname << " connected" << endl;
+            _epics_connected = true;
             break;
             
         case Epics::Disconnected:
-            //cout << "PV " << _pvname << " disconnected" << endl;
+            _epics_connected = false;
             break;
             
         case Epics::NewValue: {
