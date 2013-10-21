@@ -118,6 +118,7 @@ bool ImageWindow::ApplyTexture(int state)
         }
         else {
             _label.SetColor(dMajorAlarm); // show that something is wrong
+            _render.Text2Texture( _tex, "No Image");
         }
 
         pthread_cond_signal(&_signal);
