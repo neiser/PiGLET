@@ -67,7 +67,7 @@ protected:
     Interval _yrange;
 
     void PopBack();
-    void NewBlock();
+
 
 public:
     Color color;
@@ -87,6 +87,8 @@ public:
                                             _xrange.Min() = _xrange.Max()-len; }
     const float& GetBackLenght () { return _backlen; }
     void SetYRange( const Interval& yrange ) { _yrange = yrange; }
+
+    void NewBlock(const bool copy_last=true);
 
 };
 

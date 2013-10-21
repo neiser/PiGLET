@@ -127,6 +127,12 @@ void PlotWindow::ProcessEpicsData() {
             break;
             
         case Epics::Disconnected:
+
+            // if we were connected before
+            // start a new block
+            if( _epics_connected ) {
+                graph.NewBlock();
+            }
             _epics_connected = false;
             graph.enable_lastline = false;
             break;

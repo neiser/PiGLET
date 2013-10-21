@@ -36,6 +36,14 @@ SimpleGraph::~SimpleGraph()
     DeleteTicks();
 }
 
+void SimpleGraph::NewBlock()
+{
+    // start a new block and don't copy last
+    // value = do not connect with a line to
+    // previous
+    _blocklist.NewBlock(false);
+}
+
 void SimpleGraph::Draw() const
 {
 

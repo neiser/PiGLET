@@ -34,12 +34,12 @@ void BlockList::PopBack()
     }
 }
 
-void BlockList::NewBlock()
+void BlockList::NewBlock( const bool copy_last )
 {
 
     Block* b = new DataBlock();
 
-    if( !_blocks.empty() ) {
+    if( !_blocks.empty() && copy_last ) {
         Block* l = _blocks.front();
         b->Add( l->LastValue() );
     }

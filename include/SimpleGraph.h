@@ -95,6 +95,8 @@ public:
         _lastline[1] = p;
     }
 
+    void NewBlock();
+
     void UpdateTicks();
 
     void DrawTicks() const;
