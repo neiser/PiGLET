@@ -42,6 +42,7 @@ public:
     void Draw() const;
     void SetNumber( const float v );
     void SetString( const std::string& str );
+    void SetTime( const float s);
 
     void SetColor( const Color& c ) { _color = c; }
     Color GetColor() const { return _color; }

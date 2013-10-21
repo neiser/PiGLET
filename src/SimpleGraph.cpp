@@ -156,7 +156,6 @@ SimpleGraph::TickLabel::TickLabel(const Window *owner, const vec2_t &pos, const 
     SetAlignRight(true);
     SetDigits(5);
     SetPrec(1);
-    SetNumber(v);
 }
 
 
@@ -260,6 +259,7 @@ void SimpleGraph::AddXTick(const float x) {
     t.y -= .1;
 
     TickLabel* label = new TickLabel( _owner, t, x );
+    label->SetTime(x);
 
     _labels.push_back(label);
 
@@ -276,6 +276,7 @@ void SimpleGraph::AddYTick(const float y) {
     t.x += .1;
 
     TickLabel* label = new TickLabel( _owner, t, y );
+    label->SetNumber(y);
 
     _labels.push_back(label);
 }

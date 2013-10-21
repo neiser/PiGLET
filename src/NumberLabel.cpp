@@ -148,6 +148,29 @@ void NumberLabel::SetNumber(const float v)
 
 }
 
+void NumberLabel::SetTime( float s) {
+    const char m[6] = "smhd";
+    int level =0;
+
+    if( abs(s) >= 60.0f ) {
+        s /= 60.0;
+        level++;
+        if( abs(s) >= 60.0f ) {
+            s /= 60.0;
+            level++;
+            if( abs(s) >= 24.0f ) {
+                s /= 24.0f;
+                level++;
+            }
+        }
+    }
+
+    stringstream text;
+    text << fixed << setprecision(2) << s << " " << m[level];
+    SetString(text.str());
+
+}
+
 
 
 unsigned int NumberLabel::_num_objetcs = 0;
