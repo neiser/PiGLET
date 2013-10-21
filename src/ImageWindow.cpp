@@ -142,12 +142,15 @@ void ImageWindow::Draw()
 
     color.Activate();
     _tex.Activate();
+
+    const float winratio =XPixels() / YPixels();
+    const float totalratio = _tex.GetAspectRatio() / winratio;
     
     glPushMatrix();
-        if( _tex.GetAspectRatio() >= 1.0f )
-            glScalef(1.0f,1.0f/_tex.GetAspectRatio(),1.0f);
+        if( totalratio >= 1.0f )
+            glScalef(1.0f,1.0f/totalratio,1.0f);
         else
-            glScalef(1.0f*_tex.GetAspectRatio(),1.0f,1.0f);
+            glScalef(1.0f*totalratio,1.0f,1.0f);
 
         glEnable(GL_TEXTURE_2D);
         glEnableClientState(GL_TEXTURE_COORD_ARRAY);
