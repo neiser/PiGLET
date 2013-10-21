@@ -1,4 +1,3 @@
-#include <cmath>
 #include <iostream>
 #include <sstream>
 
@@ -33,7 +32,7 @@ void PiGLETApp::Draw(){
 
 void PiGLETApp::Init(){
     cout << "Starting PiGLET..." << endl;
-    for (int i = 0 ; i < 1; i++){
+    for (int i = 0 ; i < 3; i++){
         stringstream ss;
         ss << "MyTestRecord" << i;
         windowman.AddWindow(new PlotWindow(&windowman, ss.str()));

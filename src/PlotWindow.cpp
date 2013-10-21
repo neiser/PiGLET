@@ -1,7 +1,5 @@
 #include <iostream>
 #include <sstream>
-#include <cmath>
-#include <limits>
 #include <string.h> // for strcmp
 
 
@@ -35,7 +33,7 @@ PlotWindow::PlotWindow(
 {
     cout << "Plotwindow ctor" << endl;
     text.SetText(pvname);
-
+    _watch.Start();
     discon_lbl.SetColor(kPink);
     discon_lbl.SetAlignRight(true);
     discon_lbl.SetString("Disconnected");
@@ -59,6 +57,9 @@ string PlotWindow::callbackSetBackLength(const string& arg){
 }
 
 void PlotWindow::Draw(){
+    ProcessEpicsData();    
+    _watch.Stop();
+    graph.SetNow(_last_t+_watch.TimeElapsed());
     
     
     // Window border
@@ -74,9 +75,7 @@ void PlotWindow::Draw(){
         glPopMatrix();
     }
     
-    ProcessEpicsData();    
-    _watch.Stop();
-    graph.SetNow(_last_t+_watch.TimeElapsed());
+   
     
     ++frame;
 }
