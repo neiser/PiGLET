@@ -204,7 +204,7 @@ sub Do {
     my $ssh = $SSH->{$host};
     # the perl pipe formats the output (prepends the hostname)
     $pid->{$host} = $ssh->system({async=>1},
-                                 "bash -l -c \"$cmd\" 2>&1".
+                                 "$cmd 2>&1".
                                  " | perl -pe 'chomp(\$h=`hostname -s`); printf(\"%-17s %s\",\$h);'");
   }
 
