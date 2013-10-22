@@ -45,15 +45,15 @@ include_directories(${ImageMagick_INCLUDE_DIRS})
 # into the binary. We use the helper bin2c for that.
 find_package(PulseAudio REQUIRED)
 ADD_EXECUTABLE(bin2c sound/bin2c.c)
-file(GLOB WAV_LIST RELATIVE ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/sound/*.wav)
-message(${WAV_LIST})
+file(GLOB WAV_LIST RELATIVE ${CMAKE_SOURCE_DIR} sound/*.wav)
 set(SOUND_OUT_DIR ${CMAKE_BINARY_DIR}/sound)
 file(MAKE_DIRECTORY ${SOUND_OUT_DIR})
 include_directories(${SOUND_OUT_DIR})
 
 set(f_src "${SOUND_OUT_DIR}/wavfiles.c")
 set(f_header "${SOUND_OUT_DIR}/wavfiles.h")
-list(APPEND WAV_SRC_LIST ${f_src} ${f_header}) 
+list(APPEND WAV_SRC_LIST ${f_header})
+list(APPEND WAV_SRC_LIST ${f_src}) 
 ADD_CUSTOM_COMMAND(
   OUTPUT ${f_src} ${f_header}
   COMMAND bin2c -m -o ${f_src} -d ${f_header} ${WAV_LIST}

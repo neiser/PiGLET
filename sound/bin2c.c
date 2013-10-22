@@ -264,7 +264,7 @@ static void processFile(const char *fileName, long int from, long int to)
     /* Output the definition */
     output("%s %s[%d] = {\n", typeName, symbolName, to - from + 1);
     if (headerFile) {
-        header("extern %s *%s;\n", typeName, symbolName, to - from + 1);
+        header("extern %s %s[];\n", typeName, symbolName, to - from + 1);
     }
 
     /* Output the contents */

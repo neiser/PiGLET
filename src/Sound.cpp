@@ -76,8 +76,9 @@ Sound::Sound()
         cerr << "PulseAudio stream connect playback failed" << endl;
         exit(EXIT_FAILURE);
     }
-    
-    cout << sizeof(sound_test_wav[1]) << sound_test_wav[1] << endl;
+    //const unsigned char* a = sound_test_wav;
+    cout << sound_test_wav[44] << endl;
+    //cout << sizeof(sound_test_wav[1]) << sound_test_wav[1] << endl;
 }
 
 Sound::~Sound()
