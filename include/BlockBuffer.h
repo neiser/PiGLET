@@ -15,13 +15,15 @@
 class Block {
 protected:
     Interval _xrange;
+    Interval _yrange;
 
 public:
 
-    Block(): _xrange() {}
+    Block(): _xrange(), _yrange() {}
     virtual ~Block() {}
 
     const Interval& XRange() const { return _xrange; }
+    const Interval& YRange() const { return _yrange; }
 
     virtual void Draw() const =0;
 
@@ -65,6 +67,8 @@ protected:
     float _backlen;
     Interval _xrange;
     Interval _yrange;
+
+    void BuildYRange();
 
     void PopBack();
 

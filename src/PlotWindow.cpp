@@ -193,10 +193,11 @@ void PlotWindow::ProcessEpicsProperties(dbr_ctrl_double* d) {
         // if the provided interval is empty,
         // try guessing some better one
         if(y.Length()==0) {
-            y = d->value==0 ? Interval(-1,1) :
-                              Interval(d->value/2.0, d->value*2.0);
+            graph.SetAutoRange(true);
+        } else {
+            graph.SetAutoRange(false);
+            graph.SetYRange( y );
         }
-        graph.SetYRange(y);
     }
     
     // set precision

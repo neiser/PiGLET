@@ -12,12 +12,14 @@ float SimpleGraph::GetXGlobal(const float x)
 
 float SimpleGraph::GetYGlobal(const float y)
 {
-    return 2.0f * (y  - _blocklist.YRange().Center()) / _blocklist.YRange().Length();
+    return 2.0f * (y  - _yrange.Center()) / _yrange.Length();
 }
 
 SimpleGraph::SimpleGraph( Window* owner, const float backlength ):
     Widget(owner),
     _blocklist(backlength),
+    _yrange(),
+    _autorange(true),
     ValueDisplay(this->_owner),
     PlotArea( dPlotBackground, dPlotBorderColor),
     _minorAlarm(dMinorAlarm),
@@ -44,7 +46,7 @@ void SimpleGraph::NewBlock()
     _blocklist.NewBlock(false);
 }
 
-void SimpleGraph::Draw() const
+void SimpleGraph::Draw()
 {
 
     glPushMatrix();
@@ -80,8 +82,8 @@ void SimpleGraph::Draw() const
         glPushMatrix();
 
             // change to graph coordinates
-            glScalef( 2.0f / _blocklist.XRange().Length(), 2.0f / _blocklist.YRange().Length(), 1.0f );
-            glTranslatef(-_blocklist.XRange().Center(), -_blocklist.YRange().Center(), 0.0f );
+            glScalef( 2.0f / _blocklist.XRange().Length(), 2.0f / _yrange.Length(), 1.0f );
+            glTranslatef(-_blocklist.XRange().Center(), -_yrange.Center(), 0.0f );
 
             _blocklist.Draw();
 
@@ -112,7 +114,11 @@ void SimpleGraph::Draw() const
 
 void SimpleGraph::SetYRange(const Interval &yrange)
 {
-    _blocklist.SetYRange( yrange );
+    if( _yrange.Length() < 1.0f ) {
+        _yrange = Interval( _yrange.Min() - .5f, _yrange.Max() + .5f);
+    }
+
+    _yrange = yrange;
 
     UpdateTicks();
 
@@ -230,15 +236,15 @@ void SimpleGraph::UpdateTicks() {
     }
 
     int nty = ceil ( NTICKSFULLY *  _owner->YPixels() / GetWindowHeight());
-    float dy = _blocklist.YRange().Length() / nty;
+    float dy = _yrange.Length() / nty;
     dy = roundX(dy);
-    nty = round( _blocklist.YRange().Length() / dy ) ;
+    nty = round( _yrange.Length() / dy ) ;
     
-    const float ystart = roundX( _blocklist.YRange().Center() ) - (nty/2)*dy;
+    const float ystart = roundX( _yrange.Center() ) - (nty/2)*dy;
     for( int i=0; i<nty; ++i ) {
         float y = ystart + i * dy;
         
-        if(_blocklist.YRange().Contains(y))
+        if(_yrange.Contains(y))
             AddYTick( y );
     }
 
@@ -317,7 +323,7 @@ SimpleGraph::AlarmLevels::AlarmLevels(const Color &color):
 {
 }
 
-void SimpleGraph::AlarmLevels::Draw() const
+void SimpleGraph::AlarmLevels::Draw()
 {
     AlarmColor.Activate();
     glLineWidth(1.0f);

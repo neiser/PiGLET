@@ -15,8 +15,16 @@ void DataBlock::Draw() const
 
 void DataBlock::Add(const vec2_t &vertex)
 {
-    if( _data.empty() )
+    if( _data.empty() ) {
+
         _xrange.Min() = vertex.x;
+
+        _yrange.Min() = vertex.y;
+        _yrange.Max() = vertex.y;
+
+    } else {
+        _yrange.Extend(vertex.y);
+    }
 
     _xrange.Max() = vertex.x;
 
@@ -25,12 +33,22 @@ void DataBlock::Add(const vec2_t &vertex)
 }
 
 
+void BlockList::BuildYRange()
+{
+    _yrange = Interval(0,0);
+    blist::const_iterator i;
+    for( i= _blocks.begin(); i != _blocks.end(); ++i )
+        _yrange.Extend( (*i)->YRange() );
+
+}
+
 void BlockList::PopBack()
 {
     if( !_blocks.empty() ) {
         Block* last = _blocks.back();
         delete last;
         _blocks.pop_back();
+        BuildYRange();
     }
 }
 
@@ -51,7 +69,7 @@ void BlockList::NewBlock( const bool copy_last )
 BlockList::BlockList( const float backlen ):
     _backlen(backlen),
     _xrange(-_backlen, 0.0f),
-    _yrange(-1.0f, 1.0f),
+    _yrange(.0f,.0f),
     color(dPlotColor)
 {
 }
@@ -83,6 +101,8 @@ void BlockList::Add(const vec2_t &vertex)
     if( last->XRange().Disjoint(_xrange) ) {
         PopBack();
     }
+
+    _yrange.Extend( vertex.y );
 
 }
 

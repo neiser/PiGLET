@@ -41,6 +41,8 @@ private:
     // -------------------------
 
     BlockList _blocklist;
+    Interval  _yrange;
+    bool      _autorange;
     NumberLabel ValueDisplay;
     UnitBorderBox PlotArea;
 
@@ -64,7 +66,7 @@ private:
         Color AlarmColor;
 
         AlarmLevels( const Color& color=dMinorAlarm);
-        void Draw() const;
+        void Draw();
         void SetLevels( const Interval& levels, const Interval& draw );
         void Clear();
         void Update();
@@ -93,6 +95,12 @@ public:
         ValueDisplay.SetNumber(p.y);
         _lastline[0] = p;
         _lastline[1] = p;
+
+        if( _autorange ) {
+            if( _blocklist.YRange() != _yrange ) {
+                SetYRange(_blocklist.YRange());
+            }
+        }
     }
 
     void NewBlock();
@@ -100,7 +108,7 @@ public:
     void UpdateTicks();
 
     void DrawTicks() const;
-    void Draw() const;
+    void Draw();
 
     void SetNow( const float now ) { _blocklist.SetNow(now); _lastline[1].x=now; }
     void SetBackLength( const float len ) { _blocklist.SetBackLength( len ); UpdateTicks(); }
@@ -108,6 +116,8 @@ public:
     void SetMinorAlarms( const Interval& minoralarm );
     void SetMajorAlarms( const Interval& majoralarm );
     void SetPrecision(const unsigned char prec);
+
+    void SetAutoRange( const bool autorange ) { _autorange = autorange; }
 
     /**
      * @brief Set the alarm state
