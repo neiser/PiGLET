@@ -59,6 +59,15 @@ public:
 
         return ret;
     }
+
+    bool operator==( const Interval& i ) const {
+        return (_min == i._min) && (_max == i._max);
+    }
+
+    bool operator!=(const Interval& i ) const {
+        return ! ( (_min == i._min) && (_max == i._max));
+    }
+
 };
 
 std::ostream& operator<<( std::ostream& stream, const Interval& i );
