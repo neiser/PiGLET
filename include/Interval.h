@@ -25,6 +25,40 @@ public:
 
     bool Contains( const float x ) const { return (_min <= x) && (_max >= x); }
 
+    /**
+     * @brief Extend the interval to include x
+     * @param x
+     * @return false if x is already included
+     */
+    bool Extend( const float x ) {
+
+        if( x > _max ) {
+            _max = x;
+            return true;
+        } else if (x < _min ) {
+            _min = x;
+            return true;
+        }
+
+        return false;
+    }
+
+    bool Extend( const Interval& i ) {
+
+        bool ret = false;
+
+        if( i._max > _max ) {
+            _max = i._max;
+            ret = true;
+        }
+
+        if( i._min < _min ) {
+            _min = i._min;
+            ret = true;
+        }
+
+        return ret;
+    }
 };
 
 std::ostream& operator<<( std::ostream& stream, const Interval& i );
