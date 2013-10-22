@@ -40,7 +40,24 @@ find_package(ImageMagick COMPONENTS MagickWand REQUIRED)
 add_definitions(-DMAGICKCORE_HDRI_ENABLE=0 -DMAGICKCORE_QUANTUM_DEPTH=8)
 include_directories(${ImageMagick_INCLUDE_DIRS})
 
+# PulseAudio is a bit more complicated,
+# since we want to compile the soundfiles
+# into the binary. We use the helper bin2c for that.
 find_package(PulseAudio REQUIRED)
+ADD_EXECUTABLE(bin2c sound/bin2c.c)
+file(GLOB WAV_LIST sound/*.wav)
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/sound)
+foreach(f ${WAV_LIST})
+  get_filename_component(f_name ${f} NAME_WE) # name without extension wav
+  set(f_src "sound/${f_name}_wav.c")
+  list(APPEND WAV_SRC_LIST ${f_src})
+  ADD_CUSTOM_COMMAND(
+    OUTPUT ${f_src}
+    COMMAND bin2c -o ${CMAKE_CURRENT_BINARY_DIR}/${f_src} -n ${f_name}_wav ${f} 
+    DEPENDS bin2c ${f}
+    )
+  message(${f_src})
+endforeach()
 
 # the sources and includes itself
 aux_source_directory(src SRC_LIST)
@@ -52,10 +69,12 @@ configure_file(cmake/config.h.in ${CMAKE_BINARY_DIR}/include/config.h @ONLY)
 include_directories(${CMAKE_BINARY_DIR}/include)
 
 # build the exe
-add_executable(${PROJECT_NAME} ${SRC_LIST} ${HEADER_LIST} ${ARCH_SRC_LIST})
+add_executable(${PROJECT_NAME} ${SRC_LIST} ${HEADER_LIST} ${ARCH_SRC_LIST} ${WAV_SRC_LIST})
 target_link_libraries(${PROJECT_NAME}
   ${ARCH_LIBS}
   ${M_LIB} ${RT_LIB}
   ${ImageMagick_LIBRARIES}
   ${CMAKE_THREAD_LIBS_INIT}
-  ${EPICS_LIBRARIES})
+  ${EPICS_LIBRARIES}
+  ${PULSEAUDIO_LIBRARY}
+)
