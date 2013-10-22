@@ -4,6 +4,7 @@
 #include <time.h>
 #include <pulse/mainloop.h>
 #include <pulse/context.h>
+#include <pulse/stream.h>
 
 class Sound
 {
@@ -26,6 +27,9 @@ private:
     Sound(Sound const& copy);            // Not Implemented
     Sound& operator=(Sound const& copy); // Not Implemented
 
+    pa_mainloop *paMainLoop;
+    pa_context *paContext;
+    pa_stream *paStream;
     
 };
 
