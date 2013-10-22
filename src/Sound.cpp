@@ -26,7 +26,7 @@ Sound::Sound()
         exit(EXIT_FAILURE);
 	}
 
-	paContext = pa_context_new(pa_mainloop_get_api(paMainLoop),"YsPulseAudioCon");
+	paContext = pa_context_new(pa_mainloop_get_api(paMainLoop),"PiGLETPulseAudioCon");
 	if(NULL==paContext)
 	{
 		cerr << "Cannot create PulseAudio context" << endl;
@@ -41,18 +41,19 @@ Sound::Sound()
         exit(EXIT_FAILURE);
     }
 
-    // poll the state with timeout of about 100 ms
-    size_t max_timeouts = 100;
+    // poll the state with timeout of about 1000 ms
+    size_t max_timeouts = 1000;
     for(size_t i=1;;i++) {
-        cout << "i="<<i<<endl;
         // this still fail
         pa_mainloop_iterate(paMainLoop,0,NULL);
-		if(PA_CONTEXT_READY==pa_context_get_state(paContext))
+        pa_context_state_t state = pa_context_get_state(paContext);
+		if(state==PA_CONTEXT_READY)
 		{
 			break;
 		}
         else if(i==max_timeouts) {
-            cerr << "Connection to PulseAudio timed out" << endl;
+            cerr << "Connection to PulseAudio timed out: "<< 
+                    state << endl;
             exit(EXIT_FAILURE);
         }
         usleep(1000); // wait 1 ms
