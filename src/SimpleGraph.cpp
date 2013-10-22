@@ -51,6 +51,7 @@ void SimpleGraph::Draw()
 
     glPushMatrix();
 
+        glTranslatef(-.08, 0,0);
         glScalef(0.8f,0.8f,0.8f);
 
 
@@ -309,7 +310,7 @@ void SimpleGraph::AddYTick(const float y) {
     t.x =   1.0f;
     _ticks.push_back(t);
 
-    t.x += .1;
+    t.x += .2;
 
     TickLabel* label = new TickLabel( _owner, t, y );
     label->SetNumber(y);
