@@ -265,16 +265,16 @@ void SimpleGraph::DeleteTicks()
 
 
 float SimpleGraph::roundX( float x ) {
-    if( x==0 )
+    if( x==0 || !isfinite(x) )
         return 0;
     float m=1;
-    if (x >= 1 ) {
-        while( x > 10 ) {
+    if (abs(x) >= 1 ) {
+        while( abs(x) > 10 ) {
             x /= 10.0;
             m *= 10.0;
         }
     } else {
-        while( x < 1 ) {
+        while( abs(x) < 1 ) {
             x *= 10.0;
             m /= 10.0;
         }
