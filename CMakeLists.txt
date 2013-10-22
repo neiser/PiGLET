@@ -41,9 +41,12 @@ add_definitions(-DMAGICKCORE_HDRI_ENABLE=0 -DMAGICKCORE_QUANTUM_DEPTH=8)
 include_directories(${ImageMagick_INCLUDE_DIRS})
 
 # PulseAudio is a bit more complicated,
+find_package(SndFile REQUIRED)
+find_package(PulseAudio REQUIRED)
+include_directories(${SNDFILE_INCLUDE_DIR} ${PULSEAUDIO_INCLUDE_DIR})
+
 # since we want to compile the soundfiles
 # into the binary. We use the helper bin2c for that.
-find_package(PulseAudio REQUIRED)
 ADD_EXECUTABLE(bin2c sound/bin2c.c)
 file(GLOB WAV_LIST RELATIVE ${CMAKE_SOURCE_DIR} sound/*.wav)
 set(SOUND_OUT_DIR ${CMAKE_BINARY_DIR}/sound)
@@ -79,4 +82,5 @@ target_link_libraries(${PROJECT_NAME}
   ${CMAKE_THREAD_LIBS_INIT}
   ${EPICS_LIBRARIES}
   ${PULSEAUDIO_LIBRARY}
+  ${SNDFILE_LIBRARY}
 )
