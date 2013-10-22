@@ -7,6 +7,8 @@ use Getopt::Long;
 use Pod::Usage;
 use Switch;
 use Net::Telnet;
+use Module::Load;
+
 
 # define the display sets $dispsets here
 # as a hashref, the key is the "name" of the dispset
@@ -124,6 +126,7 @@ my $warnings = 1;
 my $exact = 0;
 my $dispsetfile;
 my $t; # telnet connection
+my $SSH; # SSH connection for "do" mode
 
 Getopt::Long::Configure(qw(gnu_getopt));
 GetOptions(
@@ -152,6 +155,7 @@ my $mode = shift @ARGV || "";
 
 switch($mode) {
   case "activate" { &Activate; }
+  case "do" { &Do; }
   case "list" { &List; }
   else {
     Logger("Supplied mode not recognized, try --help or --man");
@@ -176,6 +180,42 @@ sub Activate {
   Logger("Display set $dispset activated.",1);
 }
 
+sub Do {
+  load Net::OpenSSH;
+  # use shift to keep in the rest of @ARGV the cmd and its arguments
+  my $dispset = shift @ARGV || "";
+  my $cmd = join(" ", @ARGV);
+
+  # some simple logic to catch the ALL keyword properly
+  # and init the necessary SSH connections
+  if ($dispset eq 'ALL') {
+    foreach my $dispset (keys $dispsets) {
+      InitSSH($dispsets->{$dispset})
+    }
+  } else {
+    Logger("Specified dispset not found") unless $dispsets->{$dispset};
+    InitSSH($dispsets->{$dispset})
+  }
+
+  # in $SSH all hosts are initialized,
+  # now execute the given command
+  my $pid;
+  foreach my $host (keys $SSH) {
+    my $ssh = $SSH->{$host};
+    # the perl pipe formats the output (prepends the hostname)
+    $pid->{$host} = $ssh->system({async=>1},
+                                 "bash -l -c \"$cmd\" 2>&1".
+                                 " | perl -pe 'chomp(\$h=`hostname -s`); printf(\"%-17s %s\",\$h);'");
+  }
+
+  # Wait and check result
+  my @failed_hosts = WaitForPIDs($pid);
+  if (@failed_hosts) {
+    Logger("The command could not be executed on ".join(" ", @failed_hosts), -1)
+  }
+}
+
+
 sub List {
   print "The following display sets are available:\n";
   foreach my $dispset (sort keys $dispsets) {
@@ -186,6 +226,38 @@ sub List {
 
 
 # helper functions
+
+sub WaitForPIDs {
+  my $pid = shift;
+  # wait until all SSH commands have been executed
+  # and check exit code
+  my $failed = {};
+  foreach my $host (keys $pid) {
+    waitpid($pid->{$host},0);
+    # transform to original exit value, see perlvar $?
+    $failed->{$host} = $? >> 8 if $?;
+  }
+  if (wantarray()) {
+    return keys $failed;
+  } else {
+    return $failed;
+  }
+}
+
+
+sub InitSSH {
+  my $dispset = shift;
+  Logger("Initializing SSH connections in parallel...",2);
+  foreach my $d (@{$dispset->{Displays}}) {
+    my $host = $d->{Hostname};
+    # check if there is already a connection
+    next if exists $SSH->{$host};
+    Logger("Opening connection to $host",3);
+    # open the ssh connections for each host
+    $SSH->{$host} = Net::OpenSSH->new($host, async => 1);
+  }
+}
+
 
 sub LoadDispsetfile {
   return unless defined $dispsetfile;
@@ -307,6 +379,8 @@ PiGLETManager - Interface to PiGLET (Raspberry Pi OpenGL EPICS Toolkit)
 =head1 SYNOPSIS
 
 PiGLETManager activate <displayset>
+
+PiGLETManager do <displayset|ALL> <command>
 
 PiGLETManager list
 
