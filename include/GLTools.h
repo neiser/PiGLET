@@ -63,12 +63,13 @@ public:
 #define kCyan   Color(0.0f, 1.0f, 1.0f)
 #define kOrange Color(1.0f, 0.5f, 0.0f)
 #define kDarkGray   Color(0.2f, 0.2f, 0.2f)
+#define kDarkGray2   Color(0.1f, 0.1f, 0.1f)
 #define kGray   Color(0.4f, 0.4f, 0.4f)
 
 #define dTextColor  kWhite
 #define dBackColor  kBlack
 
-#define dPlotBackground  kDarkGray
+#define dPlotBackground  kDarkGray2
 #define dPlotBorderColor  kGray
 #define dPlotColor kWhite
 #define dStartLineColor kWhite
