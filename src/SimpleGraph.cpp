@@ -2,6 +2,7 @@
 #include "Window.h"
 #include <cmath>
 #include <iostream>
+#include <Sound.h>
 
 using namespace std;
 
@@ -171,9 +172,11 @@ void SimpleGraph::SetAlarm(const epicsAlarmSeverity serv )
         ValueDisplay.SetColor(dTextColor);
         break;
     case epicsSevMinor:
+        Sound::I().Play("warning");        
         ValueDisplay.SetColor(dMinorAlarm);
         break;
     case epicsSevMajor:
+        Sound::I().Play("alert");        
         ValueDisplay.SetColor(dMajorAlarm);
         break;
     default:

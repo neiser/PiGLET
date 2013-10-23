@@ -1,11 +1,8 @@
 #include "arch.h"
 #include "PiGLETApp.h"
-#include "Sound.h"
 
 int main()
 {
-    Sound::I().Play("warning");
-    
     // InitGL from arch.h
     InitGL();
     
