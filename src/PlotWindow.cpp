@@ -93,91 +93,37 @@ void PlotWindow::Draw() {
 }
 
 void PlotWindow::ProcessEpicsData(const Epics::DataItem* i) {
-//    // not initialized via addPV yet
-//    if(_head_ptr == NULL)
-//        return;
-    
-//    // get the pointer to the most recent item 
-//    // in the list (snapshot of current state)
-//    Epics::DataItem* head = *_head_ptr;
-    
-//    // is there something new in
-//    // the linked list since the last 
-//    // call?
-//    if(_head_last != NULL && _head_last == head) 
-//        return;   
-    
-//    // scan the linked list
-//    typedef vector<Epics::DataItem*> list_t;
-//    list_t list;
-//    Epics::fillList(head, list);    
-    
-//    // the very first call, _head_last is NULL, thus everything is new!
-//    bool newData = _head_last == NULL;
-    
-//    // go thru the vector in positive time direction (ie reverse direction)
-//    // note that the linked list (scanned above) starts from the head (most recent item!)    
-//    for(list_t::reverse_iterator it=list.rbegin(); // reverse begin
-//        it!=list.rend(); // reverse end
-//        ++it) {
-        
-//        Epics::DataItem* i = (*it);
-//        if(i->prev == _head_last) {
-//            newData = true;
-//        }      
-        
-//        if(!newData)
-//            continue;
-        
-        // if new, process it!
-        switch (i->type) {
-        case Epics::Connected:
-            _epics_connected = true;
-            graph.enable_lastline = true;
-            break;
-            
-        case Epics::Disconnected:
 
-            // if we were connected before
-            // start a new block
-            if( _epics_connected ) {
-                graph.NewBlock();
-            }
-            _epics_connected = false;
-            graph.enable_lastline = false;
-            break;
-            
-        case Epics::NewValue: {
-            vec2_t* d = (vec2_t*)i->data;
-            _watch.Start();
-            graph.AddToBlockList(*d);
-            _last_t = d->x;
-            break;               
+    // if new, process it!
+    switch (i->type) {
+    case Epics::Connected:
+        _epics_connected = true;
+        graph.enable_lastline = true;
+        break;
+        
+    case Epics::Disconnected:
+        // if we were connected before
+        // start a new block
+        if( _epics_connected ) {
+            graph.NewBlock();
         }
-        case Epics::NewProperties: {
-            ProcessEpicsProperties((dbr_ctrl_double*)i->data);
-            break;
-        }
-        default:
-            break;
-        }        
-//    }
-//    // remember the last head for the next call
-//    _head_last = head;
+        _epics_connected = false;
+        graph.enable_lastline = false;
+        break;
+        
+    case Epics::NewValue: {
+        vec2_t* d = (vec2_t*)i->data;
+        _watch.Start();
+        graph.AddToBlockList(*d);
+        _last_t = d->x;
+        break;               
+    }
+    case Epics::NewProperties: {
+        ProcessEpicsProperties((dbr_ctrl_double*)i->data);
+        break;
+    }
+    }        
     
-//    // do not delete the last two elements, 
-//    // which are still needed to build the list atomically
-//    for(list_t::reverse_iterator it=list.rbegin(); // reverse begin
-//        it<list.rend()-2; // reverse end, but not the last two!
-//        ++it) {
-//        // delete the current one properly
-//        Epics::DataItem* cur = *it;
-//        Epics::deleteDataItem(cur);   
-//        // and tell the next, that it's not pointing backwards to
-//        // us anymore
-//        Epics::DataItem* next = *(it+1);
-//        next->prev = NULL;
-//    }
 }
 
 void PlotWindow::ProcessEpicsProperties(dbr_ctrl_double* d) {

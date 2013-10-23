@@ -29,7 +29,7 @@ public:
         
     typedef Callback<void (const DataItem* i)> EpicsCallback;
     
-    void addPV(const std::string& pvname, EpicsCallback cb); // returns the tail of the datalist
+    void addPV(const std::string& pvname, EpicsCallback cb, bool autoCall = false); // returns the tail of the datalist
     void removePV(const std::string& pvname);
     void processNewDataForPV(const std::string& pvname);
     
@@ -47,8 +47,7 @@ public:
     // epics callbacks
     double GetCurrentTime();   
     
-    static void deleteDataItem(DataItem* i);
-    static void fillList(DataItem* head, std::vector<DataItem*>& list);
+    
     
 private:
     
@@ -66,7 +65,8 @@ private:
         chid chid_ctrl;
         evid evid_ctrl; 
         DataItem* head_last; // remember the last head since processing
-        EpicsCallback cb;
+        EpicsCallback cb; // gets called by processNewDataForPV() if there is new data
+        bool auto_call;  // if an EPICS callback was received, the events will be processed immediately
         DataItem*  head; // accessed by EPICS callbacks, one data stream per PV
     } PV;
     
@@ -77,13 +77,17 @@ private:
     
     epicsTime t0;
     
+    static void processNewDataForPV(PV* pv);
     
     static void connectionCallback( connection_handler_args args );
     static void eventCallback( event_handler_args args );
     static void exceptionCallback( exception_handler_args args );
     static void appendToList(PV* pv, DataItem* pNew);
     
-    static void subscribe(const std::string &pvname, PV* pv);        
+    static void subscribe(const std::string &pvname, PV* pv);    
+
+    static void deleteDataItem(DataItem* i);
+    static void fillList(DataItem* head, std::vector<DataItem*>& list);   
         
 };
 

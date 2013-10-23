@@ -137,12 +137,16 @@ void Epics::appendToList(Epics::PV* pv, Epics::DataItem *pNew)
             break; // success
     }
     //cout << "Something was appended. Contents:" << endl;
+    if(pv->auto_call)
+        processNewDataForPV(pv);
+        
 }
 
-void Epics::addPV(const string &pvname, EpicsCallback cb)
+void Epics::addPV(const string &pvname, EpicsCallback cb, bool autoCall)
 {    
     PV* pv = initPV();
     pv->cb = cb;
+    pv->auto_call = autoCall;
     
     // subscribe to value and control
     subscribe(pvname, pv);
@@ -244,9 +248,12 @@ double Epics::GetCurrentTime()
     return epicsTime::getCurrent()-t0;
 }
 
-void Epics::processNewDataForPV(const string &pvname)
+void Epics::processNewDataForPV(const string& pvname) {
+    processNewDataForPV(pvs[pvname]);
+}
+
+void Epics::processNewDataForPV(PV* pv)
 {
-    PV* pv = pvs[pvname];
       
     // get the pointer to the most recent item 
     // in the list (snapshot of current state)

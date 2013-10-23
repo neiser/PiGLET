@@ -10,7 +10,9 @@
 #include <pulse/introspect.h>
 #include <sndfile.h>
 #include <pthread.h>
-#include <Epics.h>
+
+#include "Epics.h"
+#include "StopWatch.h"
 
 class Sound
 {
@@ -37,6 +39,11 @@ private:
     volatile bool _running;
     pthread_mutex_t _mutex;
     pthread_cond_t _signal;
+    
+    StopWatch _muted;
+    double _muted_for;
+    const std::string _pvname;
+    void ProcessEpicsData(const Epics::DataItem *i);
     
     // This is the static class function that serves as a C style function pointer
     // for the pthread_create call

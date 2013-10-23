@@ -1,5 +1,5 @@
 
-#include "Sound.h"
+
 #include <iostream>
 #include <pulse/error.h>
 #include <pulse/scache.h>
@@ -11,6 +11,8 @@
 #include <string.h>
 #include <errno.h>
 
+#include "Sound.h"
+#include "Structs.h"
 
 extern "C" {
 #include "wavfiles.h"
@@ -21,6 +23,10 @@ using namespace std;
 bool Sound::Play(const string& name)
 {
     if(wavs.count(name)==0)
+        return false;
+        
+    _muted.Stop();
+    if(_muted.TimeElapsed()<_muted_for)
         return false;
     
     int state = pthread_mutex_trylock(&_mutex);
@@ -41,7 +47,9 @@ bool Sound::Play(const string& name)
     return false;
 }
 
-Sound::Sound() : _running(true), _cur_item(NULL)
+Sound::Sound() : _running(true), 
+    _pvname("GEN:ONLINEDISPLAYS:MUTE"), // the PV name to mute all displays for a specific time
+    _cur_item(NULL)
 {
     // create the loop & the context
     paMainLoop = pa_mainloop_new();
@@ -96,7 +104,10 @@ Sound::Sound() : _running(true), _cur_item(NULL)
     
     pthread_create(&_thread, 0, &Sound::start_thread, this);
     
-    //exit(0);
+    // register global MUTE PV for all displays
+    // request that ProcessEpicsData gets automatically called for each new DataItem
+    _muted.Start();
+    Epics::I().addPV(_pvname, BIND_MEM_CB(&Sound::ProcessEpicsData, this), true);
 }
 
 void Sound::SetupWavItem(const string& name, const unsigned char *data, size_t size)
@@ -106,6 +117,29 @@ void Sound::SetupWavItem(const string& name, const unsigned char *data, size_t s
     item->data = data;
     item->filelen = size;
     wavs[name] = item;
+}
+
+void Sound::ProcessEpicsData(const Epics::DataItem *i)
+{
+    _muted.Start();
+    
+    switch (i->type) {
+        
+    case Epics::Connected:
+        _muted_for = 0;
+        break;
+    case Epics::Disconnected:
+        _muted_for = 0;
+        break;
+        
+    case Epics::NewValue: {
+        vec2_t* d = (vec2_t*)i->data;
+        _muted_for = d->y>0 ? d->y : 0;
+        break;               
+    }
+    default: 
+        break;
+    }  
 }
 
 Sound::~Sound()
@@ -127,6 +161,8 @@ Sound::~Sound()
     for (map<string, wav_item_t*>::iterator it = wavs.begin(); it != wavs.end(); ++it ) {
         delete it->second;
     }
+    
+    Epics::I().removePV(_pvname);
 }
 
 void Sound::do_work()
@@ -316,9 +352,5 @@ sf_count_t Sound::sf_vio_get_filelen(void *user_data)
 {
     return static_cast<wav_item_t*>(user_data)->filelen;
 }
-
-
-
-
 
 

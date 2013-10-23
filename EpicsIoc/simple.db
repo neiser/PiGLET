@@ -1,3 +1,11 @@
+
+
+record (ai, "GEN:ONLINEDISPLAYS:MUTE")
+{
+    field (DESC, "Disables the alarm sounds")
+    field (LOPR, 0)
+}     
+
 record (ai, "MyTestRecord0")
 {
     field (DESC, "A simple record")

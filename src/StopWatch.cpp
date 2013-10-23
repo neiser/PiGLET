@@ -7,7 +7,7 @@ StopWatch::StopWatch()
     _stop = _start;
 }
 
-float StopWatch::TimeElapsed()
+double StopWatch::TimeElapsed()
 {
     return time_difference( _start, _stop );
 }
