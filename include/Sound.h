@@ -10,6 +10,7 @@
 #include <pulse/introspect.h>
 #include <sndfile.h>
 #include <pthread.h>
+#include <Epics.h>
 
 class Sound
 {
@@ -31,7 +32,7 @@ private:
     // Singleton: Stop the compiler generating methods of copy the object
     Sound(Sound const& copy);            // Not Implemented
     Sound& operator=(Sound const& copy); // Not Implemented
-
+   
     pthread_t _thread;
     volatile bool _running;
     pthread_mutex_t _mutex;

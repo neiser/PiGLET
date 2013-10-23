@@ -2,7 +2,7 @@
 #include <sstream>
 #include <string.h> // for strcmp
 
-
+#include "Callback.h"
 #include "PlotWindow.h"
 #include "ConfigManager.h"
 
@@ -20,8 +20,6 @@ PlotWindow::PlotWindow(
     _xlabel(xlabel),
     _ylabel(ylabel),    
     _initialized(false),
-    _head_ptr(NULL),
-    _head_last(NULL),
     WindowArea( dBackColor, dWindowBorderColor),
     graph(this, DEFAULT_BACKLEN),
     text(this, -.95, .82, .95, .98),
@@ -41,6 +39,18 @@ PlotWindow::PlotWindow(
     
     // don't forget to call Init()
     // which also checks if the pvname is actually valid
+}
+
+int PlotWindow::Init()
+{
+    ConfigManager::I().addCmd(Name()+"_BackLength", BIND_MEM_CB(&PlotWindow::callbackSetBackLength, this));    
+    
+    int ret = Window::Init();
+    Epics::I().addPV(_pvname, BIND_MEM_CB(&PlotWindow::ProcessEpicsData, this));
+    
+    // return & save status for dtor    
+    _initialized = ret == 0;
+    return ret;
 }
 
 PlotWindow::~PlotWindow() {
@@ -64,7 +74,7 @@ void PlotWindow::Draw() {
     _watch.Stop();
     graph.SetNow(_last_t+_watch.TimeElapsed());
     // then process the EPICS data, which restarts the _watch...
-    ProcessEpicsData();    
+    Epics::I().processNewDataForPV(_pvname);   
    
     // Window border
     WindowArea.Draw();
@@ -82,42 +92,42 @@ void PlotWindow::Draw() {
     ++frame;
 }
 
-void PlotWindow::ProcessEpicsData() {
-    // not initialized via addPV yet
-    if(_head_ptr == NULL)
-        return;
+void PlotWindow::ProcessEpicsData(const Epics::DataItem* i) {
+//    // not initialized via addPV yet
+//    if(_head_ptr == NULL)
+//        return;
     
-    // get the pointer to the most recent item 
-    // in the list (snapshot of current state)
-    Epics::DataItem* head = *_head_ptr;
+//    // get the pointer to the most recent item 
+//    // in the list (snapshot of current state)
+//    Epics::DataItem* head = *_head_ptr;
     
-    // is there something new in
-    // the linked list since the last 
-    // call?
-    if(_head_last != NULL && _head_last == head) 
-        return;   
+//    // is there something new in
+//    // the linked list since the last 
+//    // call?
+//    if(_head_last != NULL && _head_last == head) 
+//        return;   
     
-    // scan the linked list
-    typedef vector<Epics::DataItem*> list_t;
-    list_t list;
-    Epics::fillList(head, list);    
+//    // scan the linked list
+//    typedef vector<Epics::DataItem*> list_t;
+//    list_t list;
+//    Epics::fillList(head, list);    
     
-    // the very first call, _head_last is NULL, thus everything is new!
-    bool newData = _head_last == NULL;
+//    // the very first call, _head_last is NULL, thus everything is new!
+//    bool newData = _head_last == NULL;
     
-    // go thru the vector in positive time direction (ie reverse direction)
-    // note that the linked list (scanned above) starts from the head (most recent item!)    
-    for(list_t::reverse_iterator it=list.rbegin(); // reverse begin
-        it!=list.rend(); // reverse end
-        ++it) {
+//    // go thru the vector in positive time direction (ie reverse direction)
+//    // note that the linked list (scanned above) starts from the head (most recent item!)    
+//    for(list_t::reverse_iterator it=list.rbegin(); // reverse begin
+//        it!=list.rend(); // reverse end
+//        ++it) {
         
-        Epics::DataItem* i = (*it);
-        if(i->prev == _head_last) {
-            newData = true;
-        }      
+//        Epics::DataItem* i = (*it);
+//        if(i->prev == _head_last) {
+//            newData = true;
+//        }      
         
-        if(!newData)
-            continue;
+//        if(!newData)
+//            continue;
         
         // if new, process it!
         switch (i->type) {
@@ -151,23 +161,23 @@ void PlotWindow::ProcessEpicsData() {
         default:
             break;
         }        
-    }
-    // remember the last head for the next call
-    _head_last = head;
+//    }
+//    // remember the last head for the next call
+//    _head_last = head;
     
-    // do not delete the last two elements, 
-    // which are still needed to build the list atomically
-    for(list_t::reverse_iterator it=list.rbegin(); // reverse begin
-        it<list.rend()-2; // reverse end, but not the last two!
-        ++it) {
-        // delete the current one properly
-        Epics::DataItem* cur = *it;
-        Epics::deleteDataItem(cur);   
-        // and tell the next, that it's not pointing backwards to
-        // us anymore
-        Epics::DataItem* next = *(it+1);
-        next->prev = NULL;
-    }
+//    // do not delete the last two elements, 
+//    // which are still needed to build the list atomically
+//    for(list_t::reverse_iterator it=list.rbegin(); // reverse begin
+//        it<list.rend()-2; // reverse end, but not the last two!
+//        ++it) {
+//        // delete the current one properly
+//        Epics::DataItem* cur = *it;
+//        Epics::deleteDataItem(cur);   
+//        // and tell the next, that it's not pointing backwards to
+//        // us anymore
+//        Epics::DataItem* next = *(it+1);
+//        next->prev = NULL;
+//    }
 }
 
 void PlotWindow::ProcessEpicsProperties(dbr_ctrl_double* d) {
@@ -227,19 +237,7 @@ void PlotWindow::ProcessEpicsProperties(dbr_ctrl_double* d) {
 }
 
     
-int PlotWindow::Init()
-{
-    ConfigManager::I().addCmd(Name()+"_BackLength", BIND_MEM_CB(&PlotWindow::callbackSetBackLength, this));    
-    
-    int ret = Window::Init();
-    _head_ptr = Epics::I().addPV(_pvname);
-    if(_head_ptr==NULL) {
-        ret = 1;
-    }    
-    // return & save status for dtor    
-    _initialized = ret == 0;
-    return ret;
-}
+
 
 void PlotWindow::SetYRange(const float min, const float max)
 {

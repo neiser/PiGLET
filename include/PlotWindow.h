@@ -16,10 +16,7 @@ private:
     std::string _ylabel;
     
     bool _initialized;
-    Epics::DataItem** _head_ptr;
-    Epics::DataItem* _head_last;
-    
-
+  
     UnitBorderBox WindowArea;
     SimpleGraph graph;
     TextLabel text;
@@ -30,7 +27,7 @@ private:
     
     dbr_ctrl_double _old_properties;
     
-    void ProcessEpicsData();
+    void ProcessEpicsData(const Epics::DataItem *i);
     void ProcessEpicsProperties(dbr_ctrl_double* d);
     std::string callbackSetBackLength(const std::string& arg);
 

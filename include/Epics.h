@@ -5,6 +5,9 @@
 #include <vector>
 #include <string>
 #include <cadef.h>
+#include "Callback.h"
+
+using util::Callback; // Callback lives in the util namespace
 
 class Epics  {
     
@@ -24,8 +27,11 @@ public:
         struct DataItem* prev;
     } DataItem;
         
-    DataItem** addPV(const std::string& pvname); // returns the tail of the datalist
+    typedef Callback<void (const DataItem* i)> EpicsCallback;
+    
+    void addPV(const std::string& pvname, EpicsCallback cb); // returns the tail of the datalist
     void removePV(const std::string& pvname);
+    void processNewDataForPV(const std::string& pvname);
     
     // Implement a singleton
     static Epics& I() {
@@ -39,7 +45,7 @@ public:
     // the reference timepoint for 
     // timestamps given to the
     // epics callbacks
-    double GetCurrentTime();
+    double GetCurrentTime();   
     
     static void deleteDataItem(DataItem* i);
     static void fillList(DataItem* head, std::vector<DataItem*>& list);
@@ -58,8 +64,10 @@ private:
         chid chid_val;
         evid evid_val;
         chid chid_ctrl;
-        evid evid_ctrl;        
-        DataItem*  head; // accessed by EPICS callbacks, one data stream for all
+        evid evid_ctrl; 
+        DataItem* head_last; // remember the last head since processing
+        EpicsCallback cb;
+        DataItem*  head; // accessed by EPICS callbacks, one data stream per PV
     } PV;
     
     static PV* initPV();

@@ -139,9 +139,10 @@ void Epics::appendToList(Epics::PV* pv, Epics::DataItem *pNew)
     //cout << "Something was appended. Contents:" << endl;
 }
 
-Epics::DataItem** Epics::addPV(const string &pvname)
+void Epics::addPV(const string &pvname, EpicsCallback cb)
 {    
     PV* pv = initPV();
+    pv->cb = cb;
     
     // subscribe to value and control
     subscribe(pvname, pv);
@@ -150,7 +151,7 @@ Epics::DataItem** Epics::addPV(const string &pvname)
     pvs[pvname] = pv;
     cout << "PV " << pvname << " registered" << endl;
     
-    return &pv->head; // tell where to find the head (for reading the list)
+    
 }
 
 Epics::PV* Epics::initPV() {
@@ -160,6 +161,7 @@ Epics::PV* Epics::initPV() {
     DataItem* head = new DataItem; // create the first dummy item
     head->prev = NULL; // ensure it points to nothing before  
     pv->head = head; // save the pointer in the pv as a starting point
+    pv->head_last = NULL;
     return pv;    
 } 
 
@@ -240,6 +242,64 @@ void Epics::removePV(const string& pvname)
 double Epics::GetCurrentTime()
 {
     return epicsTime::getCurrent()-t0;
+}
+
+void Epics::processNewDataForPV(const string &pvname)
+{
+    PV* pv = pvs[pvname];
+      
+    // get the pointer to the most recent item 
+    // in the list (snapshot of current state)
+    DataItem* head = pv->head;
+    
+    // is there something new in
+    // the linked list since the last 
+    // call?
+    if(pv->head_last != NULL && pv->head_last == head) 
+        return;   
+    
+    // scan the linked list
+    typedef vector<DataItem*> list_t;
+    list_t list;
+    Epics::fillList(head, list);    
+    
+    // the very first call, _head_last is NULL, thus everything is new!
+    bool newData = pv->head_last == NULL;
+    
+    // go thru the vector in positive time direction (ie reverse direction)
+    // note that the linked list (scanned above) starts from the head (most recent item!)    
+    for(list_t::reverse_iterator it=list.rbegin(); // reverse begin
+        it!=list.rend(); // reverse end
+        ++it) {
+        
+        DataItem* i = (*it);
+        if(i->prev == pv->head_last) {
+            newData = true;
+        }      
+        
+        if(!newData)
+            continue;
+        
+        // if new, let it be processed
+        (pv->cb)(i);
+        
+    }
+    // remember the last head for the next call
+    pv->head_last = head;
+    
+    // do not delete the last two elements, 
+    // which are still needed to build the list atomically
+    for(list_t::reverse_iterator it=list.rbegin(); // reverse begin
+        it<list.rend()-2; // reverse end, but not the last two!
+        ++it) {
+        // delete the current one properly
+        DataItem* cur = *it;
+        deleteDataItem(cur);   
+        // and tell the next, that it's not pointing backwards to
+        // us anymore
+        DataItem* next = *(it+1);
+        next->prev = NULL;
+    }
 }
 
 
