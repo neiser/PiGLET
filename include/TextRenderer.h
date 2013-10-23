@@ -18,14 +18,17 @@ private:
     TextRenderer(TextRenderer const& copy);            // Not Implemented
     TextRenderer& operator=(TextRenderer const& copy); // Not Implemented
 
+    size_t _w_pow2, _h_pow2;
+    float _u, _v, _aspect_orig;
+    void InitWidthHeightUV();
     uint32_t RoundPow2( uint32_t val );
-    void CopyToBuffer(const int width, const int height, 
-                       GLenum TextureMode);
+        
+    void CopyToBuffer(GLenum TextureMode);
     void BindTexture(Texture& tex, 
-                     const int width, const int height, 
                      GLenum TextureMode);
     
     void InitMw(MagickWand* mw);
+     
     
 public:
 

@@ -49,12 +49,11 @@ uint32_t TextRenderer::RoundPow2( uint32_t val ) {
     return val;
 }
 
-void TextRenderer::CopyToBuffer(const int width, const int height, 
-                                 GLenum textureMode) {
-
+void TextRenderer::CopyToBuffer(GLenum textureMode) {
+    
     string exportMode = "I";
     unsigned char bytes = 1;
-
+    
     switch (textureMode) {
     case GL_LUMINANCE:
         exportMode = "I";
@@ -72,26 +71,29 @@ void TextRenderer::CopyToBuffer(const int width, const int height,
         cout << "CopyTexture: Invalid Mode" << endl;
         break;
     }
-
     
-
-    _buffer = new unsigned char[width * height * bytes];
-
+    _buffer = new unsigned char[_w_pow2 * _h_pow2 * bytes];
+    
     // Export the whole image
-    MagickExportImagePixels(_mw, 0, 0, width, height, exportMode.c_str(), CharPixel, _buffer);
+    MagickExportImagePixels(_mw, 0, 0, _w_pow2, _h_pow2, 
+                            exportMode.c_str(), CharPixel, _buffer);
     
-      
+    
 }
 
-void TextRenderer::BindTexture(Texture &tex, const int width, const int height, GLenum textureMode)
+void TextRenderer::BindTexture(Texture &tex, GLenum textureMode)
 {
     glBindTexture(GL_TEXTURE_2D, tex.GetTexHandle());
-
-    glTexImage2D(GL_TEXTURE_2D, 0, textureMode, width, height, 0, textureMode, GL_UNSIGNED_BYTE, _buffer);
-
+    
+    glTexImage2D(GL_TEXTURE_2D, 0, textureMode, _w_pow2, _h_pow2, 
+                 0, textureMode, GL_UNSIGNED_BYTE, _buffer);
+    
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-
+    
+    tex.SetMaxUV( _u, _v);
+    tex.SetAspect(_aspect_orig);
+    
     // clearing and init prevents memory eating
     // clear it here finally since properties of the image are still used
     ClearMagickWand(_mw);
@@ -105,48 +107,21 @@ void TextRenderer::BindTexture(Texture &tex, const int width, const int height, 
 
 void TextRenderer::Text2Texture(Texture& tex, const string &text )
 {
-    MagickSetSize(_mw,0,0);
-
     std::stringstream rendercmd;
     rendercmd << "label:" << text;
-
+    MagickSetSize(_mw,0,0);
     MagickReadImage(_mw, rendercmd.str().c_str());
-
-    const size_t _w = MagickGetImageWidth(_mw);
-    const size_t _h = MagickGetImageHeight(_mw);
-
-    const size_t nw = RoundPow2( _w );
-    const size_t nh = RoundPow2( _h );
-
-    MagickExtentImage(_mw,nw,nh,0,0);
-
-    const size_t width = MagickGetImageWidth(_mw);
-    const size_t height = MagickGetImageHeight(_mw);
-
-    CopyToBuffer(width, height, GL_LUMINANCE );
+    InitWidthHeightUV(); // do that before the image gets extended!
+    MagickExtentImage(_mw,_w_pow2,_h_pow2,0,0); // here we used the init'ed values!
     
-    BindTexture(tex, width, height, GL_LUMINANCE);
-
-    float texw = ((float)_w) / width;
-    float texh = ((float)_h) / height;
-
-    tex.SetMaxUV( texw, texh );
-    tex.SetAspect((float) _w / (float) _h);
+    CopyToBuffer(GL_LUMINANCE );
+    
+    BindTexture(tex, GL_LUMINANCE);
 }
 
 void TextRenderer::Mw2Texture(Texture& tex)
 {
-    const size_t width = MagickGetImageWidth(_mw);
-    const size_t height = MagickGetImageHeight(_mw);
-    
-    const size_t nw = RoundPow2( width );
-    const size_t nh = RoundPow2( height );
-    
-    BindTexture(tex, width, height, GL_RGBA);
-       
-    tex.SetMaxUV( (float) width / nw, (float) height / nh);
-    tex.SetAspect( (float) width / (float) height );
-    
+    BindTexture(tex, GL_RGBA);
 }
 
 bool TextRenderer::Image2Mw(const string &url)
@@ -154,17 +129,22 @@ bool TextRenderer::Image2Mw(const string &url)
     
     if(!MagickReadImage(_mw, url.c_str()))
         return false;
-
-    const size_t width = MagickGetImageWidth(_mw);
-    const size_t height = MagickGetImageHeight(_mw);
     
-    const size_t nw = RoundPow2( width );
-    const size_t nh = RoundPow2( height );
-    
-    CopyToBuffer(nw, nh, GL_RGBA);
-    
+    InitWidthHeightUV();    
+    CopyToBuffer(GL_RGBA);
     return true;
 }
 
-
-
+void TextRenderer::InitWidthHeightUV()
+{
+    const size_t width = MagickGetImageWidth(_mw);
+    const size_t height = MagickGetImageHeight(_mw);
+    
+    _aspect_orig = (float) width / (float) height;
+    
+    _w_pow2 = RoundPow2(width);
+    _h_pow2 = RoundPow2(height);
+    
+    _u = (float) width / _w_pow2;
+    _v = (float) height / _h_pow2;
+}
