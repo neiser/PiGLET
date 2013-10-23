@@ -4,8 +4,8 @@
 #include "PiGLETApp.h"
 #include "arch.h"
 #include "ConfigManager.h"
-#include "PlotWindow.h"
-#include "ImageWindow.h"
+//#include "PlotWindow.h"
+//#include "ImageWindow.h"
 
 using namespace std;
 
@@ -31,14 +31,14 @@ void PiGLETApp::Draw(){
 
 
 void PiGLETApp::Init(){
-    cout << "Starting PiGLET..." << endl;
-    for (int i = 0 ; i < 3; i++){
-        stringstream ss;
-        ss << "MyTestRecord" << i;
-        windowman.AddWindow(new PlotWindow(&windowman, ss.str()));
-    }
+//    cout << "Starting PiGLET..." << endl;
+//    for (int i = 0 ; i < 3; i++){
+//        stringstream ss;
+//        ss << "MyTestRecord" << i;
+//        windowman.AddWindow(new PlotWindow(&windowman, ss.str()));
+//    }
     
-    // Add one extra Image Window
-    ImageWindow* w = new ImageWindow(&windowman, "Webcam");
-    windowman.AddWindow(w);
+//    // Add one extra Image Window
+//    ImageWindow* w = new ImageWindow(&windowman, "Webcam");
+//    windowman.AddWindow(w);
 }

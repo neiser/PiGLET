@@ -30,7 +30,7 @@ $dispsets->{Test} =
                                  {
                                   Type=>'Plot', 'Name'=>'MyTestRecord1', 'BackLength'=>100},
                                  {
-                                  Type=>'Image', 'Name'=>'Webcam', 'Delay'=>50}
+                                  Type=>'Image', 'Name'=>'Webcam', 'Delay'=>50, URL=>'http://a2radiator2.online.a2.kph/free.jpg'}
                                 ]
                   }
                  ]
