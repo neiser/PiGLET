@@ -4,7 +4,7 @@
 
 int main()
 {
-    Sound::I().Play();
+    Sound::I().Play("warning");
     
     // InitGL from arch.h
     InitGL();

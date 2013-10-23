@@ -125,7 +125,7 @@ bool ImageWindow::ApplyTexture(int state)
         return true;
     }
     else if(state != EBUSY) {
-        cout << "Something wrong with image thread..." << endl;
+        cerr << "Something wrong with image thread..." << endl;
     }      
     return false;
 }
@@ -193,7 +193,7 @@ void ImageWindow::do_work()
         ts.tv_nsec=ts.tv_nsec%(long)1e9;    
         
         pthread_cond_timedwait(&_signal_delay, &_mutex_working, &ts);   
-        pthread_mutex_unlock(&_mutex_working); // ETIMEDOUT EBUSY       
+        pthread_mutex_unlock(&_mutex_working);       
         
         // then we wait that somebody has used the data
         pthread_cond_wait(&_signal, &_mutex_running);

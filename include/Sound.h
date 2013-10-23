@@ -2,12 +2,14 @@
 #define SOUND_H
 
 #include <string>
+#include <map>
 #include <time.h>
 #include <pulse/mainloop.h>
 #include <pulse/context.h>
 #include <pulse/stream.h>
 #include <pulse/introspect.h>
 #include <sndfile.h>
+#include <pthread.h>
 
 class Sound
 {
@@ -21,7 +23,7 @@ public:
         return instance;
     }
     
-    void Play();
+    bool Play(const std::string& name);
     
 private:
     Sound ();
@@ -30,20 +32,41 @@ private:
     Sound(Sound const& copy);            // Not Implemented
     Sound& operator=(Sound const& copy); // Not Implemented
 
+    pthread_t _thread;
+    volatile bool _running;
+    pthread_mutex_t _mutex;
+    pthread_cond_t _signal;
+    
+    // This is the static class function that serves as a C style function pointer
+    // for the pthread_create call
+    static void* start_thread(void *obj)
+    {
+        //All we do here is call the do_work() function
+        reinterpret_cast<Sound*>(obj)->do_work();
+        return NULL;
+    }
+
+    void do_work();
+    
     pa_mainloop *paMainLoop;
     pa_context *paContext;
     //pa_stream *paStream;
     
     const static size_t max_timeouts = 1000;
     
-    typedef struct sf_userdata {
+    typedef struct wav_item_t {
         size_t filelen;
         size_t curPos;
         const unsigned char* data;
-    } sf_userdata;
+    } wav_item_t;
     
-    pa_stream* readDataIntoStream(const std::string& name, const unsigned char* data, size_t size);
-    static pa_sample_spec getFormat(const unsigned char* data, size_t size);
+    wav_item_t* _cur_item;
+    
+    std::map<std::string, wav_item_t*> wavs;    
+    
+    void SetupWavItem(const std::string &name, const unsigned char* data, size_t size);
+    void PlayWavItem(wav_item_t* item);
+    static pa_sample_spec getFormat(wav_item_t* item);
     static sf_count_t sf_vio_get_filelen(void *user_data);
     static sf_count_t sf_vio_seek(sf_count_t offset, int whence, void *user_data);
     static sf_count_t sf_vio_read(void *ptr, sf_count_t count, void *user_data);

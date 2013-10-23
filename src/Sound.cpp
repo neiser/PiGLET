@@ -9,6 +9,7 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <string.h>
+#include <errno.h>
 
 
 extern "C" {
@@ -17,12 +18,30 @@ extern "C" {
 
 using namespace std;
 
-void Sound::Play()
+bool Sound::Play(const string& name)
 {
+    if(wavs.count(name)==0)
+        return false;
     
+    int state = pthread_mutex_trylock(&_mutex);
+    if(state==0) {
+        // mutex was free and now locked, 
+        // so we can play
+        _cur_item = wavs[name];
+        // signal the thread to play it
+        pthread_cond_signal(&_signal);
+        // don't forget to unlock
+        pthread_mutex_unlock(&_mutex);
+        
+        return true;
+    }
+    else if(state != EBUSY) {
+        cerr << "Something wrong with play thread..." << endl;
+    }      
+    return false;
 }
 
-Sound::Sound()
+Sound::Sound() : _running(true), _cur_item(NULL)
 {
     // create the loop & the context
     paMainLoop = pa_mainloop_new();
@@ -66,69 +85,77 @@ Sound::Sound()
     
     cout << "PulseAudio connected." << endl;
     
-    // setup the available streams
+    // setup the available wavs, this is somewhat manual...
     
-    pa_stream* paStream = readDataIntoStream("test", sound_alert_wav, sound_alert_wav_size);
+    SetupWavItem("alert", sound_alert_wav, sound_alert_wav_size);
+    SetupWavItem("warning", sound_warning_wav, sound_warning_wav_size);
     
-    //cout << "Playing on " << pa_stream_get_device_name (paStream) << endl;
+    // thread items
+    pthread_mutex_init(&_mutex, NULL);
+    pthread_cond_init (&_signal, NULL);    
+    
+    pthread_create(&_thread, 0, &Sound::start_thread, this);
+    
+    //exit(0);
+}
 
-   
-    pa_context_get_sample_info_list 	( paContext,
-            &Sound::pa_sample_info_cb,
-            NULL
-        );
-    
-    
-    pa_operation *o = pa_context_play_sample(
-                paContext,
-                "bell-window-system", // Name of my sample
-                NULL, // Use default sink
-                PA_VOLUME_NORM, // Full volume
-                &Sound::pa_context_success_cb, // Don't need a callback
-                NULL
-                );
-    while(pa_operation_get_state(o) == PA_OPERATION_RUNNING) {
-        pa_mainloop_iterate(paMainLoop,0,NULL);
-        usleep(100000);
-        cout << "Running" << pa_operation_get_state(o)  << endl;
-    }
-    
-    cout << "Playing on " << pa_stream_get_device_name (paStream) << endl;
-
-    pa_operation_unref(o);
-    
-    usleep(100000);
-    pa_stream_disconnect(paStream);
-	pa_stream_unref(paStream);
-   
-    exit(0);
+void Sound::SetupWavItem(const string& name, const unsigned char *data, size_t size)
+{
+    wav_item_t* item = new wav_item_t;
+    item->curPos = 0;
+    item->data = data;
+    item->filelen = size;
+    wavs[name] = item;
 }
 
 Sound::~Sound()
-{
+{    
+    // we stop the while loop
+    pthread_mutex_lock(&_mutex);
+    _running = false;
+    pthread_cond_signal(&_signal);
+    pthread_mutex_unlock(&_mutex);
+    
+    // wait until thread has really finished 
+    pthread_join(_thread, NULL);
+    pthread_cond_destroy(&_signal);
+    pthread_mutex_destroy(&_mutex);    
     
     pa_context_disconnect(paContext);
 	pa_context_unref(paContext);
 	pa_mainloop_free(paMainLoop);  
+    for (map<string, wav_item_t*>::iterator it = wavs.begin(); it != wavs.end(); ++it ) {
+        delete it->second;
+    }
 }
 
-pa_stream* Sound::readDataIntoStream(const string &name, const unsigned char *data, size_t size)
+void Sound::do_work()
 {
-    pa_sample_spec ss = getFormat(data, size);  
-    
-    pa_stream* paStream = pa_stream_new(paContext,"test",&ss, NULL);
+    pthread_mutex_lock(&_mutex);
+    while(_running) {
+        if(_cur_item != NULL) {
+            PlayWavItem(_cur_item);        
+            _cur_item = NULL;
+        }
+        pthread_cond_wait(&_signal, &_mutex);
+    }
+    pthread_mutex_unlock(&_mutex);      
+    pthread_exit(0);
+}
 
+void Sound::PlayWavItem(wav_item_t *item)
+{
+    pa_sample_spec ss = getFormat(item);  
     
-    
+    pa_stream* paStream = pa_stream_new(paContext,"PiGLETStream",&ss, NULL);
+   
 	if(NULL==paStream) {
-		cerr << "Cannot create PulseAudio stream for "<< name << cerr;
-	}
-        
+		cerr << "Cannot create PulseAudio stream" << endl;
+	}        
     
+    // don't forget to set the volume (otherwise Raspberry Pi stays silent)
     pa_cvolume cv;    
-    static const size_t wav_hdr_size = 44;
-    //int ret = pa_stream_connect_playback(paStream,NULL,NULL,(pa_stream_flags_t)0,pa_cvolume_reset(&cv, ss.channels),NULL);
-    int ret = pa_stream_connect_upload(paStream,size-wav_hdr_size);
+    int ret = pa_stream_connect_playback(paStream,NULL,NULL,(pa_stream_flags_t)0,pa_cvolume_reset(&cv, ss.channels),NULL);
     
     if(ret != PA_OK) {
         cerr << "PulseAudio stream connect upload failed" << endl;
@@ -136,33 +163,34 @@ pa_stream* Sound::readDataIntoStream(const string &name, const unsigned char *da
     }
     
     // feed some data into the stream, skip the wav header
+    static const size_t wav_hdr_size = 44;
     size_t cur = wav_hdr_size;
     for(size_t i=0;;) {
       
 		if(PA_STREAM_READY==pa_stream_get_state(paStream)) {
             const size_t writableSize = pa_stream_writable_size(paStream);
-            const size_t sizeRemain = size - cur;
+            const size_t sizeRemain = item->filelen - cur;
             const size_t writeSize = sizeRemain<writableSize ? sizeRemain : writableSize;
-            cout << "Ready: Writable " 
-                 << writableSize << " Remain " 
-                 << sizeRemain << " " << " Size " 
-                 << writeSize << endl;
+//            cout << "Ready: Writable " 
+//                 << writableSize << " Remain " 
+//                 << sizeRemain << " " << " Size " 
+//                 << writeSize << endl;
             if(writeSize>0) {
-                pa_stream_write(paStream,&data[cur],writeSize,NULL,0,PA_SEEK_RELATIVE);
+                pa_stream_write(paStream,&item->data[cur],writeSize,NULL,0,PA_SEEK_RELATIVE);
                 cur += writeSize;
             }
 		}
         else  {
-            cout << "Timeout..."<< i << endl;
+            //cout << "Timeout..."<< i << endl;
             i++;
         }
         
         pa_mainloop_iterate(paMainLoop,0,NULL);
         
-        if(size<=cur ||
+        if(item->filelen<=cur ||
 		   0<=pa_stream_get_underflow_index(paStream))
 		{
-            cout << "Underflow (maybe playback done)" << endl;
+            //cout << "Underflow (maybe playback done)" << endl;
             break;
 		}
                
@@ -172,35 +200,29 @@ pa_stream* Sound::readDataIntoStream(const string &name, const unsigned char *da
         }
         usleep(10000); // wait 10 ms
     }   
-    
-    
-    ret = pa_stream_finish_upload(paStream);
-        
-    if(ret != PA_OK) {
-        cerr << "PulseAudio stream finish upload failed" << endl;
-        exit(EXIT_FAILURE);
+       
+    // ensure we're done playing
+    pa_operation *o = pa_stream_drain(paStream, NULL, NULL);
+    while(pa_operation_get_state(o) == PA_OPERATION_RUNNING) {
+        pa_mainloop_iterate(paMainLoop,0,NULL);
+        usleep(1000);
     }
    
-    
-    pa_mainloop_iterate(paMainLoop,0,NULL);
-    
-    return paStream;
+    pa_stream_disconnect(paStream);
+	pa_stream_unref(paStream);    
 }
 
-pa_sample_spec Sound::getFormat(const unsigned char *data, size_t size)
+pa_sample_spec Sound::getFormat(wav_item_t* item)
 {
     // we decode the wav header (44 bytes long)
-    SF_INFO sfinfo;
-    sf_userdata user;
-    user.curPos = 0;
-    user.data = data;
-    user.filelen = size;
+    item->curPos = 0; // ensure we start at zero        
     SF_VIRTUAL_IO sf_vio;
     sf_vio.get_filelen = &Sound::sf_vio_get_filelen;
     sf_vio.read = &Sound::sf_vio_read;
     sf_vio.tell = &Sound::sf_vio_tell;
     sf_vio.seek = &Sound::sf_vio_seek;
-    SNDFILE* sf = sf_open_virtual(&sf_vio, SFM_READ, &sfinfo, &user);
+    SF_INFO sfinfo;
+    SNDFILE* sf = sf_open_virtual(&sf_vio, SFM_READ, &sfinfo, item);
     if(sf==NULL) {
         cout << "SndFile failed: " << sf_strerror (sf) << endl;
     }
@@ -244,7 +266,7 @@ pa_sample_spec Sound::getFormat(const unsigned char *data, size_t size)
 
 sf_count_t Sound::sf_vio_tell(void *user_data)
 {
-    return static_cast<sf_userdata*>(user_data)->curPos;
+    return static_cast<wav_item_t*>(user_data)->curPos;
 }
 
 void Sound::pa_context_success_cb(pa_context *c, int success, void *userdata)
@@ -265,7 +287,7 @@ void Sound::pa_sample_info_cb(pa_context *c, const pa_sample_info *i, int eol, v
 
 sf_count_t Sound::sf_vio_read(void *ptr, sf_count_t count, void *user_data)
 {
-    sf_userdata* data = static_cast<sf_userdata*>(user_data);
+    wav_item_t* data = static_cast<wav_item_t*>(user_data);
     memcpy(ptr, data->data+data->curPos, count);
     data->curPos += count;
     return count;
@@ -273,7 +295,7 @@ sf_count_t Sound::sf_vio_read(void *ptr, sf_count_t count, void *user_data)
 
 sf_count_t Sound::sf_vio_seek(sf_count_t offset, int whence, void *user_data)
 {
-    sf_userdata* data = static_cast<sf_userdata*>(user_data);
+    wav_item_t* data = static_cast<wav_item_t*>(user_data);
     switch (whence) {
     case SEEK_CUR:
         data->curPos += offset;
@@ -292,8 +314,11 @@ sf_count_t Sound::sf_vio_seek(sf_count_t offset, int whence, void *user_data)
 
 sf_count_t Sound::sf_vio_get_filelen(void *user_data)
 {
-    return static_cast<sf_userdata*>(user_data)->filelen;
+    return static_cast<wav_item_t*>(user_data)->filelen;
 }
+
+
+
 
 
 
