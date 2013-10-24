@@ -88,25 +88,25 @@ $dispsets->{Standard} =
                   {
                    'Hostname' => 'a2onlinedisplay-05',
                    'Windows' => [
-                                 {Type=>'Plot',  Name=>'CB:MON:TEMP:TOP', 'BackLength'=>600},
-                                 {Type=>'Plot',  Name=>'CB:MON:TEMP:BOT', 'BackLength'=>600},
-                                 {Type=>'Plot',  Name=>'CB:MON:PRES:TOP', 'BackLength'=>600},
-                                 {Type=>'Plot',  Name=>'CB:MON:PRES:BOT', 'BackLength'=>600}
+                                 {Type=>'Plot',  Name=>'CB:MON:TEMP:TOP', 'BackLength'=>7200},
+                                 {Type=>'Plot',  Name=>'CB:MON:TEMP:BOT', 'BackLength'=>7200},
+                                 {Type=>'Plot',  Name=>'CB:MON:PRES:TOP', 'BackLength'=>7200},
+                                 {Type=>'Plot',  Name=>'CB:MON:PRES:BOT', 'BackLength'=>7200}
                                 ]
                   },
                   {
                    'Hostname' => 'a2onlinedisplay-06',
                    'Windows' => [
-                                 {Type=>'Plot',  Name=>'MWPC:HV:CH1:CURR:READ', 'BackLength'=>600},
-                                 {Type=>'Plot',  Name=>'MWPC:HV:CH1:VOLT:READ', 'BackLength'=>600},
-                                 {Type=>'Plot',  Name=>'MWPC:HV:CH2:CURR:READ', 'BackLength'=>600},
-                                 {Type=>'Plot',  Name=>'MWPC:HV:CH2:VOLT:READ', 'BackLength'=>600}
+                                 {Type=>'Plot',  Name=>'MWPC:HV:CH1:CURR:READ', 'BackLength'=>1800},
+                                 {Type=>'Plot',  Name=>'MWPC:HV:CH1:VOLT:READ', 'BackLength'=>1800},
+                                 {Type=>'Plot',  Name=>'MWPC:HV:CH2:CURR:READ', 'BackLength'=>1800},
+                                 {Type=>'Plot',  Name=>'MWPC:HV:CH2:VOLT:READ', 'BackLength'=>1800}
                                 ]
                   },
                   {
                    'Hostname' => 'a2onlinedisplay-07',
                    'Windows' => [
-                                 {Type=>'Plot', Name=>'DAQ:RUNFILESIZE', 'BackLength'=>600},
+                                 {Type=>'Plot', Name=>'DAQ:RUNFILESIZE', 'BackLength'=>1800},
                                 ]
                   },
                   {
