@@ -81,19 +81,33 @@ $dispsets->{Standard} =
                   },
                   {
                    'Hostname' => 'a2onlinedisplay-04',
-                   'Windows' => []
+                   'Windows' => [
+                                 {Type=>'Image', Name=>'Outside!', URL=>'http://auge.physik.uni-mainz.de/record/current.jpg'}
+                                ]
                   },
                   {
                    'Hostname' => 'a2onlinedisplay-05',
-                   'Windows' => []
+                   'Windows' => [
+                                 {Type=>'Plot',  Name=>'CB:MON:TEMP:TOP', 'BackLength'=>600},
+                                 {Type=>'Plot',  Name=>'CB:MON:TEMP:BOT', 'BackLength'=>600},
+                                 {Type=>'Plot',  Name=>'CB:MON:PRES:TOP', 'BackLength'=>600},
+                                 {Type=>'Plot',  Name=>'CB:MON:PRES:BOT', 'BackLength'=>600}
+                                ]
                   },
                   {
                    'Hostname' => 'a2onlinedisplay-06',
-                   'Windows' => []
+                   'Windows' => [
+                                 {Type=>'Plot',  Name=>'MWPC:HV:CH1:CURR:READ', 'BackLength'=>600},
+                                 {Type=>'Plot',  Name=>'MWPC:HV:CH1:VOLT:READ', 'BackLength'=>600},
+                                 {Type=>'Plot',  Name=>'MWPC:HV:CH2:CURR:READ', 'BackLength'=>600},
+                                 {Type=>'Plot',  Name=>'MWPC:HV:CH3:VOLT:READ', 'BackLength'=>600}
+                                ]
                   },
                   {
                    'Hostname' => 'a2onlinedisplay-07',
-                   'Windows' => []
+                   'Windows' => [
+                                 {Type=>'Plot', Name=>'DAQ:RUNFILESIZE', 'BackLength'=>600},
+                                ]
                   },
                   {
                    'Hostname' => 'a2onlinedisplay-08',
