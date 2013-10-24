@@ -1,2 +1,0 @@
-dbLoadRecords "simple.db"
-iocInit
