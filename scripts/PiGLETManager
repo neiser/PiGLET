@@ -100,7 +100,7 @@ $dispsets->{Standard} =
                                  {Type=>'Plot',  Name=>'MWPC:HV:CH1:CURR:READ', 'BackLength'=>600},
                                  {Type=>'Plot',  Name=>'MWPC:HV:CH1:VOLT:READ', 'BackLength'=>600},
                                  {Type=>'Plot',  Name=>'MWPC:HV:CH2:CURR:READ', 'BackLength'=>600},
-                                 {Type=>'Plot',  Name=>'MWPC:HV:CH3:VOLT:READ', 'BackLength'=>600}
+                                 {Type=>'Plot',  Name=>'MWPC:HV:CH2:VOLT:READ', 'BackLength'=>600}
                                 ]
                   },
                   {
