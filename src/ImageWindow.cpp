@@ -137,8 +137,8 @@ void ImageWindow::Draw()
     }
              
     glPushMatrix();
-    glScalef(.95,.83,.1);
-    glTranslatef(.0,-.07,.0);    
+    glScalef(.98,.98,.1);
+    //glTranslatef(.0,-.07,.0);    
 
     color.Activate();
     _tex.Activate();
@@ -146,24 +146,22 @@ void ImageWindow::Draw()
     const float winratio =XPixels() / YPixels();
     const float totalratio = _tex.GetAspectRatio() / winratio;
     
-    glPushMatrix();
-        if( totalratio >= 1.0f )
-            glScalef(1.0f,1.0f/totalratio,1.0f);
-        else
-            glScalef(1.0f*totalratio,1.0f,1.0f);
+    if( totalratio >= 1.0f )
+        glScalef(1.0f,1.0f/totalratio,1.0f);
+    else
+        glScalef(1.0f*totalratio,1.0f,1.0f);
+    
+    glEnable(GL_TEXTURE_2D);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
-        glEnable(GL_TEXTURE_2D);
-        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+    Rectangle::unit.Draw( GL_TRIANGLE_FAN );
 
-        Rectangle::unit.Draw( GL_TRIANGLE_FAN );
+    glDisable(GL_TEXTURE_2D);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 
-        glDisable(GL_TEXTURE_2D);
-        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    glLineWidth(1.0f);
+    Rectangle::unit.Draw( GL_LINE_LOOP );
 
-        glLineWidth(1.0f);
-        Rectangle::unit.Draw( GL_LINE_LOOP );
-
-    glPopMatrix();
 
     glPopMatrix();
     
