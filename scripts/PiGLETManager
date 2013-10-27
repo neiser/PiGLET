@@ -82,7 +82,10 @@ $dispsets->{Standard} =
                   {
                    'Hostname' => 'a2onlinedisplay-04',
                    'Windows' => [
-                                 {Type=>'Image', Name=>'Outside!', URL=>'http://auge.physik.uni-mainz.de/record/current.jpg'}
+                                 {Type=>'Plot',  Name=>'DAQ:TAPS_Debug_ActualState_0', 'BackLength'=>600},
+                                 {Type=>'Plot',  Name=>'DAQ:TAPS_Debug_ActualState_1', 'BackLength'=>600},
+                                 {Type=>'Plot',  Name=>'DAQ:TAPS_Debug_ActualState_2', 'BackLength'=>600},
+                                 {Type=>'Plot',  Name=>'DAQ:TAPS_Debug_ActualState_3', 'BackLength'=>600}
                                 ]
                   },
                   {
@@ -111,19 +114,42 @@ $dispsets->{Standard} =
                   },
                   {
                    'Hostname' => 'a2onlinedisplay-08',
-                   'Windows' => []
+                   'Windows' => [
+		   		{Type=>'Plot', Name=>'DAQ:ExpTrig_Debug_0', 'BackLength'=>300},
+		   		{Type=>'Plot', Name=>'DAQ:ExpTrig_Debug_1', 'BackLength'=>300},
+		   		{Type=>'Plot', Name=>'DAQ:ExpTrig_Debug_2', 'BackLength'=>300},
+		   		{Type=>'Plot', Name=>'DAQ:ExpTrig_Debug_3', 'BackLength'=>300}
+			   ]
                   },
                   {
                    'Hostname' => 'a2onlinedisplay-09',
-                   'Windows' => []
+                   'Windows' => [
+		   		{Type=>'Plot', Name=>'DAQ:Trig:Level2_Out_0', 'BackLength'=>300},
+		   		{Type=>'Plot', Name=>'DAQ:Trig:Level2_Out_1', 'BackLength'=>300},
+		   		{Type=>'Plot', Name=>'DAQ:Trig:Level2_Out_2', 'BackLength'=>300},
+		   		{Type=>'Plot', Name=>'DAQ:Trig:Level2_Out_3', 'BackLength'=>300}
+			   ]
                   },
                   {
                    'Hostname' => 'a2onlinedisplay-10',
-                   'Windows' => []
+                   'Windows' => [
+		   		{Type=>'Plot', Name=>'DAQ:Livetime_vme-taps-trigger', 'BackLength'=>600},
+		   		{Type=>'Plot', Name=>'DAQ:Livetime_vme-taps-baf-a',   'BackLength'=>600},
+		   		{Type=>'Plot', Name=>'DAQ:Livetime_vme-taps-baf-b',   'BackLength'=>300},
+		   		{Type=>'Plot', Name=>'DAQ:Livetime_vme-taps-baf-c',   'BackLength'=>300},
+		   		{Type=>'Plot', Name=>'DAQ:Livetime_vme-taps-baf-d',   'BackLength'=>300},
+		   		{Type=>'Plot', Name=>'DAQ:Livetime_vme-taps-baf-e',   'BackLength'=>300}
+			   ]
                   },
                   {
                    'Hostname' => 'a2onlinedisplay-11',
-                   'Windows' => []
+                   'Windows' => [
+		   		{Type=>'Plot', Name=>'DAQ:Livetime_vme-taps-baf-f', 'BackLength'=>600},
+		   		{Type=>'Plot', Name=>'DAQ:Livetime_vme-taps-pwo',   'BackLength'=>600},
+		   		{Type=>'Plot', Name=>'DAQ:Livetime_vme-taps-veto-ab',   'BackLength'=>600},
+		   		{Type=>'Plot', Name=>'DAQ:Livetime_vme-taps-veto-cd',   'BackLength'=>600},
+		   		{Type=>'Plot', Name=>'DAQ:Livetime_vme-taps-veto-ef',   'BackLength'=>600}
+			   ]
                   }
                  ]
   };
