@@ -8,6 +8,7 @@ use Pod::Usage;
 use Switch;
 use Net::Telnet;
 use Module::Load;
+use threads;
 
 
 # define the display sets $dispsets here
@@ -217,9 +218,8 @@ sub Activate {
   # define a shortcut to the actual dispset data
   my $d = $dispsets->{$dispset};
 
-  foreach my $disp (@{$d->{Displays}}) {
-    WorkOnDisplay($disp);
-  }
+  my @threads = map { threads->create(\&WorkOnDisplay, $_) } @{$d->{Displays}};
+  $_->join for @threads;
 
   Logger("Display set $dispset activated.",1);
 }
