@@ -124,11 +124,16 @@ void TextRenderer::Mw2Texture(Texture& tex)
     BindTexture(tex, GL_RGBA);
 }
 
-bool TextRenderer::Image2Mw(const string &url)
+bool TextRenderer::Image2Mw(const string &url, const size_t &w, const size_t &h, const size_t &x, const size_t &y)
 {
     
     if(!MagickReadImage(_mw, url.c_str()))
         return false;
+        
+    MagickCropImage(_mw, 
+                    w==0 ? MagickGetImageWidth(_mw) : w,
+                    h==0 ? MagickGetImageHeight(_mw) : h,
+                    x, y);
     
     InitWidthHeightUV();    
     CopyToBuffer(GL_RGBA);

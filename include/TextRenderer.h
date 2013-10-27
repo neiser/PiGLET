@@ -37,7 +37,9 @@ public:
         
     void Text2Texture( Texture& tex, const std::string &text );
     void Mw2Texture(Texture &tex);
-    bool Image2Mw(const std::string& url);
+    bool Image2Mw(const std::string& url, 
+                  const size_t& w = 0, const size_t& h = 0, 
+                  const size_t& x = 0, const size_t& y = 0);
 };
 
 
