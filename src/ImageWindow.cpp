@@ -1,4 +1,5 @@
 #include <iostream>
+#include <sstream>
 #include <errno.h>
 #include "ImageWindow.h"
 #include "TextRenderer.h"
@@ -14,7 +15,8 @@ ImageWindow::ImageWindow( WindowManager* owner, const string& title, const float
     _delay(0), // see Init() for the correct default delay
     _label(this, -.95, .82, .95, .98),
     _image_ok(false),
-    _running(true)
+    _running(true),
+    _crop_w(0), _crop_h(0), _crop_x(0), _crop_y(0)
 {
     cout << "ImageWindow ctor" << endl;
     _label.SetText(title);    
@@ -39,6 +41,7 @@ int ImageWindow::Init() {
     
     ConfigManager::I().addCmd(Name()+"_Delay", BIND_MEM_CB(&ImageWindow::callbackSetDelay, this));
     ConfigManager::I().addCmd(Name()+"_URL", BIND_MEM_CB(&ImageWindow::callbackSetURL, this));
+    ConfigManager::I().addCmd(Name()+"_Crop", BIND_MEM_CB(&ImageWindow::callbackSetCrop, this));
     return Window::Init();
 }
 
@@ -46,6 +49,7 @@ ImageWindow::~ImageWindow()
 {
     ConfigManager::I().removeCmd(Name()+"_Delay");
     ConfigManager::I().removeCmd(Name()+"_URL");
+    ConfigManager::I().removeCmd(Name()+"_Crop");
    
     // at this point, we don't know in which state the 
     // thread is (loading an image or sleeping, or waiting in between)
@@ -103,6 +107,31 @@ string ImageWindow::callbackSetDelay(const string &arg)
 string ImageWindow::callbackSetURL(const string &arg)
 {
     SetURL(arg);
+    return ""; // always works, but nobody knows if an image gets displayed :)
+}
+
+string ImageWindow::callbackSetCrop(const string &arg)
+{
+    stringstream ss(arg);
+    size_t w, h, x, y;
+    if(!(ss >> w))
+        return "First value (w) not a integer";
+    if(!(ss >> h))
+        return "Second value (h) not a integer";
+    if(!(ss >> x))
+        return "Third value (x) not a integer";
+    if(!(ss >> y))
+        return "Fourth value (y) not a integer";
+    
+    // wait until thread has finished working
+    pthread_mutex_lock(&_mutex_working);
+    _crop_w = w;
+    _crop_h = h;
+    _crop_x = x;
+    _crop_y = y;
+    // negate the delay
+    pthread_cond_signal(&_signal_delay);            
+    pthread_mutex_unlock(&_mutex_working);    
     return ""; // always works, but nobody knows if an image gets displayed
 }
 
@@ -173,7 +202,7 @@ void ImageWindow::do_work()
     pthread_mutex_lock(&_mutex_running);
     while(_running) {
         pthread_mutex_lock(&_mutex_working);
-        _image_ok = _render.Image2Mw(_url);
+        _image_ok = _render.Image2Mw(_url, _crop_w, _crop_h, _crop_x, _crop_y);
         // first we wait with a condition timed wait, 
         // serves as a usleep 
         // but can be cancelled via _signal_delay 

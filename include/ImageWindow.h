@@ -28,6 +28,7 @@ private:
     pthread_cond_t _signal;        // indicates that the Draw routine has used the loaded image
     pthread_cond_t _signal_delay; // sleeping _delay can be aborted
    
+    size_t  _crop_w, _crop_h, _crop_x, _crop_y;
     
     // This is the static class function that serves as a C style function pointer
     // for the pthread_create call
@@ -44,6 +45,7 @@ private:
     
     std::string callbackSetDelay( const std::string& arg );
     std::string callbackSetURL( const std::string& arg );
+    std::string callbackSetCrop( const std::string& arg );
     
 public:
     ImageWindow( 
@@ -54,7 +56,6 @@ public:
 
     void SetURL(const std::string& url);
     
-    const std::string& GetURL() const { return _url; }
     void Update() {}
     void Draw();
     
