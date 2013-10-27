@@ -50,7 +50,8 @@ $dispsets->{Standard} =
                    'Windows' => [
                                  {Type=>'Image', Name=>'Radiator',
                                   Crop=>[260, 280, 75, 125],
-                                  Crosshair=>[100, 100, 30],
+                                  Crosshair=>[0, 0, 0],
+				  Rectangle=>[120, 80, 37],
                                   URL=>'http://a2radiator2.online.a2.kph/free.jpg'}
                                 ]
                   },
@@ -316,7 +317,7 @@ sub WorkOnDisplay {
   my $host = $disp->{Hostname};
   Logger("$host: Opening connection",2);
 
-  $t = Net::Telnet->new(Timeout => 5, Port => 1337);
+  $t = Net::Telnet->new(Timeout => 10, Port => 1337);
   $t->errmode("return");
 
   $t->open($host)
