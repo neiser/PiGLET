@@ -16,7 +16,8 @@ ImageWindow::ImageWindow( WindowManager* owner, const string& title, const float
     _label(this, -.95, .82, .95, .98),
     _image_ok(false),
     _running(true),
-    _crop_w(0), _crop_h(0), _crop_x(0), _crop_y(0)
+    _crop_w(0), _crop_h(0), _crop_x(0), _crop_y(0),
+    _crosshair_x(0), _crosshair_y(0), _crosshair_size(0)
 {
     cout << "ImageWindow ctor" << endl;
     _label.SetText(title);    
@@ -42,6 +43,7 @@ int ImageWindow::Init() {
     ConfigManager::I().addCmd(Name()+"_Delay", BIND_MEM_CB(&ImageWindow::callbackSetDelay, this));
     ConfigManager::I().addCmd(Name()+"_URL", BIND_MEM_CB(&ImageWindow::callbackSetURL, this));
     ConfigManager::I().addCmd(Name()+"_Crop", BIND_MEM_CB(&ImageWindow::callbackSetCrop, this));
+    ConfigManager::I().addCmd(Name()+"_Crosshair", BIND_MEM_CB(&ImageWindow::callbackSetCrosshair, this));    
     return Window::Init();
 }
 
@@ -50,6 +52,8 @@ ImageWindow::~ImageWindow()
     ConfigManager::I().removeCmd(Name()+"_Delay");
     ConfigManager::I().removeCmd(Name()+"_URL");
     ConfigManager::I().removeCmd(Name()+"_Crop");
+    ConfigManager::I().removeCmd(Name()+"_Crosshair");
+    
    
     // at this point, we don't know in which state the 
     // thread is (loading an image or sleeping, or waiting in between)
@@ -132,7 +136,29 @@ string ImageWindow::callbackSetCrop(const string &arg)
     // negate the delay
     pthread_cond_signal(&_signal_delay);            
     pthread_mutex_unlock(&_mutex_working);    
-    return ""; // always works, but nobody knows if an image gets displayed
+    return ""; // success
+}
+
+string ImageWindow::callbackSetCrosshair(const string &arg)
+{    
+    stringstream ss(arg);
+    size_t x, y, size;
+    if(!(ss >> x))
+        return "First value (x) not a integer";
+    if(!(ss >> y))
+        return "Second value (y) not a integer";
+    if(!(ss >> size))
+        return "Third value (size) not a integer";
+    
+    // wait until thread has finished working
+    pthread_mutex_lock(&_mutex_working);
+    _crosshair_x = x;
+    _crosshair_y = y;
+    _crosshair_size = size;
+    // negate the delay
+    pthread_cond_signal(&_signal_delay);            
+    pthread_mutex_unlock(&_mutex_working);    
+    return ""; // success
 }
 
 bool ImageWindow::ApplyTexture(int state)
@@ -202,7 +228,9 @@ void ImageWindow::do_work()
     pthread_mutex_lock(&_mutex_running);
     while(_running) {
         pthread_mutex_lock(&_mutex_working);
-        _image_ok = _render.Image2Mw(_url, _crop_w, _crop_h, _crop_x, _crop_y);
+        _image_ok = _render.Image2Mw(_url, 
+                                     _crop_w, _crop_h, _crop_x, _crop_y,
+                                     _crosshair_x, _crosshair_y, _crosshair_size);
         // first we wait with a condition timed wait, 
         // serves as a usleep 
         // but can be cancelled via _signal_delay 

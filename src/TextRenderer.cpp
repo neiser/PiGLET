@@ -3,6 +3,7 @@
 #include <sstream>
 #include <stdint.h>  // for uint32_t
 #include <iomanip>
+#include "magick/MagickCore.h"
 #include "GLTools.h"
 
 using namespace std;
@@ -15,19 +16,7 @@ TextRenderer::TextRenderer() : _buffer(NULL)
         MagickWandGenesis();    // just once at the beginning
     count++;
     _mw = NewMagickWand();
-    InitMw(_mw); // set some defaults
-}
-
-void TextRenderer::InitMw(MagickWand* mw)
-{
-    MagickSetSize(mw,256,64);
-    MagickSetPointsize(mw,48);
-    MagickSetFont(mw,"DejaVu-Sans-Mono-Book");
-    MagickSetOption(mw,"colorspace","GRAY");    // does this do anything?
-    MagickSetOption(mw,"fill","white");
-    MagickSetOption(mw,"background","rgba(0,0,0,0)");   // transparent background
-    MagickSetOption(mw,"encoding","unicode");   // does this do anything?
-    MagickSetGravity(mw,CenterGravity);
+    //SetTextOptions(_mw); // set some defaults
 }
 
 TextRenderer::~TextRenderer()
@@ -97,7 +86,7 @@ void TextRenderer::BindTexture(Texture &tex, GLenum textureMode)
     // clearing and init prevents memory eating
     // clear it here finally since properties of the image are still used
     ClearMagickWand(_mw);
-    InitMw(_mw);
+    //SetTextOptions(_mw);
     
     delete [] _buffer;
     _buffer = NULL;
@@ -109,14 +98,47 @@ void TextRenderer::Text2Texture(Texture& tex, const string &text )
 {
     std::stringstream rendercmd;
     rendercmd << "label:" << text;
-    MagickSetSize(_mw,0,0);
+    SetTextOptions();    
     MagickReadImage(_mw, rendercmd.str().c_str());
     InitWidthHeightUV(); // do that before the image gets extended!
     MagickExtentImage(_mw,_w_pow2,_h_pow2,0,0); // here we used the init'ed values!
-    
     CopyToBuffer(GL_LUMINANCE );
     
     BindTexture(tex, GL_LUMINANCE);
+}
+
+void TextRenderer::SetTextOptions()
+{
+    MagickSetSize(_mw,0,0);    
+    MagickSetPointsize(_mw,48);
+    MagickSetFont(_mw,"DejaVu-Sans-Mono-Book");
+    MagickSetOption(_mw,"colorspace","GRAY");    // does this do anything?
+    MagickSetOption(_mw,"fill","white");
+    MagickSetOption(_mw,"background","rgba(0,0,0,0)");   // transparent background
+    MagickSetOption(_mw,"encoding","unicode");   // does this do anything?
+    MagickSetGravity(_mw,CenterGravity);
+}
+
+void TextRenderer::DrawCrossHair(const size_t &x, const size_t &y, const size_t &size)
+{
+    // this is necessary for the other options 
+    // of dw to show an effect...
+    MagickSetOption(_mw,"stroke","1"); 
+    // how to use transparency? I don't know. The next command has no effect...
+    //MagickSetImageAlphaChannel(_mw, ActivateAlphaChannel);
+    DrawingWand* dw = NewDrawingWand();
+    PixelWand* cw = NewPixelWand();
+    PixelSetColor(cw,"rgb(255,255,0)");    
+    DrawSetStrokeColor(dw,cw);
+    DrawSetStrokeWidth(dw,2);
+    DrawSetStrokeAntialias(dw,MagickTrue);
+    
+    DrawLine(dw,x-size/2,y,x+size/2,y);
+    DrawLine(dw,x,y-size/2,x,y+size/2);    
+    
+    MagickDrawImage(_mw,dw);
+    DestroyPixelWand(cw);
+    DestroyDrawingWand(dw);
 }
 
 void TextRenderer::Mw2Texture(Texture& tex)
@@ -124,16 +146,23 @@ void TextRenderer::Mw2Texture(Texture& tex)
     BindTexture(tex, GL_RGBA);
 }
 
-bool TextRenderer::Image2Mw(const string &url, const size_t &w, const size_t &h, const size_t &x, const size_t &y)
+bool TextRenderer::Image2Mw(const string &url, 
+                            const size_t &crop_w, const size_t &crop_h, 
+                            const size_t &crop_x, const size_t &crop_y,
+                            const size_t &crosshair_x, const size_t &crosshair_y, const size_t &crosshair_size)
 {
     
     if(!MagickReadImage(_mw, url.c_str()))
         return false;
         
     MagickCropImage(_mw, 
-                    w==0 ? MagickGetImageWidth(_mw) : w,
-                    h==0 ? MagickGetImageHeight(_mw) : h,
-                    x, y);
+                    crop_w==0 ? MagickGetImageWidth(_mw) : crop_w,
+                    crop_h==0 ? MagickGetImageHeight(_mw) : crop_h,
+                    crop_x, crop_y);
+
+    if(crosshair_size != 0)
+        DrawCrossHair(crosshair_x, crosshair_y, crosshair_size);
+    
     
     InitWidthHeightUV();    
     CopyToBuffer(GL_RGBA);

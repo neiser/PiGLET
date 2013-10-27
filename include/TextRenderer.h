@@ -27,7 +27,8 @@ private:
     void BindTexture(Texture& tex, 
                      GLenum TextureMode);
     
-    void InitMw(MagickWand* mw);
+    void SetTextOptions();
+    void DrawCrossHair(const size_t& x, const size_t& y, const size_t &size);
      
     
 public:
@@ -38,8 +39,10 @@ public:
     void Text2Texture( Texture& tex, const std::string &text );
     void Mw2Texture(Texture &tex);
     bool Image2Mw(const std::string& url, 
-                  const size_t& w = 0, const size_t& h = 0, 
-                  const size_t& x = 0, const size_t& y = 0);
+                  const size_t& crop_w = 0, const size_t& crop_h = 0, 
+                  const size_t& crop_x = 0, const size_t& crop_y = 0,
+                  const size_t& crosshair_x = 0, const size_t& crosshair_y = 0, 
+                  const size_t& crosshair_size = 0);
 };
 
 

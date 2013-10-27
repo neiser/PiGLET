@@ -32,7 +32,8 @@ $dispsets->{Test} =
                                   Type=>'Plot', 'Name'=>'MyTestRecord1', 'BackLength'=>100},
                                  {
                                   Type=>'Image', 'Name'=>'Webcam',
-                                  Crop=>[260, 280, 75, 125]
+                                  Crop=>[260, 280, 75, 125],
+                                  Crosshair=>[100, 100, 30]
                                  }
                                 ]
                   }
@@ -49,6 +50,7 @@ $dispsets->{Standard} =
                    'Windows' => [
                                  {Type=>'Image', Name=>'Radiator',
                                   Crop=>[260, 280, 75, 125],
+                                  Crosshair=>[100, 100, 30],
                                   URL=>'http://a2radiator2.online.a2.kph/free.jpg'}
                                 ]
                   },

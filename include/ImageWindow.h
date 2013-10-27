@@ -29,6 +29,8 @@ private:
     pthread_cond_t _signal_delay; // sleeping _delay can be aborted
    
     size_t  _crop_w, _crop_h, _crop_x, _crop_y;
+    size_t  _crosshair_x, _crosshair_y, _crosshair_size;
+    
     
     // This is the static class function that serves as a C style function pointer
     // for the pthread_create call
@@ -46,7 +48,7 @@ private:
     std::string callbackSetDelay( const std::string& arg );
     std::string callbackSetURL( const std::string& arg );
     std::string callbackSetCrop( const std::string& arg );
-    
+    std::string callbackSetCrosshair( const std::string& arg );
 public:
     ImageWindow( 
             WindowManager* owner,
