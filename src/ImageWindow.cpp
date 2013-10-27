@@ -17,8 +17,8 @@ ImageWindow::ImageWindow( WindowManager* owner, const string& title, const float
     _image_ok(false),
     _running(true),
     _crop_w(0), _crop_h(0), _crop_x(0), _crop_y(0),
-    _crosshair_x(100), _crosshair_y(100), _crosshair_size(40),
-    _rect_x(100), _rect_y(100), _rect_size(40)
+    _crosshair_x(0), _crosshair_y(0), _crosshair_size(0),
+    _rect_x(0), _rect_y(0), _rect_size(0)
 {
     cout << "ImageWindow ctor" << endl;
     _label.SetText(title);    
