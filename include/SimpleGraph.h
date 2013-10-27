@@ -99,6 +99,9 @@ public:
         if( _autorange ) {
             if( _blocklist.YRange() != _yrange ) {
                 SetYRange(_blocklist.YRange());
+                float len = 0.1*_yrange.Length();
+                _yrange.Extend(_yrange.Max()+len);
+                _yrange.Extend(_yrange.Min()-len);
             }
         }
     }
