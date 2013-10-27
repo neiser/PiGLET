@@ -30,6 +30,7 @@ private:
    
     size_t  _crop_w, _crop_h, _crop_x, _crop_y;
     size_t  _crosshair_x, _crosshair_y, _crosshair_size;
+    size_t  _rect_x, _rect_y, _rect_size;
     
     
     // This is the static class function that serves as a C style function pointer
@@ -49,6 +50,8 @@ private:
     std::string callbackSetURL( const std::string& arg );
     std::string callbackSetCrop( const std::string& arg );
     std::string callbackSetCrosshair( const std::string& arg );
+    std::string callbackSetRectangle( const std::string& arg );
+    
 public:
     ImageWindow( 
             WindowManager* owner,

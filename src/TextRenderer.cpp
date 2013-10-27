@@ -127,19 +127,70 @@ void TextRenderer::DrawCrossHair(const size_t &x, const size_t &y, const size_t 
     // how to use transparency? I don't know. The next command has no effect...
     //MagickSetImageAlphaChannel(_mw, ActivateAlphaChannel);
     DrawingWand* dw = NewDrawingWand();
-    PixelWand* cw = NewPixelWand();
-    PixelSetColor(cw,"rgb(255,255,0)");    
-    DrawSetStrokeColor(dw,cw);
-    DrawSetStrokeWidth(dw,2);
     DrawSetStrokeAntialias(dw,MagickTrue);
     
-    DrawLine(dw,x-size/2,y,x+size/2,y);
-    DrawLine(dw,x,y-size/2,x,y+size/2);    
+    DrawBlackWhiteLine(dw,x-size/2,y,x+size/2,y);
+    DrawBlackWhiteLine(dw,x,y-size/2,x,y+size/2);    
     
     MagickDrawImage(_mw,dw);
-    DestroyPixelWand(cw);
+    
     DestroyDrawingWand(dw);
 }
+
+void TextRenderer::DrawRect(const size_t &x, const size_t &y, const size_t &size)
+{
+    // this is necessary for the other options 
+    // of dw to show an effect...
+    MagickSetOption(_mw,"stroke","1");
+    MagickSetOption(_mw,"fill","none"); 
+    // how to use transparency? I don't know. The next command has no effect...
+    //MagickSetImageAlphaChannel(_mw, ActivateAlphaChannel);
+    DrawingWand* dw = NewDrawingWand();
+    DrawSetStrokeAntialias(dw,MagickTrue);
+    
+    // draw a thicker black rectangle
+    PixelWand* cw_b = NewPixelWand();
+    PixelSetColor(cw_b,"rgb(0,0,0)");    
+    DrawSetStrokeColor(dw,cw_b);
+    DrawSetStrokeWidth(dw,4);
+    DrawRectangle(dw, x-size/2, y-size/2, x+size/2, y+size/2);
+    DestroyPixelWand(cw_b);  
+    
+    // draw a thicker black rectangle
+    PixelWand* cw_w = NewPixelWand();
+    PixelSetColor(cw_w,"rgb(255,255,255)");    
+    DrawSetStrokeColor(dw,cw_w);
+    DrawSetStrokeWidth(dw,2);
+    DrawRectangle(dw, x-size/2, y-size/2, x+size/2, y+size/2);
+    DestroyPixelWand(cw_w);  
+    
+    MagickDrawImage(_mw,dw);
+    
+    DestroyDrawingWand(dw);
+}
+
+void TextRenderer::DrawBlackWhiteLine(DrawingWand *dw, 
+                                      const size_t &x1, const size_t &y1, 
+                                      const size_t &x2, const size_t &y2)
+{
+    // draw a thicker black line
+    PixelWand* cw_b = NewPixelWand();
+    PixelSetColor(cw_b,"rgb(0,0,0)");    
+    DrawSetStrokeColor(dw,cw_b);
+    DrawSetStrokeWidth(dw,5);
+    DrawLine(dw, x1, y1, x2, y2);
+    DestroyPixelWand(cw_b);
+    
+    // draw a thinner white line on top
+    PixelWand* cw_w = NewPixelWand();
+    PixelSetColor(cw_w,"rgb(255,255,255)");    
+    DrawSetStrokeColor(dw,cw_w);
+    DrawSetStrokeWidth(dw,2);
+    DrawLine(dw, x1, y1, x2, y2);
+    DestroyPixelWand(cw_w);
+}
+
+
 
 void TextRenderer::Mw2Texture(Texture& tex)
 {
@@ -149,7 +200,8 @@ void TextRenderer::Mw2Texture(Texture& tex)
 bool TextRenderer::Image2Mw(const string &url, 
                             const size_t &crop_w, const size_t &crop_h, 
                             const size_t &crop_x, const size_t &crop_y,
-                            const size_t &crosshair_x, const size_t &crosshair_y, const size_t &crosshair_size)
+                            const size_t &crosshair_x, const size_t &crosshair_y, const size_t &crosshair_size, 
+                            const size_t &rect_x, const size_t &rect_y, const size_t &rect_size)
 {
     
     if(!MagickReadImage(_mw, url.c_str()))
@@ -162,6 +214,8 @@ bool TextRenderer::Image2Mw(const string &url,
 
     if(crosshair_size != 0)
         DrawCrossHair(crosshair_x, crosshair_y, crosshair_size);
+    if(rect_size != 0)
+        DrawRect(rect_x, rect_y, rect_size);
     
     
     InitWidthHeightUV();    

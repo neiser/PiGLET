@@ -29,7 +29,10 @@ private:
     
     void SetTextOptions();
     void DrawCrossHair(const size_t& x, const size_t& y, const size_t &size);
-     
+    void DrawRect(const size_t& x, const size_t& y, const size_t &size);
+    static void DrawBlackWhiteLine(DrawingWand* dw,
+                                   const size_t& x1, const size_t& y1,
+                                   const size_t& x2, const size_t& y2); 
     
 public:
 
@@ -42,7 +45,9 @@ public:
                   const size_t& crop_w = 0, const size_t& crop_h = 0, 
                   const size_t& crop_x = 0, const size_t& crop_y = 0,
                   const size_t& crosshair_x = 0, const size_t& crosshair_y = 0, 
-                  const size_t& crosshair_size = 0);
+                  const size_t& crosshair_size = 0,
+                  const size_t& rect_x = 0, const size_t& rect_y = 0, 
+                  const size_t& rect_size = 0);
 };
 
 
