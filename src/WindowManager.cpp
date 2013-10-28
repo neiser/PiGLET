@@ -14,6 +14,8 @@ WindowManager::WindowManager(const int dx, const int dy): _size_x(dx), _size_y(d
     ConfigManager::I().addCmd("RemoveAllWindows",BIND_MEM_CB(&WindowManager::callbackRemoveAllWindows,this));
     ConfigManager::I().addCmd("AddPlotWindow",BIND_MEM_CB(&WindowManager::callbackAddPlotWindow,this));
     ConfigManager::I().addCmd("AddImageWindow",BIND_MEM_CB(&WindowManager::callbackAddImageWindow,this));    
+    // prepare "no windows" texture
+    _render.Text2Texture( _tex, "No Windows. Telnet to port 1337.");
 }
 
 string WindowManager::AddWindow(Window *win)
@@ -82,6 +84,29 @@ void WindowManager::Draw(){
         }
     }
     
+    if(_window_list.empty()) {
+       
+        _tex.Activate();
+        glPushMatrix();
+        const float winratio = GetWindowWidth() / GetWindowHeight();
+        const float totalratio = _tex.GetAspectRatio() / winratio;
+        
+        if( totalratio >= 1.0f )
+            glScalef(1.0f,1.0f/totalratio,1.0f);
+        else
+            glScalef(1.0f*totalratio,1.0f,1.0f);
+        
+        glEnable(GL_TEXTURE_2D);
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+    
+        Rectangle::unit.Draw( GL_TRIANGLE_FAN );
+    
+        glDisable(GL_TEXTURE_2D);
+        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+        
+        glPopMatrix();
+        
+    }
     
 }
 

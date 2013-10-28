@@ -6,6 +6,7 @@
 #include <string>
 
 #include "Window.h"
+#include "TextRenderer.h"
 
 class WindowManager {
     
@@ -14,6 +15,8 @@ private:
     int _size_y;
     std::vector<Window*> _window_list;
     std::vector<int> _rows;
+    Texture _tex;
+    TextRenderer _render;
 
     std::string callbackRemoveAllWindows(const std::string& arg );
     std::string callbackAddPlotWindow( const std::string& arg );
