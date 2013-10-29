@@ -4,30 +4,30 @@
 #include <time.h>
 
 class StopWatch {
-public:
-    //typedef struct timespec timespec;
-
-    /**
-     * @brief Calculate the differnce in seconds of two timespec values
-     * @param start The first (earlier) time point
-     * @param stop The later time point
-     * @return difference in seconds
-     */
-    double time_difference( const timespec& start, const timespec& stop ) {
-        float time = stop.tv_sec - start.tv_sec + (stop.tv_nsec - start.tv_nsec) * 1E-9;
-        return time;
-    }
-
-protected:
-    timespec _start;
-    timespec _stop;
+private:
+    double _start;
+    double _stop;
 
 public:
     StopWatch();
     virtual ~StopWatch() {}
 
-    void Start() { clock_gettime(CLOCK_MONOTONIC, &_start); }
-    void Stop() { clock_gettime(CLOCK_MONOTONIC, &_stop);}
+    void Start() { 
+        timespec t;
+        clock_gettime(CLOCK_MONOTONIC, &t); 
+        _start = t.tv_sec + t.tv_nsec*1e-9;
+    }
+    
+    void Start(const double offset) {
+        Start();
+        _start += offset;
+    }
+    
+    void Stop() { 
+        timespec t;
+        clock_gettime(CLOCK_MONOTONIC, &t);
+        _stop = t.tv_sec + t.tv_nsec*1e-9;
+    }
     double TimeElapsed();
 
 };

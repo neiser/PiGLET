@@ -8,6 +8,7 @@
 #include "Interval.h"
 #include "alarm.h"
 #include <list>
+#include <cmath>
 
 #define NTICKSFULLX  6
 #define NTICKSFULLY  5
@@ -90,21 +91,7 @@ public:
     SimpleGraph( Window* owner, const float backlength );
     virtual ~SimpleGraph();
 
-    void AddToBlockList( const vec2_t& p) {
-        _blocklist.Add(p);
-        ValueDisplay.SetNumber(p.y);
-        _lastline[0] = p;
-        _lastline[1] = p;
-
-        if( _autorange ) {
-            if( _blocklist.YRange() != _yrange ) {
-                SetYRange(_blocklist.YRange());
-                float len = 0.1*_yrange.Length();
-                _yrange.Extend(_yrange.Max()+len);
-                _yrange.Extend(_yrange.Min()-len);
-            }
-        }
-    }
+    void AddToBlockList( const vec2_t& p); 
 
     void NewBlock();
 
@@ -113,7 +100,12 @@ public:
     void DrawTicks() const;
     void Draw();
 
-    void SetNow( const float now ) { _blocklist.SetNow(now); _lastline[1].x=now; }
+    void SetNow( const float now ) { 
+        if(isnan(now)) 
+            return; 
+        _blocklist.SetNow(now); 
+        _lastline[1].x=now; 
+    }
     void SetBackLength( const float len ) { _blocklist.SetBackLength( len ); UpdateTicks(); }
     void SetYRange( const Interval& yrange );
     void SetMinorAlarms( const Interval& minoralarm );

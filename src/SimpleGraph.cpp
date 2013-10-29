@@ -28,8 +28,12 @@ SimpleGraph::SimpleGraph( Window* owner, const float backlength ):
     TickColor(dPlotTicks),
     TickLabelColor(dPlotTickLabels),
     StartLineColor(dStartLineColor),
-    enable_lastline(true)
+    enable_lastline(false)
 {
+    vec2_t init;
+    init.x = 0./0.;
+    init.y = 0./0.;
+    _lastline[0] = init;
     ValueDisplay.SetDigits(10);
     UpdateTicks();
 }
@@ -37,6 +41,32 @@ SimpleGraph::SimpleGraph( Window* owner, const float backlength ):
 SimpleGraph::~SimpleGraph()
 {
     DeleteTicks();
+}
+
+void SimpleGraph::AddToBlockList(const vec2_t &p)
+{
+    // check if we had a previous value,
+    // then add it with the new x, but old y to
+    // create a "stepped" plotting (instead of linear slope)    
+    if(!isnan(_lastline[0].x) && _lastline[0].x>0) {
+        vec2_t p_old = p;
+        p_old.y = _lastline[0].y;
+        _blocklist.Add(p_old);
+    }
+    
+    ValueDisplay.SetNumber(p.y);    
+    _blocklist.Add(p);
+    _lastline[0] = p;
+    _lastline[1] = p;
+    
+    if( _autorange ) {
+        if( _blocklist.YRange() != _yrange ) {
+            SetYRange(_blocklist.YRange());
+            float len = 0.1*_yrange.Length();
+            _yrange.Extend(_yrange.Max()+len);
+            _yrange.Extend(_yrange.Min()-len);
+        }
+    }
 }
 
 void SimpleGraph::NewBlock()

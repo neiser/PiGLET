@@ -2,12 +2,10 @@
 
 StopWatch::StopWatch()
 {
-    _start.tv_sec =0;
-    _start.tv_nsec=0;
-    _stop = _start;
+   _stop = _start = 0;
 }
 
 double StopWatch::TimeElapsed()
 {
-    return time_difference( _start, _stop );
+    return _stop - _start;
 }

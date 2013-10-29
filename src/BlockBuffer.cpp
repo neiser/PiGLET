@@ -98,7 +98,7 @@ void BlockList::Add(const vec2_t &vertex)
     Block* last = _blocks.back();
 
     //see if we can disgard the last block
-    if( last->XRange().Disjoint(_xrange) ) {
+    if(last != h && last->XRange().Disjoint(_xrange) ) {
         PopBack();
     }
 

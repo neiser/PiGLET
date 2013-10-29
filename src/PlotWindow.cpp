@@ -1,7 +1,7 @@
 #include <iostream>
 #include <sstream>
 #include <string.h> // for strcmp
-
+#include <cmath>
 #include "Callback.h"
 #include "PlotWindow.h"
 #include "ConfigManager.h"
@@ -23,7 +23,7 @@ PlotWindow::PlotWindow(
     WindowArea( dBackColor, dWindowBorderColor),
     graph(this, DEFAULT_BACKLEN),
     text(this, -.95, .82, .95, .98),
-    _last_t(0),
+    _last_t(0./0.),
     frame(0),
     _old_properties(),
     _epics_connected(false),
@@ -38,7 +38,7 @@ PlotWindow::PlotWindow(
     discon_lbl.SetDrawBox(false);
     
     // don't forget to call Init()
-    // which also checks if the pvname is actually valid
+
 }
 
 int PlotWindow::Init()
@@ -75,6 +75,7 @@ void PlotWindow::Draw() {
     graph.SetNow(_last_t+_watch.TimeElapsed());
     // then process the EPICS data, which restarts the _watch...
     Epics::I().processNewDataForPV(_pvname);   
+    
    
     // Window border
     WindowArea.Draw();
@@ -97,8 +98,7 @@ void PlotWindow::ProcessEpicsData(const Epics::DataItem* i) {
     // if new, process it!
     switch (i->type) {
     case Epics::Connected:
-        _epics_connected = true;
-        graph.enable_lastline = true;
+        _epics_connected = true;        
         break;
         
     case Epics::Disconnected:
@@ -113,9 +113,16 @@ void PlotWindow::ProcessEpicsData(const Epics::DataItem* i) {
         
     case Epics::NewValue: {
         vec2_t* d = (vec2_t*)i->data;
-        _watch.Start();
         graph.AddToBlockList(*d);
+        if(isnan(_last_t)) {
+            _watch.Start(d->x);
+        }
+        else {
+            _watch.Start();
+        }
         _last_t = d->x;
+        
+        graph.enable_lastline = true;
         break;               
     }
     case Epics::NewProperties: {
