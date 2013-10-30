@@ -22,20 +22,18 @@ PlotWindow::PlotWindow(
     _initialized(false),
     WindowArea( dBackColor, dWindowBorderColor),
     graph(this, DEFAULT_BACKLEN),
-    text(this, -.95, .82, .95, .98),
+    text(this, -1, .76, .99, 1),
     _last_t(0./0.),
     frame(0),
     _old_properties(),
     _epics_connected(false),
-    discon_lbl(this)
+    discon_lbl(this, -.1, -.1, .8, .9)
 {
     cout << "Plotwindow ctor" << endl;
     text.SetText(pvname);
     _watch.Start();
     discon_lbl.SetColor(kPink);
-    discon_lbl.SetAlignRight(true);
-    discon_lbl.SetString("Disconnected");
-    discon_lbl.SetDrawBox(false);
+    discon_lbl.SetText("Disconnected");
     
     // don't forget to call Init()
 
@@ -46,8 +44,8 @@ int PlotWindow::Init()
     ConfigManager::I().addCmd(Name()+"_BackLength", BIND_MEM_CB(&PlotWindow::callbackSetBackLength, this));    
     
     int ret = Window::Init();
-    Epics::I().addPV(_pvname, BIND_MEM_CB(&PlotWindow::ProcessEpicsData, this));
-    
+    // the provided cb is triggered via processNewDataForPV    
+    Epics::I().addPV(_pvname, BIND_MEM_CB(&PlotWindow::ProcessEpicsData, this));     
     // return & save status for dtor    
     _initialized = ret == 0;
     return ret;
@@ -83,11 +81,11 @@ void PlotWindow::Draw() {
     text.Draw();
 
     if( !_epics_connected ) {
-        glPushMatrix();
-            glTranslatef(.4f, .6f, 0.0f);
-            glScalef(.4f,.4f,.4f);
+        //glPushMatrix();
+          //  glTranslatef(.4f, .6f, 0.0f);
+          //  glScalef(.4f,.4f,.4f);
             discon_lbl.Draw();
-        glPopMatrix();
+       // glPopMatrix();
     }
      
     ++frame;

@@ -82,7 +82,7 @@ void SimpleGraph::Draw()
 
     glPushMatrix();
 
-        glTranslatef(-.08, 0,0);
+        glTranslatef(-.08, -.05, 0);
         glScalef(0.8f,0.8f,0.8f);
 
 
@@ -133,8 +133,8 @@ void SimpleGraph::Draw()
 
 
         glPushMatrix();
-            glTranslatef(-.7,.85,0);
-            glScalef(.5,.3,.3);
+            glTranslatef(-.7,.75,0);
+            glScalef(.6,.6,.3);
             ValueDisplay.Draw();
         glPopMatrix();
 

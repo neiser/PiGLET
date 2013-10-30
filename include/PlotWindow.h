@@ -33,7 +33,7 @@ private:
 
     bool _epics_connected;
 
-    NumberLabel discon_lbl;
+    TextLabel discon_lbl;
     
 public:
     const std::string& Xlabel() const { return _xlabel; }
