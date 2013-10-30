@@ -359,6 +359,8 @@ SimpleGraph::AlarmLevels::AlarmLevels(const Color &color):
 
 void SimpleGraph::AlarmLevels::Draw()
 {
+    if(_levels.Length()==0)
+        return;
     AlarmColor.Activate();
     glLineWidth(1.0f);
     glVertexPointer(2, GL_FLOAT, 0, _lines.data());
