@@ -6,6 +6,7 @@
 #include <string>
 #include <cadef.h>
 #include "Callback.h"
+#include "StopWatch.h"
 
 using util::Callback; // Callback lives in the util namespace
 
@@ -76,6 +77,8 @@ private:
     std::map<std::string, PV*> pvs;
     
     epicsTime t0;
+    StopWatch _watch;
+    
     
     static void processNewDataForPV(PV* pv);
     

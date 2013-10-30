@@ -21,7 +21,8 @@ Epics::Epics () {
     ca_context_create( ca_enable_preemptive_callback );
     ca_add_exception_event( exceptionCallback, NULL );
     ca_poll();
-    t0 = epicsTime::getCurrent();        
+    t0 = epicsTime::getCurrent();      
+    _watch.Start();
     cout << "EPICS ctor" << endl;
 }
 
@@ -104,8 +105,15 @@ void Epics::eventCallback( event_handler_args args ) {
     if(args.type == DBR_TIME_DOUBLE) {
         vec2_t* data = new vec2_t;
         dbr_time_double* dbr = (dbr_time_double*)args.dbr; // Convert void* to correct data type
+        
+        // we use the timestamp to see if this
+        // value is from a time before the start
+        // of the program. If it isn't, we assume
+        // that the change of the value happened "right now"
         epicsTime time(dbr->stamp);
-        data->x= time - Epics::I().t0;
+        double t = time - Epics::I().t0;
+        data->x= t<0 ? t : Epics::I().GetCurrentTime();
+        // y-value is easy
         data->y = dbr->value;
         
         // pack it together
@@ -245,7 +253,8 @@ void Epics::removePV(const string& pvname)
 
 double Epics::GetCurrentTime()
 {
-    return epicsTime::getCurrent()-t0;
+    _watch.Stop();
+    return _watch.TimeElapsed();
 }
 
 void Epics::processNewDataForPV(const string& pvname) {

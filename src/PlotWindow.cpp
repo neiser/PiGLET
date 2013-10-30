@@ -23,7 +23,6 @@ PlotWindow::PlotWindow(
     WindowArea( dBackColor, dWindowBorderColor),
     graph(this, DEFAULT_BACKLEN),
     text(this, -1, .76, .99, 1),
-    _last_t(0./0.),
     frame(0),
     _old_properties(),
     _epics_connected(false),
@@ -31,7 +30,6 @@ PlotWindow::PlotWindow(
 {
     cout << "Plotwindow ctor" << endl;
     text.SetText(pvname);
-    _watch.Start();
     discon_lbl.SetColor(kPink);
     discon_lbl.SetText("Disconnected");
     
@@ -66,12 +64,7 @@ string PlotWindow::callbackSetBackLength(const string& arg){
 
 void PlotWindow::Draw() {
     
-    // order of the next three commands is very important!
-    // first SetNow with the time of the last event plus the
-    // elapsed time since the last event
-    _watch.Stop();
-    graph.SetNow(_last_t+_watch.TimeElapsed());
-    // then process the EPICS data, which restarts the _watch...
+    graph.SetNow(Epics::I().GetCurrentTime());
     Epics::I().processNewDataForPV(_pvname);   
     
    
@@ -81,11 +74,7 @@ void PlotWindow::Draw() {
     text.Draw();
 
     if( !_epics_connected ) {
-        //glPushMatrix();
-          //  glTranslatef(.4f, .6f, 0.0f);
-          //  glScalef(.4f,.4f,.4f);
-            discon_lbl.Draw();
-       // glPopMatrix();
+        discon_lbl.Draw();
     }
      
     ++frame;
@@ -97,6 +86,7 @@ void PlotWindow::ProcessEpicsData(const Epics::DataItem* i) {
     switch (i->type) {
     case Epics::Connected:
         _epics_connected = true;        
+        graph.enable_lastline = true;
         break;
         
     case Epics::Disconnected:
@@ -111,16 +101,7 @@ void PlotWindow::ProcessEpicsData(const Epics::DataItem* i) {
         
     case Epics::NewValue: {
         vec2_t* d = (vec2_t*)i->data;
-        graph.AddToBlockList(*d);
-        if(isnan(_last_t)) {
-            _watch.Start(d->x);
-        }
-        else {
-            _watch.Start();
-        }
-        _last_t = d->x;
-        
-        graph.enable_lastline = true;
+        graph.AddToBlockList(*d);     
         break;               
     }
     case Epics::NewProperties: {

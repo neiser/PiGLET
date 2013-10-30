@@ -48,7 +48,7 @@ void SimpleGraph::AddToBlockList(const vec2_t &p)
     // check if we had a previous value,
     // then add it with the new x, but old y to
     // create a "stepped" plotting (instead of linear slope)    
-    if(!isnan(_lastline[0].x) && _lastline[0].x>0) {
+    if(!isnan(_lastline[0].x)) {
         vec2_t p_old = p;
         p_old.y = _lastline[0].y;
         _blocklist.Add(p_old);

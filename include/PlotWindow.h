@@ -21,8 +21,6 @@ private:
     SimpleGraph graph;
     TextLabel text;
 
-    StopWatch _watch;
-    double _last_t;
     int frame;          //for debug
     
     dbr_ctrl_double _old_properties;
