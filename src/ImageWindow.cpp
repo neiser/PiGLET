@@ -11,7 +11,7 @@ const Color ImageWindow::color(kWhite);
 
 ImageWindow::ImageWindow( WindowManager* owner, const string& title, const float xscale, const float yscale ):
     Window(owner, title, xscale, yscale),
-    _url("http://auge.physik.uni-mainz.de/record/current.jpg"), // view on the Uni Mainz Campus!
+    _url(""),
     _delay(0), // see Init() for the correct default delay
     _label(this, -.95, .82, .95, .98),
     _image_ok(false),

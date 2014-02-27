@@ -204,6 +204,9 @@ bool TextRenderer::Image2Mw(const string &url,
                             const size_t &rect_x, const size_t &rect_y, const size_t &rect_size)
 {
     
+    if(url == "")
+ 	return false;
+
     if(!MagickReadImage(_mw, url.c_str()))
         return false;
         
