@@ -191,6 +191,7 @@ $dispsets->{Standard} =
                    'Hostname' => 'a2onlinedisplay-03',
                    'Windows' => [
                                  {Type=>'Plot',  Name=>'TAGG:TAGG:ReferenceOR', 'BackLength'=>900},
+                                 {Type=>'Plot',  Name=>'BEAM:CBREM:Edge', 'BackLength'=>3600},
                                  {Type=>'Plot',  Name=>'TAGG:TAGG:LadderP2Ratio', 'BackLength'=>900}
                                 ]
                   },
