@@ -40,6 +40,122 @@ $dispsets->{Test} =
                  ]
   };
 
+$dispsets->{EPT} =
+  {
+   'Description' => 'For EPT Measurements',
+   'Displays' => [
+                  {
+                   'Hostname' => 'a2onlinedisplay-00',
+                   'Windows' => [
+                                 {Type=>'Image', Name=>'EPT_Radiator',
+                                  Crop=>[280, 250, 150, 150],
+                                  #Crosshair=>[0, 0, 0],
+				  Rectangle=>[130, 122, 20],
+                                  URL=>'http://a2radiator1.online.a2.kph/free.jpg'},
+		                 #{Type=>'Image', Name=>'Tagger_Radiator',
+                                  #Crop=>[260, 280, 75, 125],
+                                  #Crosshair=>[0, 0, 0],
+				  #Rectangle=>[120, 80, 37],
+                                  #URL=>'http://a2radiator2.online.a2.kph/free.jpg'},
+                                 {Type=>'Plot',  Name=>'GEN:MON:EventsWithError', 'BackLength'=>900},
+                                 {Type=>'Plot',  Name=>'GEN:MON:Runfilesize', 'BackLength'=>900}
+                                ]
+                  },
+                  {
+                   'Hostname' => 'a2onlinedisplay-01',
+                   'Windows' => [
+                                 {Type=>'Plot',  Name=>'TRIG:Trigger', 'BackLength'=>900},
+                                 {Type=>'Plot',  Name=>'TRIG:TotalLivetime', 'BackLength'=>900},
+                                 {Type=>'Plot',  Name=>'TRIG:MeanReadoutTime', 'BackLength'=>900}
+                                ]
+                  },
+                  {
+                   'Hostname' => 'a2onlinedisplay-02',
+                   'Windows' => [
+                                 {Type=>'Plot',  Name=>'BEAM:FaradayCup', 'BackLength'=>900},
+                                 {Type=>'Plot',  Name=>'BEAM:PBGlass', 'BackLength'=>900},
+                                 {Type=>'Plot',  Name=>'BEAM:IonChamber', 'BackLength'=>900},
+                                 {Type=>'Plot',  Name=>'TAGG:EPT:LadderP2Ratio', 'BackLength'=>900}
+                                ]
+                  },
+                  {
+                   'Hostname' => 'a2onlinedisplay-03',
+                   'Windows' => [
+                                 {Type=>'Plot',  Name=>'TAGG:EPT:Sector0:TRIG:OR', 'BackLength'=>900},
+                                 {Type=>'Plot',  Name=>'TAGG:EPT:Sector1:TRIG:OR', 'BackLength'=>900},
+                                 {Type=>'Plot',  Name=>'TAGG:EPT:Sector2:TRIG:OR', 'BackLength'=>900},
+                                 {Type=>'Plot',  Name=>'TAGG:EPT:Sector3:TRIG:OR', 'BackLength'=>900}
+                                ]
+                  },
+                  {
+                   'Hostname' => 'a2onlinedisplay-04',
+                   'Windows' => [
+                                 {Type=>'Plot',  Name=>'CB:MWPC:HV:CH1:CURR:READ', 'BackLength'=>900},
+                                 {Type=>'Plot',  Name=>'CB:MWPC:HV:CH1:VOLT:READ', 'BackLength'=>900},
+                                 {Type=>'Plot',  Name=>'CB:MWPC:HV:CH2:CURR:READ', 'BackLength'=>900},
+                                 {Type=>'Plot',  Name=>'CB:MWPC:HV:CH2:VOLT:READ', 'BackLength'=>900}
+                                ]
+                  },
+                  {
+                   'Hostname' => 'a2onlinedisplay-05',
+                   'Windows' => [
+                                 {Type=>'Plot',  Name=>'TRIG:ImmediateReset', 'BackLength'=>900},
+                                 {Type=>'Plot',  Name=>'TRIG:L1_Trigger', 'BackLength'=>900},
+                                 {Type=>'Plot',  Name=>'TRIG:FastClear', 'BackLength'=>900},
+                                 {Type=>'Plot',  Name=>'TAGG:TAGG:ReferenceOR', 'BackLength'=>900}
+                                ]
+                  },
+                  {
+                   'Hostname' => 'a2onlinedisplay-06',
+                   'Windows' => [
+                                 {Type=>'Plot',  Name=>'TRIG:MULT:M1', 'BackLength'=>900},
+                                 {Type=>'Plot',  Name=>'TRIG:MULT:M2', 'BackLength'=>900},
+                                 {Type=>'Plot',  Name=>'TRIG:MULT:M3', 'BackLength'=>900},
+                                 {Type=>'Plot',  Name=>'TRIG:MULT:M4Plus', 'BackLength'=>900}
+                                ]
+                  },
+                  {
+                   'Hostname' => 'a2onlinedisplay-07',
+                   'Windows' => [
+                                 {Type=>'Plot', Name=>'TRIG:COPL:TriggerCharged', 'BackLength'=>900},
+                                 {Type=>'Plot', Name=>'TRIG:COPL:Trigger', 'BackLength'=>900}
+                                ]
+                  },
+                  {
+                   'Hostname' => 'a2onlinedisplay-08',
+                   'Windows' => [
+                                 {Type=>'Plot', Name=>'TRIG:Debug0', 'BackLength'=>900},
+                                 {Type=>'Plot', Name=>'TRIG:Debug1', 'BackLength'=>900},
+                                 {Type=>'Plot', Name=>'TRIG:Debug2', 'BackLength'=>900},
+                                 {Type=>'Plot', Name=>'TRIG:Debug3', 'BackLength'=>900}
+                                ]
+                  },
+                  {
+                   'Hostname' => 'a2onlinedisplay-09',
+                   'Windows' => [
+                                 {Type=>'Plot', Name=>'CB:CB:TRIG:ESum_Low', 'BackLength'=>900},
+                                 {Type=>'Plot', Name=>'CB:CB:TRIG:ESum_High', 'BackLength'=>900}
+                                ]
+                  },
+                  {
+                   'Hostname' => 'a2onlinedisplay-10',
+                   'Windows' => [
+                                 {Type=>'Plot', Name=>'TAPS:TRIG:InternalTrigger', 'BackLength'=>900},
+                                 {Type=>'Plot', Name=>'TRIG:TAPS:TriggerLivetimeStandalone',   'BackLength'=>900},
+                                 {Type=>'Plot', Name=>'TAPS:TRIG:TotalLivetime', 'BackLength'=>900}
+                                ]
+                  },
+                  {
+                   'Hostname' => 'a2onlinedisplay-11',
+                   'Windows' => [
+                                 {Type=>'Plot', Name=>'TAPS:BAF:TRIG:LED1:OR', 'BackLength'=>900},
+                                 {Type=>'Plot', Name=>'TAPS:BAF:TRIG:LED2:M2Plus',   'BackLength'=>900},
+                                 {Type=>'Plot', Name=>'TAPS:BAF:TRIG:CFD:OR',   'BackLength'=>900},
+                                 {Type=>'Plot', Name=>'TAPS:VETOBAF:TRIG:OR',   'BackLength'=>900}
+                                ]
+                  }
+                 ]
+  };
 $dispsets->{Standard} =
   {
    'Description' => 'Counting Room Standard',
