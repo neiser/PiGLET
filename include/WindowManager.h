@@ -16,6 +16,7 @@ private:
     std::vector<Window*> _window_list;
     std::vector<int> _rows;
     Texture _tex;
+    Color _color;
     TextRenderer _render;
 
     std::string callbackRemoveAllWindows(const std::string& arg );

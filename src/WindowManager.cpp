@@ -8,7 +8,8 @@
 
 using namespace std;
 
-WindowManager::WindowManager(const int dx, const int dy): _size_x(dx), _size_y(dy)
+WindowManager::WindowManager(const int dx, const int dy): 
+    _size_x(dx), _size_y(dy), _color(1.0,1.0,1.0)
 {
     // register the callbacks in the ConfigManager
     ConfigManager::I().addCmd("RemoveAllWindows",BIND_MEM_CB(&WindowManager::callbackRemoveAllWindows,this));
@@ -85,7 +86,7 @@ void WindowManager::Draw(){
     }
     
     if(_window_list.empty()) {
-       
+        _color.Activate();
         _tex.Activate();
         glPushMatrix();
         const float winratio = GetWindowWidth() / GetWindowHeight();
