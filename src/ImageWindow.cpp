@@ -20,7 +20,7 @@ ImageWindow::ImageWindow( WindowManager* owner, const string& title, const float
     _crosshair_x(0), _crosshair_y(0), _crosshair_size(0),
     _rect_x(0), _rect_y(0), _rect_size(0)
 {
-    cout << "ImageWindow ctor" << endl;
+    //cout << "ImageWindow ctor" << endl;
     _label.SetText(title);    
     _label.SetColor(dInvalidAlarm);
     
@@ -81,7 +81,7 @@ ImageWindow::~ImageWindow()
     pthread_mutex_destroy(&_mutex_working);    
     pthread_mutex_destroy(&_mutex_running);
     
-    cout << "ImageWindow dtor" << endl;
+    //cout << "ImageWindow dtor" << endl;
 }
 
 void ImageWindow::SetURL(const string &url)
