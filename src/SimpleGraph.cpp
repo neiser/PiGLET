@@ -82,8 +82,8 @@ void SimpleGraph::Draw()
 
     glPushMatrix();
 
-        glTranslatef(-.08, -.05, 0);
-        glScalef(0.8f,0.8f,0.8f);
+        glTranslatef(-.08, -.12, 0);
+        glScalef(0.8f,0.72f,0.8f);
 
 
         PlotArea.Draw();

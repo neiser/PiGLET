@@ -22,7 +22,7 @@ PlotWindow::PlotWindow(
     _initialized(false),
     WindowArea( dBackColor, dWindowBorderColor),
     graph(this, DEFAULT_BACKLEN),
-    text(this, -1, .76, .99, 1),
+    text(this, -0.98, .66, .99, .98),
     frame(0),
     _old_properties(),
     _epics_connected(false),
