@@ -23,7 +23,7 @@ Epics::Epics () {
     ca_poll();
     t0 = epicsTime::getCurrent();      
     _watch.Start();
-    cout << "EPICS ctor" << endl;
+    //cout << "EPICS ctor" << endl;
 }
 
 Epics::~Epics () {
@@ -33,7 +33,7 @@ Epics::~Epics () {
     pvs.clear();
     ca_context_destroy();
     
-    cout << "EPICS dtor" << endl;
+    //cout << "EPICS dtor" << endl;
 }
 
 void Epics::exceptionCallback( exception_handler_args args ) {
