@@ -43,7 +43,7 @@ public:
             WindowManager* owner,
             const std::string& pvname, 
             const std::string& xlabel = "Always label your axes",
-            const std::string& ylabel = "Alawys label your axes",
+            const std::string& ylabel = "Always label your axes",
             const float xscale = 1,
             const float yscale = 1);
 
