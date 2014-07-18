@@ -65,6 +65,7 @@ private:
     }
 
     void do_work();
+    bool sgetline(int client, std::string& line);
     bool SendToClient(int client, std::string msg);
     
     void InitSocket();
