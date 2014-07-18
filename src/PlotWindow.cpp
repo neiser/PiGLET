@@ -28,7 +28,7 @@ PlotWindow::PlotWindow(
     _epics_connected(false),
     discon_lbl(this, -.1, -.1, .8, .9)
 {
-    cout << "Plotwindow ctor" << endl;
+    //cout << "Plotwindow ctor" << endl;
     text.SetText(pvname);
     discon_lbl.SetColor(kPink);
     discon_lbl.SetText("Disconnected");
@@ -39,6 +39,9 @@ PlotWindow::PlotWindow(
 
 int PlotWindow::Init()
 {
+    if(_pvname.empty())
+        return 1;
+    
     ConfigManager::I().addCmd(Name()+"_BackLength", BIND_MEM_CB(&PlotWindow::callbackSetBackLength, this));    
     
     int ret = Window::Init();
@@ -54,7 +57,7 @@ PlotWindow::~PlotWindow() {
         Epics::I().removePV(_pvname);      
     }
     ConfigManager::I().removeCmd(_pvname+"_BackLength");
-    cout << "Plotwindow dtor" << endl;
+    //cout << "Plotwindow dtor" << endl;
 } 
 
 string PlotWindow::callbackSetBackLength(const string& arg){
