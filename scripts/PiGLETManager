@@ -168,6 +168,7 @@ $dispsets->{Standard} =
                                   Crosshair=>[0, 0, 0],
 				  Rectangle=>[120, 80, 37],
                                   URL=>'http://a2radiator2.online.a2.kph/free.jpg'},
+                                 {Type=>'Plot',  Name=>'GEN:MON:EventsWithError', 'BackLength'=>900},
                                  {Type=>'Plot',  Name=>'GEN:MON:Runfilesize', 'BackLength'=>900}
                                 ]
                   },
