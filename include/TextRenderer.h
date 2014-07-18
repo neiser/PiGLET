@@ -33,6 +33,14 @@ private:
     static void DrawBlackWhiteLine(DrawingWand* dw,
                                    const size_t& x1, const size_t& y1,
                                    const size_t& x2, const size_t& y2); 
+    static void MyDrawLine(DrawingWand* dw, const std::string& color, 
+                                const size_t &stroke, 
+                                const size_t &x1, const size_t &y1, 
+                                const size_t &x2, const size_t &y2);
+    static void MyDrawRect(DrawingWand* dw, const std::string& color, 
+                           const size_t &stroke, 
+                           const size_t &x, const size_t &y, 
+                           const size_t &size);
     
 public:
 

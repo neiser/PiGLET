@@ -129,9 +129,12 @@ void TextRenderer::DrawCrossHair(const size_t &x, const size_t &y, const size_t 
     DrawingWand* dw = NewDrawingWand();
     DrawSetStrokeAntialias(dw,MagickTrue);
     
-    DrawBlackWhiteLine(dw,x-size/2,y,x+size/2,y);
-    DrawBlackWhiteLine(dw,x,y-size/2,x,y+size/2);    
-    
+    MyDrawLine(dw,"rgb(0,0,0)", 4, x-size/2,y,x+size/2,y);
+    MyDrawLine(dw,"rgb(0,0,0)", 4, x,y-size/2,x,y+size/2);
+    MyDrawLine(dw,"rgb(255,255,255)", 2, x-size/2,y,x+size/2,y);
+    MyDrawLine(dw,"rgb(255,255,255)", 2, x,y-size/2,x,y+size/2);
+            
+        
     MagickDrawImage(_mw,dw);
     
     DestroyDrawingWand(dw);
@@ -149,47 +152,42 @@ void TextRenderer::DrawRect(const size_t &x, const size_t &y, const size_t &size
     DrawSetStrokeAntialias(dw,MagickTrue);
     
     // draw a thicker black rectangle
-    PixelWand* cw_b = NewPixelWand();
-    PixelSetColor(cw_b,"rgb(0,0,0)");    
-    DrawSetStrokeColor(dw,cw_b);
-    DrawSetStrokeWidth(dw,4);
-    DrawRectangle(dw, x-size/2, y-size/2, x+size/2, y+size/2);
-    DestroyPixelWand(cw_b);  
+    MyDrawRect(dw, "rgb(0,0,0)", 5, x, y, size);
     
-    // draw a thicker black rectangle
-    PixelWand* cw_w = NewPixelWand();
-    PixelSetColor(cw_w,"rgb(255,255,255)");    
-    DrawSetStrokeColor(dw,cw_w);
-    DrawSetStrokeWidth(dw,2);
-    DrawRectangle(dw, x-size/2, y-size/2, x+size/2, y+size/2);
-    DestroyPixelWand(cw_w);  
+    // draw a thinner white rectangle
+    MyDrawRect(dw, "rgb(255,255,255)", 2, x, y, size);
     
     MagickDrawImage(_mw,dw);
     
     DestroyDrawingWand(dw);
 }
 
-void TextRenderer::DrawBlackWhiteLine(DrawingWand *dw, 
-                                      const size_t &x1, const size_t &y1, 
-                                      const size_t &x2, const size_t &y2)
-{
-    // draw a thicker black line
-    PixelWand* cw_b = NewPixelWand();
-    PixelSetColor(cw_b,"rgb(0,0,0)");    
-    DrawSetStrokeColor(dw,cw_b);
-    DrawSetStrokeWidth(dw,5);
-    DrawLine(dw, x1, y1, x2, y2);
-    DestroyPixelWand(cw_b);
+void TextRenderer::MyDrawRect(DrawingWand *dw, const string &color, 
+                              const size_t &stroke,
+                              const size_t &x, const size_t &y, const size_t &size) {
+    MyDrawLine(dw, color, stroke,
+               x-(size)/2, y+size/2, x+(size)/2, y+size/2);
+    MyDrawLine(dw, color, stroke,
+               x-(size)/2, y-size/2, x+(size)/2, y-size/2);
+    MyDrawLine(dw, color, stroke,
+               x+size/2, y-(size)/2, x+size/2, y+(size)/2);
+    MyDrawLine(dw, color, stroke,
+               x-size/2, y-(size)/2, x-size/2, y+(size)/2);
     
-    // draw a thinner white line on top
-    PixelWand* cw_w = NewPixelWand();
-    PixelSetColor(cw_w,"rgb(255,255,255)");    
-    DrawSetStrokeColor(dw,cw_w);
-    DrawSetStrokeWidth(dw,2);
-    DrawLine(dw, x1, y1, x2, y2);
-    DestroyPixelWand(cw_w);
 }
 
+void TextRenderer::MyDrawLine(DrawingWand* dw, const string& color, 
+                              const size_t &stroke, 
+                              const size_t &x1, const size_t &y1, 
+                              const size_t &x2, const size_t &y2) {
+    PixelWand* cw_b = NewPixelWand();
+    PixelSetColor(cw_b,color.c_str());    
+    DrawSetStrokeColor(dw,cw_b);
+    DrawSetStrokeWidth(dw,stroke);
+    DrawSetStrokeLineCap(dw, SquareCap);
+    DrawLine(dw, x1, y1, x2, y2);
+    DestroyPixelWand(cw_b);    
+}
 
 
 void TextRenderer::Mw2Texture(Texture& tex)
