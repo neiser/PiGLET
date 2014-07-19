@@ -89,8 +89,7 @@ void SimpleGraph::Draw()
         PlotArea.Draw();
         DrawTicks();
 
-        _minorAlarm.Draw();
-        _majorAlarm.Draw();
+      
 
         // limit draw area to plot area box
         glEnable(GL_STENCIL_TEST);
@@ -108,9 +107,10 @@ void SimpleGraph::Draw()
         glStencilMask(0x00);
         glStencilFunc(GL_EQUAL, 1, 0xFF);
         // draw area is now limited
-
-
-
+        
+        _minorAlarm.Draw();
+        _majorAlarm.Draw();
+       
         glPushMatrix();
 
             // change to graph coordinates
