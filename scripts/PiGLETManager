@@ -45,7 +45,7 @@ $dispsets->{EPT} =
    'Description' => 'For EPT Measurements',
    'Displays' => [
                   {
-                   'Hostname' => 'a2onlinedisplay-00',
+                   'Hostname' => 'rpi-onlinedisplay-00',
                    'Windows' => [
                                  {Type=>'Image', Name=>'EPT_Radiator',
                                   Crop=>[280, 250, 150, 150],
@@ -62,7 +62,7 @@ $dispsets->{EPT} =
                                 ]
                   },
                   {
-                   'Hostname' => 'a2onlinedisplay-01',
+                   'Hostname' => 'rpi-onlinedisplay-01',
                    'Windows' => [
                                  {Type=>'Plot',  Name=>'TRIG:Trigger', 'BackLength'=>900},
                                  {Type=>'Plot',  Name=>'TRIG:TotalLivetime', 'BackLength'=>900},
@@ -70,7 +70,7 @@ $dispsets->{EPT} =
                                 ]
                   },
                   {
-                   'Hostname' => 'a2onlinedisplay-02',
+                   'Hostname' => 'rpi-onlinedisplay-02',
                    'Windows' => [
                                  {Type=>'Plot',  Name=>'BEAM:FaradayCup', 'BackLength'=>900},
                                  {Type=>'Plot',  Name=>'BEAM:PBGlass', 'BackLength'=>900},
@@ -79,7 +79,7 @@ $dispsets->{EPT} =
                                 ]
                   },
                   {
-                   'Hostname' => 'a2onlinedisplay-03',
+                   'Hostname' => 'rpi-onlinedisplay-03',
                    'Windows' => [
                                  {Type=>'Plot',  Name=>'TAGG:EPT:Sector0:TRIG:OR', 'BackLength'=>900},
                                  {Type=>'Plot',  Name=>'TAGG:EPT:Sector1:TRIG:OR', 'BackLength'=>900},
@@ -88,7 +88,7 @@ $dispsets->{EPT} =
                                 ]
                   },
                   {
-                   'Hostname' => 'a2onlinedisplay-04',
+                   'Hostname' => 'rpi-onlinedisplay-04',
                    'Windows' => [
                                  {Type=>'Plot',  Name=>'CB:MWPC:HV:CH1:CURR:READ', 'BackLength'=>900},
                                  {Type=>'Plot',  Name=>'CB:MWPC:HV:CH1:VOLT:READ', 'BackLength'=>900},
@@ -97,7 +97,7 @@ $dispsets->{EPT} =
                                 ]
                   },
                   {
-                   'Hostname' => 'a2onlinedisplay-05',
+                   'Hostname' => 'rpi-onlinedisplay-05',
                    'Windows' => [
                                  {Type=>'Plot',  Name=>'TRIG:ImmediateReset', 'BackLength'=>900},
                                  {Type=>'Plot',  Name=>'TRIG:L1_Trigger', 'BackLength'=>900},
@@ -106,7 +106,7 @@ $dispsets->{EPT} =
                                 ]
                   },
                   {
-                   'Hostname' => 'a2onlinedisplay-06',
+                   'Hostname' => 'rpi-onlinedisplay-06',
                    'Windows' => [
                                  {Type=>'Plot',  Name=>'TRIG:MULT:M1', 'BackLength'=>900},
                                  {Type=>'Plot',  Name=>'TRIG:MULT:M2', 'BackLength'=>900},
@@ -115,14 +115,16 @@ $dispsets->{EPT} =
                                 ]
                   },
                   {
-                   'Hostname' => 'a2onlinedisplay-07',
+                   'Hostname' => 'rpi-onlinedisplay-07',
                    'Windows' => [
                                  {Type=>'Plot', Name=>'TRIG:COPL:TriggerCharged', 'BackLength'=>900},
-                                 {Type=>'Plot', Name=>'TRIG:COPL:Trigger', 'BackLength'=>900}
+                                 {Type=>'Plot', Name=>'TRIG:COPL:Trigger', 'BackLength'=>900},
+                                 {Type=>'Plot', Name=>'BEAM:PhotonCam:CenterX', 'BackLength'=>900},
+                                 {Type=>'Plot', Name=>'BEAM:PhotonCam:CenterY', 'BackLength'=>900}
                                 ]
                   },
                   {
-                   'Hostname' => 'a2onlinedisplay-08',
+                   'Hostname' => 'rpi-onlinedisplay-08',
                    'Windows' => [
                                  {Type=>'Plot', Name=>'TRIG:Debug0', 'BackLength'=>900},
                                  {Type=>'Plot', Name=>'TRIG:Debug1', 'BackLength'=>900},
@@ -131,14 +133,14 @@ $dispsets->{EPT} =
                                 ]
                   },
                   {
-                   'Hostname' => 'a2onlinedisplay-09',
+                   'Hostname' => 'rpi-onlinedisplay-09',
                    'Windows' => [
                                  {Type=>'Plot', Name=>'CB:CB:TRIG:ESum_Low', 'BackLength'=>900},
                                  {Type=>'Plot', Name=>'CB:CB:TRIG:ESum_High', 'BackLength'=>900}
                                 ]
                   },
                   {
-                   'Hostname' => 'a2onlinedisplay-10',
+                   'Hostname' => 'rpi-onlinedisplay-10',
                    'Windows' => [
                                  {Type=>'Plot', Name=>'TAPS:TRIG:InternalTrigger', 'BackLength'=>900},
                                  {Type=>'Plot', Name=>'TRIG:TAPS:TriggerLivetimeStandalone',   'BackLength'=>900},
@@ -146,7 +148,7 @@ $dispsets->{EPT} =
                                 ]
                   },
                   {
-                   'Hostname' => 'a2onlinedisplay-11',
+                   'Hostname' => 'rpi-onlinedisplay-11',
                    'Windows' => [
                                  {Type=>'Plot', Name=>'TAPS:BAF:TRIG:LED1:OR', 'BackLength'=>900},
                                  {Type=>'Plot', Name=>'TAPS:BAF:TRIG:LED2:M2Plus',   'BackLength'=>900},
@@ -161,7 +163,7 @@ $dispsets->{Standard} =
    'Description' => 'Counting Room Standard',
    'Displays' => [
                   {
-                   'Hostname' => 'a2onlinedisplay-00',
+                   'Hostname' => 'rpi-onlinedisplay-00',
                    'Windows' => [
                                  {Type=>'Image', Name=>'Radiator',
                                   Crop=>[260, 280, 75, 125],
@@ -173,14 +175,14 @@ $dispsets->{Standard} =
                                 ]
                   },
                   {
-                   'Hostname' => 'a2onlinedisplay-01',
+                   'Hostname' => 'rpi-onlinedisplay-01',
                    'Windows' => [
                                  {Type=>'Plot',  Name=>'TRIG:Trigger', 'BackLength'=>900},
                                  {Type=>'Plot',  Name=>'TRIG:TotalLivetime', 'BackLength'=>900}
                                 ]
                   },
                   {
-                   'Hostname' => 'a2onlinedisplay-02',
+                   'Hostname' => 'rpi-onlinedisplay-02',
                    'Windows' => [
                                  {Type=>'Plot',  Name=>'BEAM:FaradayCup', 'BackLength'=>900},
                                  {Type=>'Plot',  Name=>'BEAM:PBGlass', 'BackLength'=>900},
@@ -188,7 +190,7 @@ $dispsets->{Standard} =
                                 ]
                   },
                   {
-                   'Hostname' => 'a2onlinedisplay-03',
+                   'Hostname' => 'rpi-onlinedisplay-03',
                    'Windows' => [
                                  {Type=>'Plot',  Name=>'TAGG:TAGG:ReferenceOR', 'BackLength'=>900},
                                  {Type=>'Plot',  Name=>'BEAM:CBREM:Edge', 'BackLength'=>3600},
@@ -196,7 +198,7 @@ $dispsets->{Standard} =
                                 ]
                   },
                   {
-                   'Hostname' => 'a2onlinedisplay-04',
+                   'Hostname' => 'rpi-onlinedisplay-04',
                    'Windows' => [
                                  {Type=>'Plot',  Name=>'CB:MWPC:HV:CH1:CURR:READ', 'BackLength'=>900},
                                  {Type=>'Plot',  Name=>'CB:MWPC:HV:CH1:VOLT:READ', 'BackLength'=>900},
@@ -205,7 +207,7 @@ $dispsets->{Standard} =
                                 ]
                   },
                   {
-                   'Hostname' => 'a2onlinedisplay-05',
+                   'Hostname' => 'rpi-onlinedisplay-05',
                    'Windows' => [
                                  {Type=>'Plot',  Name=>'TRIG:ImmediateReset', 'BackLength'=>900},
                                  {Type=>'Plot',  Name=>'TRIG:L1_Trigger', 'BackLength'=>900},
@@ -213,7 +215,7 @@ $dispsets->{Standard} =
                                 ]
                   },
                   {
-                   'Hostname' => 'a2onlinedisplay-06',
+                   'Hostname' => 'rpi-onlinedisplay-06',
                    'Windows' => [
                                  {Type=>'Plot',  Name=>'TRIG:MULT:M1', 'BackLength'=>900},
                                  {Type=>'Plot',  Name=>'TRIG:MULT:M2', 'BackLength'=>900},
@@ -222,14 +224,14 @@ $dispsets->{Standard} =
                                 ]
                   },
                   {
-                   'Hostname' => 'a2onlinedisplay-07',
+                   'Hostname' => 'rpi-onlinedisplay-07',
                    'Windows' => [
                                  {Type=>'Plot', Name=>'TRIG:COPL:TriggerCharged', 'BackLength'=>900},
                                  {Type=>'Plot', Name=>'TRIG:COPL:Trigger', 'BackLength'=>900}
                                 ]
                   },
                   {
-                   'Hostname' => 'a2onlinedisplay-08',
+                   'Hostname' => 'rpi-onlinedisplay-08',
                    'Windows' => [
                                  {Type=>'Plot', Name=>'TRIG:Debug0', 'BackLength'=>900},
                                  {Type=>'Plot', Name=>'TRIG:Debug1', 'BackLength'=>900},
@@ -238,14 +240,14 @@ $dispsets->{Standard} =
                                 ]
                   },
                   {
-                   'Hostname' => 'a2onlinedisplay-09',
+                   'Hostname' => 'rpi-onlinedisplay-09',
                    'Windows' => [
                                  {Type=>'Plot', Name=>'CB:CB:TRIG:ESum_Low', 'BackLength'=>900},
                                  {Type=>'Plot', Name=>'CB:CB:TRIG:ESum_High', 'BackLength'=>900}
                                 ]
                   },
                   {
-                   'Hostname' => 'a2onlinedisplay-10',
+                   'Hostname' => 'rpi-onlinedisplay-10',
                    'Windows' => [
                                  {Type=>'Plot', Name=>'TAPS:TRIG:InternalTrigger', 'BackLength'=>900},
                                  {Type=>'Plot', Name=>'TRIG:TAPS:TriggerLivetimeStandalone',   'BackLength'=>900},
@@ -253,7 +255,7 @@ $dispsets->{Standard} =
                                 ]
                   },
                   {
-                   'Hostname' => 'a2onlinedisplay-11',
+                   'Hostname' => 'rpi-onlinedisplay-11',
                    'Windows' => [
                                  {Type=>'Plot', Name=>'TAPS:BAF:TRIG:LED1:OR', 'BackLength'=>900},
                                  {Type=>'Plot', Name=>'TAPS:BAF:TRIG:LED2:M2Plus',   'BackLength'=>900},
