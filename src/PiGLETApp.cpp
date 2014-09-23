@@ -6,6 +6,7 @@
 #include "ConfigManager.h"
 //#include "PlotWindow.h"
 //#include "ImageWindow.h"
+#include <sys/prctl.h>
 
 using namespace std;
 
@@ -31,6 +32,7 @@ void PiGLETApp::Draw(){
 
 
 void PiGLETApp::Init(){
+    prctl(PR_SET_NAME, "PiGLET", 0l, 0l, 0l);
 //    cout << "Starting PiGLET..." << endl;
 //    for (int i = 0 ; i < 3; i++){
 //        stringstream ss;
