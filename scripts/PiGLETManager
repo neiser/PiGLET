@@ -384,6 +384,10 @@ sub WaitForPIDs {
   # and check exit code
   my $failed = {};
   foreach my $host (keys $pid) {
+    unless(defined $pid->{$host}) {
+      $failed->{$host} = 1;
+      next;
+    }
     waitpid($pid->{$host},0);
     # transform to original exit value, see perlvar $?
     $failed->{$host} = $? >> 8 if $?;
