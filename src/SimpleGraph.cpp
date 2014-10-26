@@ -63,11 +63,12 @@ void SimpleGraph::AddToBlockList(const vec2_t &p)
     _lastline[1] = p;
     
     if( _autorange ) {
-        if( _blocklist.YRange() != _yrange ) {
-            SetYRange(_blocklist.YRange());
-            float len = 0.1*_yrange.Length();
-            _yrange.Extend(_yrange.Max()+len);
-            _yrange.Extend(_yrange.Min()-len);
+        Interval y = _blocklist.YRange();
+        if( y != _yrange ) {
+            float len = 0.1*y.Length();
+            y.Extend(y.Max()+len);
+            y.Extend(y.Min()-len);
+            SetYRange(y);
         }
     }
 }
