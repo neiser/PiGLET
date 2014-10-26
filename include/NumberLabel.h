@@ -15,7 +15,7 @@ private:
     // array of texture handles
     static Texture* _textures;
     static vec2_t _texcoords[4];
-    static unsigned int _num_objetcs;   // Number of instances alive
+    static unsigned int _num_objects;   // Number of instances alive
 
     /**
      * @brief Generate textures for all characters we can render
@@ -28,7 +28,8 @@ private:
     std::vector<GLuint> _digtex;
 
     Color _color;
-    unsigned char _prec;
+    unsigned short _prec;
+    float _value;
     unsigned char _digits;
     bool _align_right;
     bool _draw_box;
@@ -53,7 +54,7 @@ public:
      * @note  Gets applied at the next call to Set()
      * @see GetPrec()
      */
-    void SetPrec( const unsigned char prec ) { _prec = prec; }
+    void SetPrec( const unsigned short prec );
 
     /**
      * @brief Get the decimal precision

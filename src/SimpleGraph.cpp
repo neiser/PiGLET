@@ -20,6 +20,7 @@ SimpleGraph::SimpleGraph( Window* owner, const float backlength ):
     Widget(owner),
     _blocklist(backlength),
     _yrange(),
+    _yrange_manual(),
     _autorange(true),
     ValueDisplay(this->_owner),
     _prev_color(dTextColor),    
@@ -62,15 +63,8 @@ void SimpleGraph::AddToBlockList(const vec2_t &p)
     _lastline[0] = p;
     _lastline[1] = p;
     
-    if( _autorange ) {
-        Interval y = _blocklist.YRange();
-        if( y != _yrange ) {
-            float len = 0.1*y.Length();
-            y.Extend(y.Max()+len);
-            y.Extend(y.Min()-len);
-            SetYRange(y);
-        }
-    }
+    // trigger autorange calculation, if enabled
+    SetAutoRange(_autorange);
 }
 
 void SimpleGraph::NewBlock()
@@ -83,7 +77,7 @@ void SimpleGraph::NewBlock()
 
 void SimpleGraph::Draw()
 {
-    // set the fading color of the ValueDisplay
+    // set the fading/blinking color of the ValueDisplay
     
     _time_since_noalarm.Stop();
     if(_time_since_noalarm.TimeElapsed()<ALARM_DECAY_TIME) {
@@ -108,10 +102,11 @@ void SimpleGraph::Draw()
     
     
     glPushMatrix();
-
+        const float scale_y = 0.72f;
+        const float scale_x = 0.8f;
         glTranslatef(-.08, -.12, 0);
-        glScalef(0.8f,0.72f,0.8f);
-
+        glScalef(scale_x, scale_y, 1.0f);
+        //glScalef(scale_x, 1.0f, 1.0f);
 
         PlotArea.Draw();
         DrawTicks();
@@ -135,13 +130,14 @@ void SimpleGraph::Draw()
         glStencilFunc(GL_EQUAL, 1, 0xFF);
         // draw area is now limited
         
+        
         _minorAlarm.Draw();
         _majorAlarm.Draw();
        
         glPushMatrix();
 
             // change to graph coordinates
-            glScalef( 2.0f / _blocklist.XRange().Length(), 2.0f / _yrange.Length(), 1.0f );
+            glScalef( 2.0f / _blocklist.XRange().Length(), 2.0f /  _yrange.Length(), 1.0f );
             glTranslatef(-_blocklist.XRange().Center(), -_yrange.Center(), 0.0f );
 
             _blocklist.Draw();
@@ -173,33 +169,62 @@ void SimpleGraph::Draw()
 
 void SimpleGraph::SetYRange(const Interval &yrange)
 {
-    if( _yrange.Length() < 1.0f ) {
-        _yrange = Interval( _yrange.Min() - .5f, _yrange.Max() + .5f);
+    
+    if( yrange.Length() <= 0 ) {
+        SetAutoRange(true);
+        return;
     }
-
+    
     _yrange = yrange;
-
+    
+    
     UpdateTicks();
 
-    _minorAlarm.SetLevels( _minorAlarm.Levels(),
-                Interval(
-                    GetYGlobal(_minorAlarm.Levels().Min()),
-                    GetYGlobal(_minorAlarm.Levels().Max())
-                    )
-                );
+    // update alarm levels yranges by explicitly setting them
+    SetMinorAlarms(_minorAlarm.Levels());
+    SetMajorAlarms(_majorAlarm.Levels());
+}
 
-    _majorAlarm.SetLevels( _majorAlarm.Levels(),
-                Interval(
-                    GetYGlobal(_majorAlarm.Levels().Min()),
-                    GetYGlobal(_majorAlarm.Levels().Max())
-                    )
-                );
+void SimpleGraph::SetAutoRange(const bool autorange)
+{
+    _autorange = autorange;
+    
+    if( _autorange ) {
+        Interval y = _blocklist.YRange();
+        if( y != _yrange ) {
+            float len = 0.1*y.Length();
+            if(len <= 1.0) {
+                len = 0.1*abs(y.Max());
+                if(len <= 1.0) {
+                    len = 1.0;
+                }
+            }
+            y.Extend(y.Max()+len);
+            y.Extend(y.Min()-len);
+            SetYRange(y);
+        }
+    }
+}
 
+
+void SimpleGraph::SetYRangeMin(const double val)
+{
+    SetAutoRange(false);
+    _yrange_manual = Interval(val, _yrange_manual.Max());
+    SetYRange(_yrange_manual);    
+}
+
+void SimpleGraph::SetYRangeMax(const double val)
+{
+    SetAutoRange(false);
+    _yrange_manual = Interval(_yrange_manual.Min(), val);    
+    SetYRange(_yrange_manual);    
 }
 
 void SimpleGraph::SetMinorAlarms(const Interval &minoralarm )
 {
-    _minorAlarm.SetLevels( minoralarm,
+    _minorAlarm.SetLevels( 
+                minoralarm,
                 Interval(
                     GetYGlobal(minoralarm.Min()),
                     GetYGlobal(minoralarm.Max())
@@ -207,17 +232,39 @@ void SimpleGraph::SetMinorAlarms(const Interval &minoralarm )
                 );
 }
 
+void SimpleGraph::SetMinorAlarmsMin(const double val)
+{
+    SetMinorAlarms(Interval(val, _minorAlarm.Levels().Max()));
+}
+
+void SimpleGraph::SetMinorAlarmsMax(const double val)
+{
+    SetMinorAlarms(Interval(_minorAlarm.Levels().Min(), val));
+}
+
 void SimpleGraph::SetMajorAlarms(const Interval &majoralarm)
 {
-    _majorAlarm.SetLevels( majoralarm,
+    _majorAlarm.SetLevels( 
+                majoralarm,
                 Interval(
                     GetYGlobal(majoralarm.Min()),
                     GetYGlobal(majoralarm.Max())
                     )
-                           );
+                );
 }
 
-void SimpleGraph::SetPrecision(const unsigned char prec)
+void SimpleGraph::SetMajorAlarmsMin(const double val)
+{
+    SetMajorAlarms(Interval(val, _majorAlarm.Levels().Max()));
+}
+
+void SimpleGraph::SetMajorAlarmsMax(const double val)
+{
+    SetMajorAlarms(Interval(_majorAlarm.Levels().Min(), val));
+}
+
+
+void SimpleGraph::SetPrecision(const unsigned short prec)
 {
     ValueDisplay.SetPrec(prec);
 }

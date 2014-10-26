@@ -35,11 +35,10 @@ void DataBlock::Add(const vec2_t &vertex)
 
 void BlockList::BuildYRange()
 {
-    _yrange = Interval(0,0);
+    _yrange = Interval(nanf(""),nanf(""));
     blist::const_iterator i;
     for( i= _blocks.begin(); i != _blocks.end(); ++i )
         _yrange.Extend( (*i)->YRange() );
-
 }
 
 void BlockList::PopBack()
@@ -69,7 +68,7 @@ void BlockList::NewBlock( const bool copy_last )
 BlockList::BlockList( const float backlen ):
     _backlen(backlen),
     _xrange(-_backlen, 0.0f),
-    _yrange(.0f,.0f),
+    _yrange(nanf(""),nanf("")), // set to nan by default
     color(dPlotColor)
 {
 }
@@ -102,8 +101,14 @@ void BlockList::Add(const vec2_t &vertex)
         PopBack();
     }
 
-    _yrange.Extend( vertex.y );
-
+    // check if _yrange is valid, if not, 
+    // initialize with the help of this first y value
+    if(isnan(_yrange.Length())) {
+        _yrange = Interval(vertex.y, vertex.y);
+    }
+    else {
+        _yrange.Extend( vertex.y );
+    }
 }
 
 void BlockList::Draw() const

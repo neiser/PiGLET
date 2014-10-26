@@ -8,7 +8,7 @@
 #include "Interval.h"
 #include "GLTools.h"
 
-#define DATA_BLOCK_SIZE 256
+#define DATA_BLOCK_SIZE 1
 
 
 
@@ -90,7 +90,7 @@ public:
     void SetBackLength( const float len ) { _backlen = len; 
                                             _xrange.Min() = _xrange.Max()-len; }
     const float& GetBackLength () { return _backlen; }
-    void SetYRange( const Interval& yrange ) { _yrange = yrange; }
+    //void SetYRange( const Interval& yrange ) { _yrange = yrange; }
 
     void NewBlock(const bool copy_last=true);
     

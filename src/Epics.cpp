@@ -3,6 +3,7 @@
 #include <iomanip>
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "config.h"
 #include "Epics.h"
 #include "Structs.h"
@@ -44,15 +45,14 @@ void Epics::exceptionCallback( exception_handler_args args ) {
 }
 
 void Epics::deleteDataItem(DataItem* i) {
-    // well, the void* data must be deleted as well
-    // but we need to know the data type 
+    // well, the void* data should be freed
     // (see the callbacks below where these items are generated)
     switch (i->type) {
     case Epics::NewValue:
-        delete static_cast<vec2_t*>(i->data);
+        free(i->data);
         break;
     case Epics::NewProperties:
-        delete static_cast<dbr_ctrl_double*>(i->data);
+        free(i->data);
         break;
     default:
         // all other types currently 
@@ -60,7 +60,8 @@ void Epics::deleteDataItem(DataItem* i) {
         // in the i->data
         break;
     }            
-    // delete the current item
+    // delete the current item, 
+    // this hopefully calls destructors of nested items
     delete i;    
 }
 
@@ -85,13 +86,14 @@ void Epics::connectionCallback( connection_handler_args args ) {
     else { // args.op == CA_OP_CONN_DOWN
         pNew->type = Disconnected;
     }
-    
+    string pvname = ( args.chid ? ca_name( args.chid ) : "unknown" );
+    //cout << "Connection " << pvname << endl;
     appendToList((PV*)ca_puser(args.chid), pNew);
 }
 
 void Epics::eventCallback( event_handler_args args ) {
     if ( args.status != ECA_NORMAL ) {
-        cerr << "Error in EPICS event callback" << endl;
+        cerr << "Error in EPICS event callback, ignoring event." << endl;
         return;
     } 
     
@@ -99,7 +101,7 @@ void Epics::eventCallback( event_handler_args args ) {
     // this callback, we create some new memory space here
     // and hardcopy it
     
-    PV* pv = (PV*)ca_puser(args.chid);   
+    PV* pv = (PV*)args.usr;
     DataItem* pNew = new DataItem;        
     
     if(args.type == DBR_TIME_DOUBLE) {
@@ -120,17 +122,23 @@ void Epics::eventCallback( event_handler_args args ) {
         pNew->type = NewValue;
         pNew->data = data;   
     }
-    else if(args.type == DBR_CTRL_DOUBLE) {
+    else {
         
-        dbr_ctrl_double* dbr = (dbr_ctrl_double*)args.dbr; // Convert void* to correct data type
-        // make a hardcopy
-        dbr_ctrl_double* data = new dbr_ctrl_double(*dbr);
-        
-        //cout << "ctrl received " << data->upper_warning_limit << " " << data->upper_alarm_limit << endl;
-        
-        // pack it together
         pNew->type = NewProperties;
-        pNew->data = data;
+        
+        // determine the "attr" name of the property.
+        pNew->attr = "_UNKNOWN";
+        for(size_t i=0; i<pv->channels.size(); i++) {
+            if(args.chid == pv->channels[i]._chid) {
+                pNew->attr = pv->channels[i]._attr;
+                break;
+            }
+        }
+        // copy the content, since args is only valid within this callback
+        size_t nBytes = dbr_size_n(args.type, args.count);
+        //cout << "ATTR: " << pNew->attr << " nBytes: " << nBytes << endl;
+        pNew->data = malloc(nBytes);
+        memcpy(pNew->data, args.dbr, nBytes);       
     }
     
     appendToList(pv, pNew);    
@@ -177,41 +185,48 @@ Epics::PV* Epics::initPV() {
     return pv;    
 } 
 
-void Epics::subscribe(const string &pvname, PV* pv) {
-    
-    // create/subscribe for value
-    int ca_rtn = ca_create_channel( pvname.c_str(),      // PV name
+void Epics::subscribe_channel(const string &pvname, PV* pv, 
+                              const string &attr, chtype type ) {
+    PV_channel_t channel;
+    channel._attr = attr; // remember the attribute, see Epics::eventCallback
+    int ca_rtn = ca_create_channel( (pvname+"."+attr).c_str(),      // PV name including attr
                                     connectionCallback,  // name of connection callback function
                                     pv,               // 
                                     CA_PRIORITY_DEFAULT, // CA Priority
-                                    &pv->chid_val );    // Unique channel id
-    SEVCHK(ca_rtn, "ca_create_channel for value failed");
-    ca_rtn = ca_create_subscription( DBR_TIME_DOUBLE,          // CA data type
+                                    &channel._chid );    // Unique channel id
+    SEVCHK(ca_rtn, "ca_create_channel failed");
+    ca_rtn = ca_create_subscription( type,          // CA data type
                                      1,                        // number of elements
-                                     pv->chid_val,            // unique channel id
-                                     DBE_VALUE,    // event mask (change of value and alarm)
+                                     channel._chid,            // unique channel id
+                                     DBE_VALUE,    // event mask (change of value)
                                      eventCallback,            // name of event callback function
                                      pv,
-                                     &pv->evid_val );         // unique event id needed to clear subscription
-    SEVCHK(ca_rtn, "ca_create_subscription for value failed");
+                                     &channel._evid );         // unique event id needed to clear subscription
+    SEVCHK(ca_rtn, "ca_create_subscription failed");
     
-    // create/subscribe for control (all interesting properties)
-    ca_rtn = ca_create_channel( pvname.c_str(),      // PV name
-                                NULL,  // name of connection callback function
-                                pv,               // 
-                                CA_PRIORITY_DEFAULT, // CA Priority
-                                &pv->chid_ctrl );    // Unique channel id    
-    SEVCHK(ca_rtn, "ca_create_channel for ctrl failed");
-    ca_rtn = ca_create_subscription( DBR_CTRL_DOUBLE,          // CA data type
-                                     1,                        // number of elements
-                                     pv->chid_ctrl,            // unique channel id
-                                     DBE_PROPERTY | DBE_ALARM,             // event mask (change of properties)
-                                     eventCallback,            // name of event callback function
-                                     pv,
-                                     &pv->evid_ctrl);         // unique event id needed to clear subscription
-    SEVCHK(ca_rtn, "ca_create_subscription for ctrl failed");
+    pv->channels.push_back(channel);
+}
+
+void Epics::subscribe(const string &pvname, PV* pv) {
     
-    // dont know if this is really meaningful here (also done in ctor)
+    // create/subscribe for value
+    subscribe_channel(pvname, pv, "VAL", DBR_TIME_DOUBLE);
+    
+    
+    // create/subscribe for interesting properties: alarms, operating ranges, unit
+    // you may use any DBR_* type except DBR_TIME_DOUBLE, see Epics::eventCallback
+    // we don't use the fairly new DBR_CTRL* types to monitor the properties,
+    // since many records don't propagate changes correctly...
+    subscribe_channel(pvname, pv, "HIHI", DBR_DOUBLE);
+    subscribe_channel(pvname, pv, "HIGH", DBR_DOUBLE);
+    subscribe_channel(pvname, pv, "LOW",  DBR_DOUBLE);
+    subscribe_channel(pvname, pv, "LOLO", DBR_DOUBLE);
+    subscribe_channel(pvname, pv, "SEVR", DBR_ENUM);    
+    subscribe_channel(pvname, pv, "HOPR", DBR_DOUBLE);
+    subscribe_channel(pvname, pv, "LOPR", DBR_DOUBLE);
+    subscribe_channel(pvname, pv, "EGU",  DBR_STRING);
+    subscribe_channel(pvname, pv, "PREC", DBR_SHORT);
+    
     ca_poll();
 }
 
@@ -221,17 +236,13 @@ void Epics::removePV(const string& pvname)
     PV* pv = pvs[pvname];
     
     // cancel the subscription/channels
-    int ca_rtn = ca_clear_subscription (pv->evid_val);
-    SEVCHK(ca_rtn, "ca_clear_subscription for value failed");
+    for(size_t i=0;i<pv->channels.size();i++) {
+        int ca_rtn = ca_clear_subscription (pv->channels[i]._evid);
+        SEVCHK(ca_rtn, "ca_clear_subscription failed");
     
-    ca_rtn = ca_clear_channel(pv->chid_val);
-    SEVCHK(ca_rtn, "ca_clear_channel for value failed");
-    
-    ca_rtn = ca_clear_subscription (pv->evid_ctrl);
-    SEVCHK(ca_rtn, "ca_clear_subscription for ctrl failed");
-    
-    ca_rtn = ca_clear_channel(pv->chid_ctrl);
-    SEVCHK(ca_rtn, "ca_clear_channel for ctrl failed");
+        ca_rtn = ca_clear_channel(pv->channels[i]._chid);
+        SEVCHK(ca_rtn, "ca_clear_channel failed");
+    }
     
     ca_poll();    
     

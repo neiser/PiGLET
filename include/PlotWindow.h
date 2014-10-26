@@ -7,8 +7,6 @@
 #include "TextLabel.h"
 #include "StopWatch.h"
 
-#define DEFAULT_BACKLEN 60.0f
-
 class PlotWindow: public Window {
 private:
     std::string _pvname; // the EPICS PV name
@@ -23,10 +21,8 @@ private:
 
     int frame;          //for debug
     
-    dbr_ctrl_double _old_properties;
-    
     void ProcessEpicsData(const Epics::DataItem *i);
-    void ProcessEpicsProperties(dbr_ctrl_double* d);
+    void ProcessEpicsProperties(const std::string &attr, void *d);
     std::string callbackSetBackLength(const std::string& arg);
 
     bool _epics_connected;
@@ -54,7 +50,6 @@ public:
     virtual void Draw();
     virtual int Init();
 
-    void SetYRange( const float min, const float max );
 };
 
 std::ostream& operator<<( std::ostream& stream, const PlotWindow& win );

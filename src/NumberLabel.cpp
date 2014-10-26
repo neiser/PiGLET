@@ -54,6 +54,7 @@ NumberLabel::NumberLabel(const Window *owner ):
     Widget(owner),
     _color(dTextColor),
     _prec(2),
+    _value(nanf("")),
     _digits(7),
     _align_right(true),
     _draw_box(true)
@@ -63,9 +64,9 @@ NumberLabel::NumberLabel(const Window *owner ):
 
 NumberLabel::~NumberLabel()
 {
-    --_num_objetcs;
+    --_num_objects;
 
-    if( _num_objetcs == 0) {
+    if( _num_objects == 0) {
         delete [] _textures;
     }
 }
@@ -136,8 +137,16 @@ void NumberLabel::SetString(const std::string &str)
     }
 }
 
+void NumberLabel::SetPrec(const unsigned short prec)
+{
+     _prec = prec; 
+     if(!isnan(_value))
+         SetNumber(_value);
+}
+
 void NumberLabel::SetNumber(const float v)
 {
+    _value = v;
     // generate text string from number
     stringstream stream;
     stream << fixed << setprecision(_prec);
@@ -173,14 +182,14 @@ void NumberLabel::SetTime( float s) {
 
 
 
-unsigned int NumberLabel::_num_objetcs = 0;
+unsigned int NumberLabel::_num_objects = 0;
 Texture* NumberLabel::_textures(NULL);
 float NumberLabel::_texratio = 1.0;
 
 void NumberLabel::_maketextures()
 {
 
-    if(_num_objetcs==0) {
+    if(_num_objects==0) {
         cout << "make tex" << endl;
 
         _textures = new Texture[NUMBERLABEL_NUM_TEX];
@@ -195,6 +204,6 @@ void NumberLabel::_maketextures()
         }
 
     }
-    _num_objetcs++;
+    _num_objects++;
 
 }

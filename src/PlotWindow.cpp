@@ -21,10 +21,9 @@ PlotWindow::PlotWindow(
     _ylabel(ylabel),    
     _initialized(false),
     WindowArea( dBackColor, dWindowBorderColor),
-    graph(this, DEFAULT_BACKLEN),
+    graph(this, 60), // DEFAULT_BACKLEN 60
     text(this, -0.98, .66, .99, .98),
     frame(0),
-    _old_properties(),
     _epics_connected(false),
     discon_lbl(this, -.1, -.1, .8, .9)
 {
@@ -108,75 +107,52 @@ void PlotWindow::ProcessEpicsData(const Epics::DataItem* i) {
         break;               
     }
     case Epics::NewProperties: {
-        ProcessEpicsProperties((dbr_ctrl_double*)i->data);
+        ProcessEpicsProperties(i->attr, i->data);
         break;
     }
     }        
     
 }
 
-void PlotWindow::ProcessEpicsProperties(dbr_ctrl_double* d) {
-   
-    // we use this macro only in this function 
-    // to prevent typos in the field names   
-    #define CHANGED(field) ((d->field) != (_old_properties.field))  
+void PlotWindow::ProcessEpicsProperties(const string& attr, void* d) {
     
-    // set alarm/warnings levels
-    if(CHANGED(lower_alarm_limit) || CHANGED(upper_alarm_limit)) 
-        graph.SetMajorAlarms(Interval(d->lower_alarm_limit, d->upper_alarm_limit));
-    
-    if(CHANGED(lower_warning_limit) || CHANGED(upper_warning_limit))
-        graph.SetMinorAlarms(Interval(d->lower_warning_limit, d->upper_warning_limit));
-        
-    // set alarm state
-    if(CHANGED(severity))
-        graph.SetAlarm((epicsAlarmSeverity)d->severity);
-    
-    // display limits a.k.a yrange
-    if(CHANGED(lower_disp_limit) || CHANGED(upper_disp_limit)) {
-        Interval y(d->lower_disp_limit,d->upper_disp_limit);
-        // if the provided interval is empty,
-        // try guessing some better one
-        if(y.Length()==0) {
-            graph.SetAutoRange(true);
-        } else {
-            graph.SetAutoRange(false);
-            graph.SetYRange( y );
-        }
+    if(attr == "HIHI") {
+        graph.SetMajorAlarmsMax(*(dbr_double_t*)d);
     }
-    
-    // set precision
-    // only positive numbers are allowed
-    if(CHANGED(precision) && d->precision>0) {
-        graph.SetPrecision(d->precision);
+    else if(attr == "HIGH") {
+        graph.SetMinorAlarmsMax(*(dbr_double_t*)d);
     }
-    
-    // append unit to title
-    // d->units is a char array, 
-    // so the simple CHANGED can't be used... 
-    if(strcmp(d->units,_old_properties.units) != 0) {
-        // update title with unit
+    else if(attr == "LOW") {
+        graph.SetMinorAlarmsMin(*(dbr_double_t*)d);
+    }
+    else if(attr == "LOLO") {
+        graph.SetMajorAlarmsMin(*(dbr_double_t*)d);
+    }    
+    else if(attr == "SEVR") {
+        graph.SetAlarm((epicsAlarmSeverity)(*(dbr_enum_t*)d));
+    }
+    else if(attr == "LOPR") {
+        graph.SetYRangeMin(*(dbr_double_t*)d);
+    }
+    else if(attr == "HOPR") {
+        graph.SetYRangeMax(*(dbr_double_t*)d);
+    }
+    else if(attr == "EGU") {
+        // append the unit to the title
         stringstream title;
-        string u(d->units);
+        string u((char*)d);
         title << _pvname;
         if(!u.empty()) {
             title << " / " << u;
-        }
-        text.SetText(title.str());
-    }    
-
-    // save a copy of the old state
-    _old_properties = *d;
-    
-    #undef CHANGED
-}
-
-    
-
-
-void PlotWindow::SetYRange(const float min, const float max)
-{
-    graph.SetYRange( Interval(min, max ));
+            text.SetText(title.str());
+        }        
+    }
+    else if(attr == "PREC") {
+        graph.SetPrecision(*(dbr_short_t*)d);
+    }
+    else {
+        cout << "Attribute change " << attr << " ignored." << endl;
+    }
 }
 
 void PlotWindow::Update() 

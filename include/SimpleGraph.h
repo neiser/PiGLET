@@ -45,6 +45,7 @@ private:
 
     BlockList _blocklist;
     Interval  _yrange;
+    Interval  _yrange_manual;
     bool      _autorange;
     NumberLabel ValueDisplay;
     StopWatch _time_since_noalarm;
@@ -85,7 +86,12 @@ private:
 
     vec2_t _lastline[2];
 
-
+    void SetYRange( const Interval& yrange );
+    void SetAutoRange( const bool autorange );    
+    void SetMinorAlarms( const Interval& minoralarm );
+    void SetMajorAlarms( const Interval& majoralarm );
+      
+    
 public:
     Color TickColor;
     Color TickLabelColor;   //note: does not change color on screen when changed!
@@ -112,12 +118,20 @@ public:
         _lastline[1].x=now; 
     }
     void SetBackLength( const float len ) { _blocklist.SetBackLength( len ); UpdateTicks(); }
-    void SetYRange( const Interval& yrange );
-    void SetMinorAlarms( const Interval& minoralarm );
-    void SetMajorAlarms( const Interval& majoralarm );
-    void SetPrecision(const unsigned char prec);
+    void SetYRangeMin( const double val );
+    void SetYRangeMax( const double val );
+    void SetMinorAlarmsMin( const double val );
+    void SetMinorAlarmsMax( const double val );       
+    void SetMajorAlarmsMin( const double val );
+    void SetMajorAlarmsMax( const double val );       
 
-    void SetAutoRange( const bool autorange ) { _autorange = autorange; }
+
+    
+    
+    
+    void SetPrecision(const unsigned short prec);
+
+    
 
     /**
      * @brief Set the alarm state

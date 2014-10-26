@@ -2,7 +2,7 @@
 #define INTERVAL_H
 
 #include <ostream>
-
+#include <cmath>
 
 
 class Interval {
@@ -47,12 +47,12 @@ public:
 
         bool ret = false;
 
-        if( i._max > _max ) {
+        if( isnan(_max) || i._max > _max ) {
             _max = i._max;
             ret = true;
         }
 
-        if( i._min < _min ) {
+        if( isnan(_min) || i._min < _min ) {
             _min = i._min;
             ret = true;
         }

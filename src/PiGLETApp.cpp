@@ -33,13 +33,13 @@ void PiGLETApp::Draw(){
 
 void PiGLETApp::Init(){
     prctl(PR_SET_NAME, "PiGLET", 0l, 0l, 0l);
-//    cout << "Starting PiGLET..." << endl;
-//    for (int i = 0 ; i < 3; i++){
+    cout << "Starting PiGLET..." << endl;
+//    for (int i = 0 ; i < 1; i++){
 //        stringstream ss;
 //        ss << "MyTestRecord" << i;
 //        windowman.AddWindow(new PlotWindow(&windowman, ss.str()));
 //    }
-    
+ //   windowman.AddWindow(new PlotWindow(&windowman, "BEAM:IonChamber"));
 //    // Add one extra Image Window
 //    ImageWindow* w = new ImageWindow(&windowman, "Webcam");
 //    windowman.AddWindow(w);

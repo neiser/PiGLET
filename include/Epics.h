@@ -25,6 +25,7 @@ public:
     typedef struct DataItem {
         DataType type;
         void* data;
+        std::string attr; // if type==NewProperties, this contains what property is in data 
         struct DataItem* prev;
     } DataItem;
         
@@ -60,15 +61,18 @@ private:
     Epics(Epics const& copy);            // Not Implemented
     Epics& operator=(Epics const& copy); // Not Implemented
     
+    typedef struct PV_channel_t {
+        chid _chid;
+        evid _evid;
+        std::string _attr;
+    } PV_channel_t;
+    
     typedef struct PV {
-        chid chid_val;
-        evid evid_val;
-        chid chid_ctrl;
-        evid evid_ctrl; 
-        DataItem* head_last; // remember the last head since processing
+        std::vector< PV_channel_t > channels;
         EpicsCallback cb; // gets called by processNewDataForPV() if there is new data
         bool auto_call;  // if an EPICS callback was received, the events will be processed immediately
-        DataItem*  head; // accessed by EPICS callbacks, one data stream per PV
+        DataItem* head_last; // remember the last head since processing        
+        DataItem* head; // accessed by EPICS callbacks, one data stream per PV
     } PV;
     
     static PV* initPV();
@@ -87,7 +91,9 @@ private:
     static void exceptionCallback( exception_handler_args args );
     static void appendToList(PV* pv, DataItem* pNew);
     
-    static void subscribe(const std::string &pvname, PV* pv);    
+    static void subscribe(const std::string &pvname, PV* pv);   
+    static void subscribe_channel(const std::string &pvname, PV* pv, 
+                                  const std::string &attr, chtype type ); 
 
     static void deleteDataItem(DataItem* i);
     static void fillList(DataItem* head, std::vector<DataItem*>& list);   
