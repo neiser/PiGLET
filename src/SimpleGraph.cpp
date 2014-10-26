@@ -191,7 +191,7 @@ void SimpleGraph::SetAutoRange(const bool autorange)
     
     if( _autorange ) {
         Interval y = _blocklist.YRange();
-        if( y != _yrange ) {
+        if( _yrange.Length() == 0 || y != _yrange ) {
             float len = 0.1*y.Length();
             if(len <= 1.0) {
                 len = 0.1*abs(y.Max());
