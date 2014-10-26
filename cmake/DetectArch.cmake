@@ -20,6 +20,7 @@ if(BUILD_FOR_PI)
     /opt/vc/include/interface/vmcs_host/linux)
   link_directories(/opt/vc/lib)
   set(ARCH_LIBS EGL GLESv2 bcm_host)
+  add_definitions(-DBUILD_PI)
 else()
   set(ARCH_DIR ${CMAKE_SOURCE_DIR}/arch/GLUT)
 
@@ -27,6 +28,7 @@ else()
   find_package(GLUT REQUIRED)
   include_directories(${OPENGL_INCLUDE_DIR} ${GLUT_INCLUDE_DIR})
   set(ARCH_LIBS ${OPENGL_LIBRARIES} ${GLUT_LIBRARIES})
+  add_definitions(-DBUILD_NONPI)
 endif()
 
 # for all archs, we add the sources 

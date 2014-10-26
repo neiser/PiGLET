@@ -68,9 +68,9 @@ Sound::Sound() : _running(true),
     
     cout << "PulseAudio mainloop and context created." << endl;
     
-    int ret = pa_context_connect(paContext,"localhost",(pa_context_flags_t)0, NULL);
+    int ret = pa_context_connect(paContext,NULL,(pa_context_flags_t)0, NULL);
     if(ret != PA_OK) {
-        cerr << "PulseAudio context connect failed" << endl;
+        cerr << "PulseAudio context connect failed, exit." << endl;
         exit(EXIT_FAILURE);
     }
 
@@ -190,8 +190,13 @@ void Sound::PlayWavItem(wav_item_t *item)
 	}        
     
     // don't forget to set the volume (otherwise Raspberry Pi stays silent)
-    pa_cvolume cv;    
-    int ret = pa_stream_connect_playback(paStream,NULL,NULL,(pa_stream_flags_t)0,pa_cvolume_reset(&cv, ss.channels),NULL);
+    pa_cvolume* cv = NULL;    
+#ifdef BUILD_PI
+    cv = new pa_cvolume();
+    pa_cvolume_reset(cv, ss.channels);
+#endif
+    int ret = pa_stream_connect_playback(paStream,NULL,NULL,(pa_stream_flags_t)NULL,
+                                         cv,NULL);
     
     if(ret != PA_OK) {
         cerr << "PulseAudio stream connect upload failed" << endl;
