@@ -39,18 +39,25 @@ public:
         _color[3] = a;
     }
 
-    inline float& Red()   { return _color[0]; }
-    inline float& Green() { return _color[1]; }
-    inline float& Blue()  { return _color[2]; }
-    inline float& Alpha() { return _color[3]; }
+    float& Red()   { return _color[0]; }
+    float& Green() { return _color[1]; }
+    float& Blue()  { return _color[2]; }
+    float& Alpha() { return _color[3]; }
+    
+    const float& Red()   const { return _color[0]; }
+    const float& Green() const { return _color[1]; }
+    const float& Blue()  const { return _color[2]; }
+    const float& Alpha() const { return _color[3]; }
 
-    inline const float& Red()   const { return _color[0]; }
-    inline const float& Green() const { return _color[1]; }
-    inline const float& Blue()  const { return _color[2]; }
-    inline const float& Alpha() const { return _color[3]; }
+    void Activate() const { glColor4fv( _color ); }
 
-    inline void Activate() const { glColor4fv( _color ); }
-
+    static const Color Interpolate(const double r, const Color& c0, const Color& c1) {
+        const Color c(c0.Red()*(1-r)   + c1.Red()*r,
+                c0.Green()*(1-r) + c1.Green()*r,
+                c0.Blue()*(1-r)  + c1.Blue()*r,
+                c0.Alpha()*(1-r) + c1.Alpha()*r);
+        return c;
+    }
 };
 
 #define kRed    Color(1.0f, 0.0f, 0.0f)

@@ -7,11 +7,13 @@
 #include "NumberLabel.h"
 #include "Interval.h"
 #include "alarm.h"
+#include "StopWatch.h"
 #include <list>
 #include <cmath>
 
 #define NTICKSFULLX  6
 #define NTICKSFULLY  5
+#define ALARM_DECAY_TIME 7 // seconds after ValueDisplay fades back to dTextColor
 
 class SimpleGraph: public Widget {
 
@@ -45,6 +47,9 @@ private:
     Interval  _yrange;
     bool      _autorange;
     NumberLabel ValueDisplay;
+    StopWatch _time_since_noalarm;
+    Color _prev_color;
+    Color _curr_color;
     UnitBorderBox PlotArea;
 
     static float roundX( float x);

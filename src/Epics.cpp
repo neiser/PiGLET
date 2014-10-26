@@ -212,7 +212,7 @@ void Epics::subscribe(const string &pvname, PV* pv) {
     SEVCHK(ca_rtn, "ca_create_subscription for ctrl failed");
     
     // dont know if this is really meaningful here (also done in ctor)
-    //ca_poll();
+    ca_poll();
 }
 
 void Epics::removePV(const string& pvname)

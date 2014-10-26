@@ -22,14 +22,17 @@ SimpleGraph::SimpleGraph( Window* owner, const float backlength ):
     _yrange(),
     _autorange(true),
     ValueDisplay(this->_owner),
+    _prev_color(dTextColor),    
+    _curr_color(dTextColor),        
     PlotArea( dPlotBackground, dPlotBorderColor),
     _minorAlarm(dMinorAlarm),
-    _majorAlarm(dMajorAlarm),
+    _majorAlarm(dMajorAlarm),    
     TickColor(dPlotTicks),
     TickLabelColor(dPlotTickLabels),
     StartLineColor(dStartLineColor),
     enable_lastline(false)
 {
+    _time_since_noalarm.Start(-ALARM_DECAY_TIME);
     vec2_t init;
     init.x = 0./0.;
     init.y = 0./0.;
@@ -79,7 +82,30 @@ void SimpleGraph::NewBlock()
 
 void SimpleGraph::Draw()
 {
-
+    // set the fading color of the ValueDisplay
+    
+    _time_since_noalarm.Stop();
+    if(_time_since_noalarm.TimeElapsed()<ALARM_DECAY_TIME) {
+        /*const double r = _time_since_noalarm.TimeElapsed()/ALARM_DECAY_TIME;
+        ValueDisplay.SetColor(
+                    Color::Interpolate(r,
+                                       _prev_color,
+                                       dTextColor
+                                  ));*/
+        if((int)(3*_time_since_noalarm.TimeElapsed()) % 2 == 0) {
+            ValueDisplay.SetColor(_curr_color);
+        }
+        else {
+            ValueDisplay.SetColor(_prev_color);
+        }
+    }
+    else {
+        ValueDisplay.SetColor(_curr_color);
+    }
+    
+    //cout << _time_since_noalarm.TimeElapsed() << endl;
+    
+    
     glPushMatrix();
 
         glTranslatef(-.08, -.12, 0);
@@ -197,20 +223,25 @@ void SimpleGraph::SetPrecision(const unsigned char prec)
 
 void SimpleGraph::SetAlarm(const epicsAlarmSeverity serv )
 {
+    // disable fading by default
+    _time_since_noalarm.Start(-ALARM_DECAY_TIME);    
     switch (serv ) {
     case epicsSevNone:
-        ValueDisplay.SetColor(dTextColor);
+        _time_since_noalarm.Start();
+        _prev_color = ValueDisplay.GetColor();
+        _curr_color = dTextColor;
         break;
     case epicsSevMinor:
         Sound::I().Play("warning");        
-        ValueDisplay.SetColor(dMinorAlarm);
+        _curr_color = dMinorAlarm;
         break;
     case epicsSevMajor:
         Sound::I().Play("alert");        
-        ValueDisplay.SetColor(dMajorAlarm);
+        _curr_color = dMajorAlarm;
         break;
     default:
-        ValueDisplay.SetColor(dInvalidAlarm);
+        // in most cases: epicsSevInvalid
+        _curr_color = dInvalidAlarm;
         break;
     }
 }
