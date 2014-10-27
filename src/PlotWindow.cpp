@@ -148,7 +148,10 @@ void PlotWindow::ProcessEpicsProperties(const string& attr, void* d) {
         }        
     }
     else if(attr == "PREC") {
-        graph.SetPrecision(*(dbr_short_t*)d);
+        short prec = *(dbr_short_t*)d;
+        if(prec<=0)
+            return;
+        graph.SetPrecision(prec);
     }
     else {
         cout << "Attribute change " << attr << " ignored." << endl;

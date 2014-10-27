@@ -192,12 +192,10 @@ void SimpleGraph::SetAutoRange(const bool autorange)
     if( _autorange ) {
         Interval y = _blocklist.YRange();
         if( _yrange.Length() == 0 || y != _yrange ) {
-            float len = 0.1*y.Length();
+            float scale = y.Length()>abs(y.Max()) ? y.Length() : abs(y.Max());
+            float len = 0.1*scale;
             if(len <= 1.0) {
-                len = 0.1*abs(y.Max());
-                if(len <= 1.0) {
-                    len = 1.0;
-                }
+                len = 1.0;
             }
             y.Extend(y.Max()+len);
             y.Extend(y.Min()-len);
@@ -304,7 +302,7 @@ SimpleGraph::TickLabel::TickLabel(const Window *owner, const vec2_t &pos, const 
     SetDrawBox(false);
     SetAlignRight(true);
     SetDigits(5);
-    SetPrec(1);
+    SetPrec(2);
 }
 
 
@@ -347,24 +345,20 @@ void SimpleGraph::UpdateTicks() {
         float x = 0 - i * dx;
         AddXTick( x );
     }
-
-    int nty = ceil ( NTICKSFULLY *  _owner->YPixels() / GetWindowHeight());
+      
+    int nty = ceil (NTICKSFULLY * _owner->YPixels() / GetWindowHeight());
     float dy = _yrange.Length() / nty;
-    dy = roundX(dy);
-    nty = round( _yrange.Length() / dy ) ;
+    float dy_r = roundX(dy);
+    float nty_r = round( _yrange.Length() / dy_r );
     
-    const float ystart = roundX( _yrange.Center() ) - (nty/2)*dy;
-    for( int i=0; i<nty; ++i ) {
-        float y = ystart + i * dy;
-        
+    // since the rounded ystart might be outside _yrange already
+    // we scan with nty a little bit more around...
+    const float ystart = roundX( _yrange.Center() - nty*dy/2 ) ;
+    for( int i=-2; i<nty_r+2; ++i ) {
+        float y = ystart + i * dy_r;
         if(_yrange.Contains(y))
             AddYTick( y );
     }
-
- //   if( _blocklist.YRange().Contains(0.0f) ) {
- //       AddYTick(0.0f);
- //   }
-
 }
 
 void SimpleGraph::DeleteTicks()
@@ -377,7 +371,7 @@ void SimpleGraph::DeleteTicks()
 }
 
 
-float SimpleGraph::roundX( float x ) {
+float SimpleGraph::roundX(float x) {
     if( x==0 || !isfinite(x) )
         return 0;
     float m=1;

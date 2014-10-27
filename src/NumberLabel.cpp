@@ -26,27 +26,42 @@ static float pow10( const int exp ) {
     return v;
 }
 
-#define NUM_PREFIX 9
-static char prefixes[NUM_PREFIX+1] = "pnum kMGT";
+std::string NumberLabel::FormatNumberPrec(const float& v, const char prefix) {
+    std::stringstream stream;
+    unsigned short prec = _prec;
+    int exp = log10(abs(v));  // should never be negative...
+    prec = prec>exp ? prec-exp : 0;
+    
+    stream << setprecision(prec) << fixed;
+    stream << v << prefix;
+    return stream.str();
+}
 
-static std::ostream& SIPrefix( std::ostream& stream, const float& v ) {
-
-   if( v != 0.0f ) {
-
-        int exp = (int) (log10(abs(v)) / 3 );
-
-        if( exp < -NUM_PREFIX/2 )
-            exp = -NUM_PREFIX/2;
-        else if( exp > NUM_PREFIX/2 )
-            exp = NUM_PREFIX/2;
-
-        stream << v / pow10(exp*3) << prefixes[ exp + (NUM_PREFIX/2) ];
-
-   } else {
-       stream << v << " ";
-   }
-
-    return stream;
+std::string NumberLabel::FormatNumberSI(const float& v) {
+    if(v == 0)
+        return "0 ";
+        
+    
+    const std::string prefixes = "pnum kMGT"; // no SI prefix in the center
+    
+    // find some good guess for the SI prefix exponential
+    // make sure it's inside the bounds
+    int si_exp = (int) (log10(abs(v)) / 3 );    
+    int center = prefixes.size()/2; // integer division
+    if( si_exp < -center )
+        si_exp = -center;
+    else if( si_exp > center )
+        si_exp = center;
+        
+    // find string with minimum length, large numbers are usually
+    // nicer displayed with one exp less
+    std::string str = FormatNumberPrec(v / pow10(si_exp*3), prefixes[si_exp+center]);
+    if(si_exp==1) { // prefix = k
+        std::string str_noprefix = FormatNumberPrec(v, ' ');
+        if(str_noprefix.size()-1<str.size())
+            str = str_noprefix;
+    }
+    return str;
 }
 
 
@@ -146,15 +161,10 @@ void NumberLabel::SetPrec(const unsigned short prec)
 
 void NumberLabel::SetNumber(const float v)
 {
+    // remember the value, if the precision is changed...
     _value = v;
     // generate text string from number
-    stringstream stream;
-    stream << fixed << setprecision(_prec);
-    SIPrefix(stream,v);
-
-    string s = stream.str();
-    SetString(s);
-
+    SetString(FormatNumberSI(v));
 }
 
 void NumberLabel::SetTime( float s) {

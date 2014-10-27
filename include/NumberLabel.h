@@ -35,7 +35,9 @@ private:
     bool _draw_box;
 
     UnitBorderBox Box;
-
+    
+    std::string FormatNumberSI(const float& v);
+    std::string FormatNumberPrec(const float& v, const char prefix);
 public:
     NumberLabel( const Window* owner );
     virtual ~NumberLabel();
@@ -51,20 +53,11 @@ public:
     /**
      * @brief Sets the decimal precision
      * @param prec number of digits
-     * @note  Gets applied at the next call to Set()
-     * @see GetPrec()
      */
     void SetPrec( const unsigned short prec );
 
     /**
-     * @brief Get the decimal precision
-     * @return number of digits
-     * @see SetPrec()
-     */
-    unsigned char GetPrec() const { return _prec; }
-
-    /**
-     * @brief Sets the number of digits to aling text to
+     * @brief Sets the number of digits to align text to
      * @param digits number of digits
      * @note  Gets applied at the next call to Set()
      * @see GetDigits()

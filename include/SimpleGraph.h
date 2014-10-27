@@ -13,7 +13,7 @@
 
 #define NTICKSFULLX  6
 #define NTICKSFULLY  5
-#define ALARM_DECAY_TIME 7 // seconds after ValueDisplay fades back to dTextColor
+#define ALARM_DECAY_TIME 10 // seconds after ValueDisplay fades back to dTextColor
 
 class SimpleGraph: public Widget {
 
