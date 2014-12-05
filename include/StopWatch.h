@@ -10,7 +10,7 @@ private:
 
     double GetTime() {
         timespec t;
-        clock_gettime(CLOCK_MONOTONIC, &t);
+        clock_gettime(CLOCK_MONOTONIC_COARSE, &t);
         return t.tv_sec + t.tv_nsec*1e-9;
     }
 public:
