@@ -38,40 +38,13 @@ void MyGLWindow::initializeGL()
     cout << "init GL" << endl;
 }
 
-/**
- * @brief Calculate the differnce in seconds of two timespec values
- * @param start The first (earlier) time point
- * @param stop The later time point
- * @return difference in seconds
- */
-float time_difference( const timespec* start, const timespec* stop ) {
-    float time = stop->tv_sec - start->tv_sec + (stop->tv_nsec - start->tv_nsec) * 1E-9;
-    return time;
-}
-
-
-
 void MyGLWindow::paintGL()
 {
-
-
     app->Draw();
 
 	glFlush();
 	glFinish();
 	swapBuffers();
-
-    ++frames;
-    if( frames == 200 ) {
-        timespec stop;
-        clock_gettime(CLOCK_MONOTONIC, &stop);
-        float diff = time_difference( &start_fps, &stop );
-
-        cout << "fps: " << frames / diff << endl;
-        frames = 0;
-        clock_gettime(CLOCK_MONOTONIC, &start_fps);
-    }
-
 
 }
 

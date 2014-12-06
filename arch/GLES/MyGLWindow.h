@@ -49,8 +49,6 @@ class MyGLWindow : public EGLWindow
 
         static const vec2_t square[4];
 
-        unsigned int frames;
-        timespec start_fps;
 };
 
 
