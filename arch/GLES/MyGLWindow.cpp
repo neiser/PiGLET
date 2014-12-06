@@ -21,11 +21,10 @@
 
 using namespace std;
 
-MyGLWindow::MyGLWindow(EGLconfig *_config) : EGLWindow(_config), frames(0)
+MyGLWindow::MyGLWindow(EGLconfig *_config) : EGLWindow(_config)
 {
 	std::cout<<"My GL Window Ctor\n";
 	makeSurface();
-    clock_gettime(CLOCK_MONOTONIC, &start_fps);
 }
 
 MyGLWindow::~MyGLWindow()
