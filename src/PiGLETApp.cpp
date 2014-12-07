@@ -10,6 +10,8 @@
 
 using namespace std;
 
+#define AVG_FRAMES 200
+
 void PiGLETApp::Draw(){
        
     // Start with a clear screen
@@ -30,21 +32,29 @@ void PiGLETApp::Draw(){
     ReportGLError();
     
     frames++;
-    if(frames == 200) {
+    if(frames % AVG_FRAMES == 0) {
         frames_timer.Stop();        
-        fps = frames/frames_timer.TimeElapsed();
+        
+        fps = AVG_FRAMES/(frames_timer.TimeElapsed()-timeElapsed);
         cout << " FPS: " << fps << endl;
-        frames_timer.Start();        
-        frames = 0;
+        
+        timeElapsed = frames_timer.TimeElapsed();
     }
 }
 
+
+double PiGLETApp::GetRoughTime()
+{
+    return timeElapsed +
+            (frames % AVG_FRAMES)/fps;
+}
 
 void PiGLETApp::Init(){
     prctl(PR_SET_NAME, "PiGLET", 0l, 0l, 0l);
     cout << "Starting PiGLET..." << endl;
     frames_timer.Start();
     frames = 0;
+    timeElapsed = 0.0;
     fps = 25.0; // some guess for initial frames
         
 //    for (int i = 0 ; i < 1; i++){

@@ -15,7 +15,7 @@ public:
         return instance;
     }
     
-    
+    double GetRoughTime();
 
     void Init();
     void Draw();
@@ -26,6 +26,7 @@ private:
     
     unsigned int frames;
     double fps; // frames per second 
+    double timeElapsed;
     StopWatch frames_timer;
     
     // Singleton: Stop the compiler generating methods of copy the object

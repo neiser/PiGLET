@@ -48,7 +48,7 @@ private:
     Interval  _yrange_manual;
     bool      _autorange;
     NumberLabel ValueDisplay;
-    StopWatch _time_since_noalarm;
+    double _time_since_noalarm;
     Color _prev_color;
     Color _curr_color;
     UnitBorderBox PlotArea;

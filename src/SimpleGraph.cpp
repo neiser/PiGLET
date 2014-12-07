@@ -2,7 +2,8 @@
 #include "Window.h"
 #include <cmath>
 #include <iostream>
-#include <Sound.h>
+#include "Sound.h"
+#include "PiGLETApp.h"
 
 using namespace std;
 
@@ -33,7 +34,7 @@ SimpleGraph::SimpleGraph( Window* owner, const float backlength ):
     StartLineColor(dStartLineColor),
     enable_lastline(false)
 {
-    _time_since_noalarm.Start(-ALARM_DECAY_TIME);
+    _time_since_noalarm = PiGLETApp::I().GetRoughTime()-ALARM_DECAY_TIME;    
     vec2_t init;
     init.x = 0./0.;
     init.y = 0./0.;
@@ -79,15 +80,9 @@ void SimpleGraph::Draw()
 {
     // set the fading/blinking color of the ValueDisplay
     
-    _time_since_noalarm.Stop();
-    if(_time_since_noalarm.TimeElapsed()<ALARM_DECAY_TIME) {
-        /*const double r = _time_since_noalarm.TimeElapsed()/ALARM_DECAY_TIME;
-        ValueDisplay.SetColor(
-                    Color::Interpolate(r,
-                                       _prev_color,
-                                       dTextColor
-                                  ));*/
-        if((int)(3*_time_since_noalarm.TimeElapsed()) % 2 == 0) {
+    double timeElapsed = PiGLETApp::I().GetRoughTime() - _time_since_noalarm;
+    if(timeElapsed<ALARM_DECAY_TIME) {
+        if((int)(3*timeElapsed) % 2 == 0) {
             ValueDisplay.SetColor(_curr_color);
         }
         else {
@@ -98,8 +93,7 @@ void SimpleGraph::Draw()
         ValueDisplay.SetColor(_curr_color);
     }
     
-    //cout << _time_since_noalarm.TimeElapsed() << endl;
-    
+
     
     glPushMatrix();
         const float scale_y = 0.72f;
@@ -270,10 +264,10 @@ void SimpleGraph::SetPrecision(const unsigned short prec)
 void SimpleGraph::SetAlarm(const epicsAlarmSeverity serv )
 {
     // disable fading by default
-    _time_since_noalarm.Start(-ALARM_DECAY_TIME);    
+    _time_since_noalarm = PiGLETApp::I().GetRoughTime()-ALARM_DECAY_TIME;    
     switch (serv ) {
     case epicsSevNone:
-        _time_since_noalarm.Start();
+        _time_since_noalarm = PiGLETApp::I().GetRoughTime(); // fade the alarm status
         _prev_color = ValueDisplay.GetColor();
         _curr_color = dTextColor;
         break;
