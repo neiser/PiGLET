@@ -40,7 +40,7 @@ void MyGLWindow::initializeGL()
 
 void MyGLWindow::paintGL()
 {
-    PiGLETApp.I().Draw();    
+    PiGLETApp::I().Draw();    
 	glFlush();
 	glFinish();
 	swapBuffers();

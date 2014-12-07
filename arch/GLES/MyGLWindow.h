@@ -19,13 +19,7 @@
 
 #include "EGLWindow.h"
 
-#include <vector>
 #include "Structs.h"
-#include <time.h>
-
-#include "GLApp.h"
-
-typedef struct timespec timespec;
 
 
 /// @brief this class create our window by inheriting the features of the EGL Window
