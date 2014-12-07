@@ -19,9 +19,6 @@
 
 #include "EGLWindow.h"
 
-#include "Structs.h"
-
-
 /// @brief this class create our window by inheriting the features of the EGL Window
 class MyGLWindow : public EGLWindow
 {
@@ -35,12 +32,9 @@ class MyGLWindow : public EGLWindow
 		/// been called
 		virtual void paintGL();
 
-
 	protected :
 		/// @brief one time OpenGL initialisation
 		virtual void initializeGL();
-
-        static const vec2_t square[4];
 
 };
 

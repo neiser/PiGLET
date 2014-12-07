@@ -18,13 +18,11 @@
 
 #include "PiGLETApp.h"
 #include <iostream>
-#include <time.h>
 
 using namespace std;
 
 MyGLWindow::MyGLWindow(EGLconfig *_config) : EGLWindow(_config)
 {
-	std::cout<<"My GL Window Ctor\n";
 	makeSurface();
 }
 
@@ -36,6 +34,7 @@ MyGLWindow::~MyGLWindow()
 void MyGLWindow::initializeGL()
 {
     cout << "init GL" << endl;
+    PiGLETApp::I().Init();    
 }
 
 void MyGLWindow::paintGL()
@@ -46,4 +45,3 @@ void MyGLWindow::paintGL()
 	swapBuffers();
 }
 
-const vec2_t MyGLWindow::square[4] = { {1,1},{-1,1},{-1,-1},{1,-1} };
