@@ -97,6 +97,7 @@ Sound::Sound() : _running(true),
     
     SetupWavItem("alert", sound_alert_wav, sound_alert_wav_size);
     SetupWavItem("warning", sound_warning_wav, sound_warning_wav_size);
+    SetupWavItem("silence", sound_silence_wav, sound_silence_wav_size);
     
     // thread items
     pthread_mutex_init(&_mutex, NULL);
