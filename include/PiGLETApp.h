@@ -1,4 +1,5 @@
 #include "WindowManager.h"
+#include "StopWatch.h"
 
 class PiGLETApp {
 
@@ -14,7 +15,7 @@ public:
         return instance;
     }
     
-
+    
 
     void Init();
     void Draw();
@@ -24,6 +25,8 @@ private:
     ~PiGLETApp() {}
     
     unsigned int frames;
+    double fps; // frames per second 
+    StopWatch frames_timer;
     
     // Singleton: Stop the compiler generating methods of copy the object
     PiGLETApp(PiGLETApp const& copy);            // Not Implemented

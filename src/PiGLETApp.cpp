@@ -30,12 +30,23 @@ void PiGLETApp::Draw(){
     ReportGLError();
     
     frames++;
+    if(frames == 200) {
+        frames_timer.Stop();        
+        fps = frames/frames_timer.TimeElapsed();
+        cout << " FPS: " << fps << endl;
+        frames_timer.Start();        
+        frames = 0;
+    }
 }
 
 
 void PiGLETApp::Init(){
     prctl(PR_SET_NAME, "PiGLET", 0l, 0l, 0l);
     cout << "Starting PiGLET..." << endl;
+    frames_timer.Start();
+    frames = 0;
+    fps = 25.0; // some guess for initial frames
+        
 //    for (int i = 0 ; i < 1; i++){
 //        stringstream ss;
 //        ss << "MyTestRecord" << i;
