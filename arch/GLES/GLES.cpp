@@ -26,7 +26,6 @@ void InitGL() {
 }
 
 void RunGL() {
-    PiGLETApp::I().Init();
     while(1) {
         win->paintGL();
         usleep(1000); // give other threads (especially EPICS callbacks) some time
