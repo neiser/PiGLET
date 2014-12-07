@@ -4,7 +4,7 @@
 #include "GLES.h"
 #include "MyGLWindow.h"
 #include "arch_common.h"
-#include "ConfigManager.h"
+#include "PiGLETApp.h"
 
 static MyGLWindow* win;
 
@@ -25,13 +25,10 @@ void InitGL() {
     CommonInitGL();
 }
 
-void RunGL(GLApp& app) {
-    app.Init();
-    win->app = &app;
+void RunGL() {
+    PiGLETApp::I().Init();
     while(1) {
-        ConfigManager::I().MutexLock();
         win->paintGL();
-        ConfigManager::I().MutexUnlock();
         usleep(1000); // give other threads (especially EPICS callbacks) some time
     }
     bcm_host_deinit();

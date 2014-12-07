@@ -13,21 +13,23 @@ using namespace std;
 void PiGLETApp::Draw(){
        
     // Start with a clear screen
-
     glClearColor(.1,.1,.1,0);
-
     glClear( GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT );
-
     glLoadIdentity();
-
     glLineWidth(3);
 
+    // draw the stuff, 
+    // but don't let the config manager interfere
+    ConfigManager::I().MutexLock();    
     windowman.Draw();
+    ConfigManager::I().MutexUnlock();
        
     // check if there are callbacks from the telnet
     // to be executed
     ConfigManager::I().ExecutePendingCallback();
     ReportGLError();
+    
+    frames++;
 }
 
 

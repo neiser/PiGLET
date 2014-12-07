@@ -5,10 +5,9 @@
 #include <EGL/eglext.h>
 #include <GLES/gl.h>
 #include "bcm_host.h"
-#include "GLApp.h"
 
 void InitGL();
-void RunGL( GLApp& app );
+void RunGL();
 
 int GetWindowWidth();
 int GetWindowHeight();

@@ -41,7 +41,6 @@ class MyGLWindow : public EGLWindow
 		/// been called
 		virtual void paintGL();
 
-        GLApp* app;
 
 	protected :
 		/// @brief one time OpenGL initialisation

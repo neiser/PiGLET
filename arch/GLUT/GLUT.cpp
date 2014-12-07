@@ -4,11 +4,10 @@
 
 #include "GLUT.h"
 #include "arch_common.h"
-#include "ConfigManager.h"
+#include "PiGLETApp.h"
 
 using namespace std;
 
-static GLApp* currentInstance;
 static bool fullscreen = false;
 static int _width =  DEFAULT_WINDOW_WIDTH;
 static int _height = DEFAULT_WINDOW_HEIGHT;
@@ -28,12 +27,10 @@ int GetWindowHeight() {
 }
 
 static void drawCallback(int val) {
-    ConfigManager::I().MutexLock();
-    currentInstance->Draw();
+    PiGLETApp::I().Draw();
     glFlush();
     glFinish();
     glutSwapBuffers();
-    ConfigManager::I().MutexUnlock();
     glutTimerFunc(20, drawCallback, 0);
 }
 
@@ -79,9 +76,8 @@ void InitGL(){
     CommonInitGL();
 }
 
-void RunGL(GLApp &app) {
-    currentInstance = &app;
-    app.Init();
+void RunGL() {
+    PiGLETApp::I().Init();
     cout << "Press ESC to quit" << endl;
     glutMainLoop();
 }

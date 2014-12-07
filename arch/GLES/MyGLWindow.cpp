@@ -16,6 +16,7 @@
 */
 #include "MyGLWindow.h"
 
+#include "PiGLETApp.h"
 #include <iostream>
 #include <time.h>
 
@@ -39,12 +40,10 @@ void MyGLWindow::initializeGL()
 
 void MyGLWindow::paintGL()
 {
-    app->Draw();
-
+    PiGLETApp.I().Draw();    
 	glFlush();
 	glFinish();
 	swapBuffers();
-
 }
 
 const vec2_t MyGLWindow::square[4] = { {1,1},{-1,1},{-1,-1},{1,-1} };
