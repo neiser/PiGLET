@@ -105,6 +105,15 @@ Sound::Sound() : _running(true),
     
     pthread_create(&_thread, 0, &Sound::start_thread, this);
     
+    struct sched_param params;
+    // We'll set the priority to the maximum.
+    params.sched_priority = sched_get_priority_max(SCHED_FIFO);
+    ret = pthread_setschedparam(_thread, SCHED_FIFO, &params);
+    if (ret != 0) {
+        // Print the error
+        cout << "Unsuccessful in setting thread realtime prio: " << strerror(errno) << endl;
+    }
+    
     // register global MUTE PV for all displays
     // request that ProcessEpicsData gets automatically called for each new DataItem
     _muted.Start();
