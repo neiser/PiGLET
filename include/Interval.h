@@ -47,12 +47,12 @@ public:
 
         bool ret = false;
 
-        if( isnan(_max) || i._max > _max ) {
+        if( std::isnan(_max) || i._max > _max ) {
             _max = i._max;
             ret = true;
         }
 
-        if( isnan(_min) || i._min < _min ) {
+        if( std::isnan(_min) || i._min < _min ) {
             _min = i._min;
             ret = true;
         }
