@@ -1,5 +1,6 @@
 #include <iostream>
 #include <sstream>
+#include <unistd.h>
 
 #include "PiGLETApp.h"
 #include "arch.h"
@@ -40,6 +41,8 @@ void PiGLETApp::Draw(){
         
         timeElapsed = frames_timer.TimeElapsed();
     }
+
+    usleep(1000);
 }
 
 
