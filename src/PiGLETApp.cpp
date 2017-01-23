@@ -14,31 +14,31 @@ using namespace std;
 #define AVG_FRAMES 200
 
 void PiGLETApp::Draw(){
-       
+
     // Start with a clear screen
     glClearColor(.1,.1,.1,0);
     glClear( GL_COLOR_BUFFER_BIT | GL_STENCIL_BUFFER_BIT );
     glLoadIdentity();
     glLineWidth(3);
 
-    // draw the stuff, 
+    // draw the stuff,
     // but don't let the config manager interfere
-    ConfigManager::I().MutexLock();    
+    ConfigManager::I().MutexLock();
     windowman.Draw();
     ConfigManager::I().MutexUnlock();
-       
+
     // check if there are callbacks from the telnet
     // to be executed
     ConfigManager::I().ExecutePendingCallback();
     ReportGLError();
-    
+
     frames++;
     if(frames % AVG_FRAMES == 0) {
-        frames_timer.Stop();        
-        
+        frames_timer.Stop();
+
         fps = AVG_FRAMES/(frames_timer.TimeElapsed()-timeElapsed);
         cout << " FPS: " << fps << endl;
-        
+
         timeElapsed = frames_timer.TimeElapsed();
     }
 
